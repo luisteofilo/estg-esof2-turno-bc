@@ -25,3 +25,8 @@
 
 volumes:
   local-db:
+  blazorapp1:
+    image: blazorapp1
+    build:
+      context: .
+      dockerfile: BlazorApp1/Dockerfile

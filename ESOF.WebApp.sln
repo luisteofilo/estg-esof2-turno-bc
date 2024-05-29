@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBLayer", "DBLayer\DBLayer.csproj", "{C1F5CD12-5627-48D6-80DD-C26D6F9A4DD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Frontend.csproj", "{145A87FD-4D64-4698-A843-72EB58CF1215}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Frontend.csproj", "{74EC8401-878F-4611-B1ED-81F5A3E9A2E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{B87DF5B0-8517-414E-B3A2-3799E668D423}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,9 +31,15 @@ Global
 		{C1F5CD12-5627-48D6-80DD-C26D6F9A4DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1F5CD12-5627-48D6-80DD-C26D6F9A4DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1F5CD12-5627-48D6-80DD-C26D6F9A4DD7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{145A87FD-4D64-4698-A843-72EB58CF1215}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{145A87FD-4D64-4698-A843-72EB58CF1215}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{145A87FD-4D64-4698-A843-72EB58CF1215}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{145A87FD-4D64-4698-A843-72EB58CF1215}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74EC8401-878F-4611-B1ED-81F5A3E9A2E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74EC8401-878F-4611-B1ED-81F5A3E9A2E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74EC8401-878F-4611-B1ED-81F5A3E9A2E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74EC8401-878F-4611-B1ED-81F5A3E9A2E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B87DF5B0-8517-414E-B3A2-3799E668D423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B87DF5B0-8517-414E-B3A2-3799E668D423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B87DF5B0-8517-414E-B3A2-3799E668D423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B87DF5B0-8517-414E-B3A2-3799E668D423}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal
