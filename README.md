@@ -5,10 +5,11 @@
  * You need to install the Microsoft .NET SDK 8 available at https://dotnet.microsoft.com/en-us/download
  * This solution was tested with version 8.0.6
 
-## Basic Instructions ## 
+## Basic Setup ## 
 
  * Fill .env file (you can copy or adapt from .env.sample if you want to run things locally)
- * xx
+ * Run the database with Docker
+ * Update the database by running the current migrations 
 
 ## Migrations ##
 
@@ -29,3 +30,7 @@
 
  * Never push the .env file to git
  * `docker compose up --build database` will allow you to create a local database for you to work
+
+## TODO ##
+
+ * The docker compose containers for the frontend and api are not working yet!
