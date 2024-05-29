@@ -1,0 +1,45 @@
+﻿@page "/users"
+@using Frontend.Helpers
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+
+<PageTitle>Users</PageTitle>
+
+<h1>Users</h1>
+
+<p>This component demonstrates showing data from the API.</p>
+
+@if (_userEmails == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var email in _userEmails)
+        {
+            <tr>
+                <td>@email</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string[]? _userEmails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _userEmails = await ApiHelper.GetFromApiAsync<string[]>("users/emails");
+    }
+    
+}
