@@ -1,0 +1,27 @@
+﻿services:
+  database:
+    image: postgres:16.3-alpine
+    volumes:
+      - ${LOCAL_DB_PATH}:/var/lib/postgresql/shared-data/
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    ports:
+      - "${POSTGRES_PORT}:5432"
+  
+  webapi:
+    image: webapi
+    build:
+      context: .
+      dockerfile: WebAPI/Dockerfile
+
+  frontend:
+    image: frontend
+    build:
+      context: .
+      dockerfile: Frontend/Dockerfile
+
+volumes:
+  local-db:
