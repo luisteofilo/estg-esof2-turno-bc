@@ -1,3 +1,5 @@
+using ESOF.WebApp.DBLayer.Context;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -34,6 +36,14 @@ app.MapGet("/weatherforecast", () =>
         return forecast;
     })
     .WithName("GetWeatherForecast")
+    .WithOpenApi();
+
+app.MapGet("/users/emails", () =>
+    {
+        var db = new ApplicationDbContext();
+        return db.Users.Select(u => u.Email);
+    })
+    .WithName("GetUsersNames")
     .WithOpenApi();
 
 app.Run();

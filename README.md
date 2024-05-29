@@ -24,3 +24,7 @@
    * Sample Feature 1 (Normal and Admin)
    * Sample Feature 2 (Normal and Admin)
    * Sample Admin Feature (Admin)
+
+## Notes / Rules and Recommendations ##
+
+ * Never push the .env file to git

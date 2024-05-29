@@ -6,7 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <AssemblyName>ESOF WebApp Frontend</AssemblyName>
-        <RootNamespace>ESOF.WebApp.Frontend</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

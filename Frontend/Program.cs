@@ -1,4 +1,4 @@
-using ESOF.WebApp.Frontend.Components;
+using Frontend.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
