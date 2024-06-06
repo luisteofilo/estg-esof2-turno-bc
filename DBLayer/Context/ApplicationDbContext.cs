@@ -43,6 +43,12 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
+    public DbSet<Wine> Wines { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<Region> Regions { get; set; }
+    public DbSet<GrapeType> GrapeTypes { get; set; }
+    public DbSet<WineCategoryLink> WineCategoryLinks { get; set; }
+    public DbSet<WineGrapeTypeLink> WineGrapeTypeLinks { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -58,6 +64,12 @@ public partial class ApplicationDbContext : DbContext
         BuildPermissions(modelBuilder);
         BuildRolePermissions(modelBuilder);
         BuildUserRoles(modelBuilder);
+        BuildWines(modelBuilder);
+        BuildBrands(modelBuilder);
+        BuildRegions(modelBuilder);
+        BuildGrapeTypes(modelBuilder);
+        BuildWineCategoryLinks(modelBuilder);
+        BuildWineGrapeTypeLinks(modelBuilder);
         base.OnModelCreating(modelBuilder);
     }
 }
