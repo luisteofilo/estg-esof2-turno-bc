@@ -35,7 +35,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("PermissionId");
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Role", b =>
@@ -51,7 +51,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.RolePermission", b =>
@@ -66,7 +66,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("RolePermissions", (string)null);
+                    b.ToTable("RolePermissions");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.User", b =>
@@ -93,7 +93,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.UserRole", b =>
@@ -108,7 +108,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.RolePermission", b =>
