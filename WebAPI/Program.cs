@@ -46,6 +46,14 @@ app.MapGet("/users/emails", () =>
     .WithName("GetUsersNames")
     .WithOpenApi();
 
+app.MapGet("/vinho", () =>
+    {
+        var db = new ApplicationDbContext();
+        return db.Vinho.Select(u => new { u.Name, u.Tipo }).ToList();
+    })
+    .WithName("GetVinho")
+    .WithOpenApi();
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

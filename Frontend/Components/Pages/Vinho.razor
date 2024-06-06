@@ -1,0 +1,52 @@
+@page "/vinho"
+@using Frontend.Helpers
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+
+<PageTitle>Vinhos</PageTitle>
+
+<h1>Vinhos</h1>
+
+<p>Esta página demonstra a exibição de dados da API.</p>
+
+@if (_vinhos == null)
+{
+<p>
+    <em>Carregando...</em>
+</p>
+}
+else
+{
+<table class="table">
+    <thead>
+    <tr>
+        <th>Nome</th>
+        <th>Tipo</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var vinho in _vinhos)
+    {
+    <tr>
+        <td>@vinho.Name</td>
+        <td>@vinho.Tipo</td>
+    </tr>
+    }
+    </tbody>
+</table>
+}
+
+@code {
+    private List<VinhoViewModel> _vinhos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _vinhos = await ApiHelper.GetFromApiAsync<List<VinhoViewModel>>("vinho");
+    }
+
+    public class VinhoViewModel
+    {
+        public string Name { get; set; }
+        public int Tipo { get; set; }
+    }
+}

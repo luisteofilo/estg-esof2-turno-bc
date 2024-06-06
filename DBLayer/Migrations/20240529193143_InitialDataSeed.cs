@@ -77,8 +77,27 @@ namespace ESOF.WebApp.DBLayer.Migrations
                 { adminUserId, adminRoleId },
                 { normalUserId, normalRoleId }
             });
+        
+        var vinhoId1 = Guid.NewGuid();
+        var vinhoId2 = Guid.NewGuid();
+        var vinhoId3 = Guid.NewGuid();
+
+        // Inserting data into the Vinhos table
+        migrationBuilder.InsertData(
+            table: "Vinho",
+            columns: new[] { "VinhoId", "Name", "Tipo" },
+            values: new object[,]
+            {
+                { vinhoId1, "Vinho Tinto", 1 },
+                { vinhoId2, "Vinho Branco", 2 },
+                { vinhoId3, "Vinho Rosé", 3 }
+            });
+        
+        
         }
 
+        
+        
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
@@ -87,6 +106,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
             migrationBuilder.Sql("DELETE FROM RolePermissions");
             migrationBuilder.Sql("DELETE FROM Permissions");
             migrationBuilder.Sql("DELETE FROM Roles");
+            migrationBuilder.Sql("DELETE FROM Vinho");
         }
     }
 }

@@ -50,6 +50,19 @@ namespace ESOF.WebApp.DBLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Vinho",
+                columns: table => new
+                {
+                    VinhoId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Tipo = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vinho", x => x.VinhoId);
+                });
+            
+            migrationBuilder.CreateTable(
                 name: "RolePermissions",
                 columns: table => new
                 {
@@ -131,6 +144,10 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+            
+            migrationBuilder.DropTable(
+                name: "Vinho");
+        
         }
     }
 }

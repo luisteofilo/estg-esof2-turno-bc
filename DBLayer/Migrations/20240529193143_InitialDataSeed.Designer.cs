@@ -114,6 +114,38 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("UserRoles");
                 });
 
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Vinho", b =>
+            {
+                // Configura a propriedade VinhoId
+                b.Property<Guid>("VinhoId")
+                    // Indica que o valor do VinhoId será gerado ao adicionar uma nova entidade
+                    .ValueGeneratedOnAdd()
+                    // Define o tipo da coluna como uuid (para PostgreSQL)
+                    .HasColumnType("uuid")
+                    // Define o valor padrão da coluna como um UUID gerado pela função gen_random_uuid()
+                    .HasDefaultValueSql("gen_random_uuid()");
+
+                // Configura a propriedade Name
+                b.Property<string>("Name")
+                    // Define que a coluna Name é obrigatória (não pode ser nula)
+                    .IsRequired()
+                    // Define o tipo da coluna como text
+                    .HasColumnType("text");
+
+                // Configura a propriedade Tipo
+                b.Property<int>("Tipo")
+                    // Define que a coluna Tipo é obrigatória (não pode ser nula)
+                    .IsRequired()
+                    // Define o tipo da coluna como integer
+                    .HasColumnType("integer");
+
+                // Configura a chave primária da tabela
+                b.HasKey("VinhoId");
+
+                // Define o nome da tabela como Vinhos
+                b.ToTable("Vinho");
+            });
+            
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.RolePermission", b =>
                 {
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.Permission", "Permission")
