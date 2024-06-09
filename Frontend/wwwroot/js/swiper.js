@@ -20,7 +20,7 @@
 
         activeCard.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotate}deg)`;
 
-        if (Math.abs(offsetX) > boundaries.width * 0.3) {
+        if (Math.abs(offsetX) > boundaries.width * 0.3 || Math.abs(offsetY) > boundaries.height * 0.3) {
             dismiss();
         }
     };
