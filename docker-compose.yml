@@ -22,6 +22,8 @@
     build:
       context: .
       dockerfile: Frontend/Dockerfile
-
+    ports:
+      - "${EXT_FRONTEND_PORT}:${FRONTEND_PORT}"
+      - "${EXT_FRONTEND_ALT_PORT}:${FRONTEND_ALT_PORT}"
 volumes:
   local-db:
