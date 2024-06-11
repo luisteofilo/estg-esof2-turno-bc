@@ -1,72 +1,46 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
-    let startPoint = null;
-    let offsetX = 0;
-    let offsetY = 0;
-    let activeCard = null;
-    let isDismissAnimationInProgress = false;
-    const container = document.getElementById('borders');
-    const boundaries = container.getBoundingClientRect();
+﻿
+function sayHi(str) {
+    console.log("Hi" + str)
+}
 
-    const handleMouseMovement = (event) => {
-        if (!startPoint || !activeCard) return;
-        if (isDismissAnimationInProgress) return;
+function handleButtonClick(action) {
+    const swiper = document.getElementById("swiper");
+    const cards = swiper.getElementsByClassName("card");
 
-        const mouseX = event.clientX;
-        const mouseY = event.clientY;
+    if (cards.length > 0) {
+        let card = cards[0];
+        card.style.transition = "transform 0.5s, opacity 0.5s";
+        const wineName = card.getAttribute('data-wine-name');
+        const wineTipo = card.getAttribute('data-wine-tipo');
 
-        offsetX = mouseX - startPoint.x;
-        offsetY = mouseY - startPoint.y;
-        const rotate = offsetX * 0.1;
-
-        activeCard.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotate}deg)`;
-
-        if (Math.abs(offsetX) > boundaries.width * 0.3 || Math.abs(offsetY) > boundaries.height * 0.3) {
-            dismiss();
+        switch (action) {
+            case "dislike":
+                card.style.transform = "translateX(-430px) translateY(80px) scale(0.3)";
+                break;
+            case "superLike":
+                card.style.transform = "translateY(300px) scale(0.3)";
+                console.log("Hi");
+                break;
+            case "like":
+                card.style.transform = "translateX(430px) translateY(80px) scale(0.3)";
+                console.log("Hi");
+                break;
         }
-    };
 
-    const handleMouseUp = () => {
-        if (activeCard) {
-            startPoint = null;
-            document.removeEventListener('mousemove', handleMouseMovement);
+        card.style.opacity = "0";
+        setTimeout(() => {
+            card.remove();
+            updateCardPositions();
+        }, 500);
+    }
+}
 
-            activeCard.style.transition = 'transform 0.5s ease';
-            activeCard.style.transform = 'translate(0, 0) rotate(0)';
-        }
-    };
-
-    const mouseEventListener = (card) => {
-        card.addEventListener('mousedown', (event) => {
-            if (isDismissAnimationInProgress) return;
-            event.preventDefault();
-
-            startPoint = { x: event.clientX, y: event.clientY };
-            activeCard = card;
-            document.addEventListener('mousemove', handleMouseMovement);
-
-            activeCard.style.transition = 'none';
-        });
-
-        document.addEventListener('mouseup', handleMouseUp);
-    };
-
-    const dismiss = () => {
-        if (isDismissAnimationInProgress) return;
-
-        isDismissAnimationInProgress = true;
-        startPoint = null;
-        document.removeEventListener('mouseup', handleMouseUp);
-        document.removeEventListener('mousemove', handleMouseMovement);
-        activeCard.remove();
-        isDismissAnimationInProgress = false;
-
-        activeCard = document.querySelector('.card');
-        if (activeCard) {
-            activeCard.style.transition = 'none';
-            mouseEventListener(activeCard);
-        }
-    };
-    
-    const firstCard = document.querySelector('.card');
-    mouseEventListener(firstCard);
-});
+function updateCardPositions() {
+    const swiper = document.getElementById("swiper");
+    const cards = swiper.getElementsByClassName("card");
+    for (let i = 0; i < cards.length; i++) {
+        cards[i].style.transition = "none";
+        cards[i].style.transform = `translateZ(calc(-20px * ${i})) translateY(calc(-5px * ${i})) rotate(calc(-3deg * ${i}))`;
+        cards[i].style.opacity = "1";
+    }
+}

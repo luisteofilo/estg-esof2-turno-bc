@@ -2,6 +2,7 @@
 @using Frontend.Helpers
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
+@inject IJSRuntime JsRuntime
 
 <style>
     .container {
@@ -77,9 +78,9 @@
         </p>
     }
     else{
-        <div class="icons">
+        <button class="btn btn-trash icons" @onclick="HelloWorld">
             <i class="bi bi-trash-fill" style="color: darkgreen"></i>
-        </div>
+        </button>
         <div class="d-flex flex-column align-items-center">
             <div class="card-container" id="swiper">
                 @{
@@ -87,7 +88,7 @@
                 }
                 @foreach (var wine in _vinhos)
                 {
-                    <div class="card" style="--i: @index">
+                    <div class="card" data-wine-name="@wine.Name" data-wine-tipo="@wine.Tipo" style="--i: @index">
                         <img src="favicon.png" alt="@wine.Tipo" class="card-image"/>
                         <div class="card-headers">
                             <h3 class="card-header">@wine.Name</h3>
@@ -98,32 +99,87 @@
                     index++;
                 }
             </div>
-            
-            <div class="icons mt-5">
+
+            <button class="btn btn-fire icons mt-5" onclick="handleButtonClick('superLike')">
                 <i class="bi bi-fire" style="color: orangered"></i>
-            </div>
+            </button>
         </div>
-        <div class="icons">
+        <button class="btn btn-heart-fill icons" @onclick="Hello">
             <i class="bi bi-heart-fill" style="color: red"></i>
+        </button>
+        
+        <div>
+            <input type="text" @bind-value="Name"/>
+            <button class="btn btn-primary" @onclick="HelloName"> Hello Name</button>
         </div>
         
     }
 </div>
 
-<script src="js/swiper.js"></script>
+<script src="js/hello.js"></script>
 
 @code {
     private List<VinhoViewModel> _vinhos;
+    private List<UserChoice> userChoices;
+    string Name = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         _vinhos = await ApiHelper.GetFromApiAsync<List<VinhoViewModel>>("vinho");
     }
 
+    private void Test()
+    {
+        Console.WriteLine("Is this even working?");
+    }
+    
+    private async Task HelloWorld()
+    {
+        Test();
+        try
+        {
+            Console.WriteLine("Before JavaScript invocation");
+            await JsRuntime.InvokeVoidAsync("helloWorld");
+            Console.WriteLine("After JavaScript invocation");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error invoking JavaScript function: {ex.Message}");
+        }
+    }
+    
+    private async Task HelloName()
+    {
+        Console.WriteLine("XDDDDDDDDDD");
+        await JsRuntime.InvokeVoidAsync("helloName", Name);
+        Console.WriteLine("XDDDDDDDDDD");
+    }
+    
+    private async Task Hello()
+    {
+        Console.WriteLine("XDDDDDDDDDD");
+        await JsRuntime.InvokeVoidAsync("Hi");
+        Console.WriteLine("XDDDDDDDDDD");
+    }
+    
+    [JSInvokable]
+    public void SaveUserChoice(string wineName, int wineTipo, string action)
+    {
+        userChoices.Add(new UserChoice { WineName = wineName, WineTipo = wineTipo, Action = action });
+        Console.WriteLine($"Choice saved: {wineName}, {wineTipo}, {action}");
+    }
+
     public class VinhoViewModel
     {
         public string Name { get; set; }
         public int Tipo { get; set; }
+    }
+    
+    public class UserChoice
+    {
+        public string WineName { get; set; }
+        public int WineTipo { get; set; }
+        public string Action { get; set; }
     }
 
     private void DislikeVinho(VinhoViewModel vinho)
