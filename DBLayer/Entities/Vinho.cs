@@ -5,7 +5,7 @@ namespace ESOF.WebApp.DBLayer.Entities;
 public class Vinho
 {
     [Key]
-    public Guid vinhoid { get; set; }
+    public Guid VinhoId { get; set; }
     
     [Required]
     public string Name { get; set; }

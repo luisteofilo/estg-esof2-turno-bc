@@ -1,4 +1,7 @@
 using ESOF.WebApp.DBLayer.Context;
+using ESOF.WebApp.DBLayer.Entities;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,9 +69,36 @@ app.MapGet("/usersdois", () =>
 app.MapGet("/vinho", () =>
     {
         var db = new ApplicationDbContext();
-        return db.Vinho.Select(u => new { u.Name, u.Tipo }).ToList();
+        return db.Vinho.Select(u => new { u.VinhoId, u.Name, u.Tipo }).ToList();
     })
     .WithName("GetVinho")
+    .WithOpenApi();
+
+app.MapPost("/create-interaction", async (Interacao interaction) =>
+    {
+        var db = new ApplicationDbContext();
+        db.Interacao.Add(interaction);
+        await db.SaveChangesAsync();
+        return Results.Ok();
+    })
+    .WithName("CreateInteraction")
+    .WithOpenApi();
+
+app.MapPut("/update-interaction", async (Interacao interactionUpdate) =>
+    {
+        var db = new ApplicationDbContext();
+        var interaction = db.Interacao.FirstOrDefault(i => i.user_id == interactionUpdate.user_id && i.vinho_id == interactionUpdate.vinho_id);
+        if (interaction == null)
+        {
+            return Results.NotFound();
+        }
+        
+        interaction.tipo_interacao = interactionUpdate.tipo_interacao;
+        await db.SaveChangesAsync();
+        
+        return Results.Ok();
+    })
+    .WithName("UpdateInteraction")
     .WithOpenApi();
 
 app.Run();

@@ -10,7 +10,7 @@ public partial class ApplicationDbContext
     {
         modelBuilder.Entity<Vinho>(entity =>
         {
-            entity.HasKey(e => e.vinhoid);
+            entity.HasKey(e => e.VinhoId);
 
             entity.Property(e => e.Name)
                 .IsRequired();
@@ -18,7 +18,7 @@ public partial class ApplicationDbContext
             entity.Property(e => e.Tipo)
                 .IsRequired();
 
-            entity.Property(e => e.vinhoid)
+            entity.Property(e => e.VinhoId)
                 .HasDefaultValueSql("gen_random_uuid()");
         });
     }
