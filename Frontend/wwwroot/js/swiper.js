@@ -15,15 +15,13 @@ function handleButtonClick(action) {
 
         switch (action) {
             case "dislike":
-                card.style.transform = "translateX(-430px) translateY(80px) scale(0.3)";
+                card.style.transform = "translateX(-130px) translateY(300px) scale(0.3)";
                 break;
             case "superLike":
                 card.style.transform = "translateY(300px) scale(0.3)";
-                console.log("Hi");
                 break;
             case "like":
-                card.style.transform = "translateX(430px) translateY(80px) scale(0.3)";
-                console.log("Hi");
+                card.style.transform = "translateX(130px) translateY(300px) scale(0.3)";
                 break;
         }
 
