@@ -29,6 +29,8 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
+                    
+                    // TODO: Add WineId foreign key, EventId foreign key
                 });
             
             migrationBuilder.CreateIndex(
