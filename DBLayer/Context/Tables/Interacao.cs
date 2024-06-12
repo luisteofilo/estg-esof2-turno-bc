@@ -18,9 +18,6 @@ namespace ESOF.WebApp.DBLayer.Context
                 entity.Property(e => e.vinho_id)
                     .IsRequired();
 
-                entity.Property(e => e.tipo_vinho)
-                    .IsRequired();
-
                 entity.Property(e => e.tipo_interacao)
                     .IsRequired();
 
