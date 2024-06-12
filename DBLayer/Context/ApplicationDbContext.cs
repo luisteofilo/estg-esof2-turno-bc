@@ -45,6 +45,8 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<RolePermission> RolePermissions { get; set; }
     public DbSet<Vinho> Vinho { get; set; }
 
+    public DbSet<Interacao> Interacao { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
@@ -55,6 +57,7 @@ public partial class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         BuildUsers(modelBuilder);
+        BuildInteracao(modelBuilder);
         BuildRoles(modelBuilder);
         BuildPermissions(modelBuilder);
         BuildVinho(modelBuilder);

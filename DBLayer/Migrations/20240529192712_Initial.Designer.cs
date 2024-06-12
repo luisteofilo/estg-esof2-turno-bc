@@ -57,6 +57,51 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("Roles");
                 });
 
+            
+            
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Interacao", b =>
+            {
+                // Configura a propriedade user_id
+                b.Property<Guid>("user_id")
+                    .IsRequired()
+                    .HasColumnType("uuid");
+
+                // Configura a propriedade vinho_id
+                b.Property<Guid>("vinho_id")
+                    .IsRequired()
+                    .HasColumnType("uuid");
+
+                // Configura a propriedade tipo_vinho
+                b.Property<int>("tipo_vinho")
+                    .IsRequired()
+                    .HasColumnType("integer");
+
+                // Configura a propriedade tipo_interacao
+                b.Property<int>("tipo_interacao")
+                    .IsRequired()
+                    .HasColumnType("integer");
+
+                // Configura a chave primária composta da tabela
+                b.HasKey("user_id", "vinho_id");
+
+                // Configura a chave estrangeira para a entidade User
+                b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "User")
+                    .WithMany()
+                    .HasForeignKey("user_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Configura a chave estrangeira para a entidade Vinho
+                b.HasOne("ESOF.WebApp.DBLayer.Entities.Vinho", "Vinho")
+                    .WithMany()
+                    .HasForeignKey("vinho_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Define o nome da tabela como Interacoes
+                b.ToTable("Interacao");
+            });
+
+            
+            
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Vinho", b =>
             {
                 // Configura a propriedade VinhoId

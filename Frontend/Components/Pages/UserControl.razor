@@ -1,0 +1,55 @@
+@page "/UserControl"
+
+@using Frontend.Helpers
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject ProtectedSessionStorage ProtectedSessionStorage
+
+<PageTitle>User Control</PageTitle>
+
+<h3>User Control</h3>
+
+@if (Users == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (var user in Users)
+        {
+            <li>
+                <button type="button" @onclick="() => SelectUser(user.UserId)">@user.Email</button>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<UserDto> Users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get users from the endpoint
+        Users = await HttpClient.GetFromJsonAsync<List<UserDto>>("usersdois");
+    }
+
+    private async Task SelectUser(Guid userId)
+    {
+        // Store the selected user ID in session
+        await ProtectedSessionStorage.SetAsync("selectedUserId", userId.ToString());
+        Console.WriteLine($"User ID: {userId}");
+
+        NavigationManager.NavigateTo("/UserSss", true);
+    }
+
+    public class UserDto
+    {
+        public Guid UserId { get; set; }
+        public string Email { get; set; }
+    }
+}

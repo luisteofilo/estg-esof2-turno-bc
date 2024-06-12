@@ -107,6 +107,8 @@ namespace ESOF.WebApp.DBLayer.Migrations
             migrationBuilder.Sql("DELETE FROM Permissions");
             migrationBuilder.Sql("DELETE FROM Roles");
             migrationBuilder.Sql("DELETE FROM Vinho");
+            migrationBuilder.Sql("DELETE FROM Interacao");
+
         }
     }
 }
