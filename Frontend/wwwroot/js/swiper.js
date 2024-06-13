@@ -11,7 +11,7 @@
             vinho_id: vinho_id,
             tipo_interacao: 0
         };
-        
+
         card.style.transition = "transform 0.5s, opacity 0.5s";
 
         switch (action) {
@@ -34,23 +34,54 @@
             card.remove();
             updateCardPositions();
         }, 500);
-        
-        sendInteraction(interaction)
-            .then(() => {
-                console.log("Interaction sent successfully");
-            })
-            .catch((error) => {
-                console.error("Failed to send interaction", error);
-            });
+
+        const apiUrlElement = document.getElementById('apiUrl');
+        if (apiUrlElement) {
+            const apiUrl = apiUrlElement.value;
+
+            checkInteractionExists(interaction)
+                .then(exists => {
+                    if (exists === 0) {
+                        sendInteraction(interaction, apiUrl)
+                            .then(() => {
+                                console.log("Interaction sent successfully");
+                            })
+                            .catch((error) => {
+                                console.error("Failed to send interaction", error);
+                            });
+                    } else if (exists === 1) {
+                        updateInteraction(interaction, apiUrl)
+                            .then(() => {
+                                console.log("Interaction updated successfully");
+                            })
+                            .catch((error) => {
+                                console.error("Failed to update interaction", error);
+                            });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Failed to check interaction existence", error);
+                });
+        } else {
+            console.error("API URL element not found");
+        }
     }
 }
 
-function getUserId() {
-    return  sessionStorage.getItem('selectedUserId');
+async function checkInteractionExists(interaction) {
+    const response = await fetch(`https://localhost:7103/get-interaction?user_id=${interaction.user_id}&vinho_id=${interaction.vinho_id}`);
+    if (!response.ok) {
+        throw new Error("Failed to check interaction existence");
+    }
+    return await response.json();
 }
 
-async function sendInteraction(interaction) {
-    const response = await fetch("http://localhost:5295/create-interaction", {
+function getUserId() {
+    return sessionStorage.getItem('selectedUserId');
+}
+
+async function sendInteraction(interaction, apiUrl) {
+    const response = await fetch(`https://localhost:7103/create-interaction`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -59,6 +90,22 @@ async function sendInteraction(interaction) {
     });
     if (!response.ok) {
         console.error("Failed to send interaction");
+    }
+}
+
+async function updateInteraction(interaction, apiUrl) {
+    const response = await fetch(`https://localhost:7103/update-interaction`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(interaction)
+    });
+
+    if (!response.ok) {
+        console.error("Failed to update interaction");
+    } else {
+        console.log("Interaction updated successfully");
     }
 }
 
