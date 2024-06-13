@@ -68,7 +68,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                 {
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     vinho_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    tipo_vinho = table.Column<int>(type: "integer", nullable: false),
                     tipo_interacao = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>

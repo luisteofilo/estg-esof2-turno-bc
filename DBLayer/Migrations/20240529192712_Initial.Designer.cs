@@ -70,11 +70,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
                 b.Property<Guid>("vinho_id")
                     .IsRequired()
                     .HasColumnType("uuid");
-
-                // Configura a propriedade tipo_vinho
-                b.Property<int>("tipo_vinho")
-                    .IsRequired()
-                    .HasColumnType("integer");
+                
 
                 // Configura a propriedade tipo_interacao
                 b.Property<int>("tipo_interacao")
