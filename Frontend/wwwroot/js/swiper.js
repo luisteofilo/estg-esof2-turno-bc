@@ -34,11 +34,8 @@
             card.remove();
             updateCardPositions();
         }, 500);
-
-
-        const apiUrl = document.getElementById('apiUrl').value;
         
-        sendInteraction(interaction, apiUrl)
+        sendInteraction(interaction)
             .then(() => {
                 console.log("Interaction sent successfully");
             })
@@ -52,9 +49,8 @@ function getUserId() {
     return  sessionStorage.getItem('selectedUserId');
 }
 
-async function sendInteraction(interaction, apiUrl) {
-    
-    const response = await fetch(apiUrl + "create-interaction", {
+async function sendInteraction(interaction) {
+    const response = await fetch("http://localhost:5295/create-interaction", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

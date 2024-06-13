@@ -110,20 +110,15 @@
                 </button>
             </div>
         </div>
-        <input type="hidden" id="apiUrl" value="@apiUrl" />
     }
 </div>
 
-<script src="js/swiper.js"></script>
-
 @code {
     private List<VinhoViewModel> _vinhos;
-    private string? apiUrl;
 
     protected override async Task OnInitializedAsync()
     {
         _vinhos = await ApiHelper.GetFromApiAsync<List<VinhoViewModel>>("vinho");
-        apiUrl = Configuration["API_URL"];
     }
     
     public class VinhoViewModel
