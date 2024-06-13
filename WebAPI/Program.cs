@@ -74,11 +74,30 @@ app.MapGet("/vinho", () =>
     .WithName("GetVinho")
     .WithOpenApi();
 
-app.MapPost("/create-interaction", async (Interacao interaction) =>
+app.MapPost("/create-interaction", async (Interacao interactionRequest) =>
     {
         var db = new ApplicationDbContext();
+        
+        var user = await db.Users.FindAsync(interactionRequest.user_id);
+        var vinho = await db.Vinho.FindAsync(interactionRequest.vinho_id);
+    
+        if (user == null || vinho == null)
+        {
+            return Results.NotFound();
+        }
+
+        var interaction = new Interacao
+        {
+            user_id = interactionRequest.user_id,
+            vinho_id = interactionRequest.vinho_id,
+            tipo_interacao = interactionRequest.tipo_interacao,
+            User = user,
+            Vinho = vinho
+        };
+
         db.Interacao.Add(interaction);
         await db.SaveChangesAsync();
+    
         return Results.Ok();
     })
     .WithName("CreateInteraction")

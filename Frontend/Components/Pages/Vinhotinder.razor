@@ -3,6 +3,7 @@
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 @inject IJSRuntime JsRuntime
+@inject IConfiguration Configuration
 
 <style>
     .container {
@@ -85,13 +86,14 @@
                 }
                 @foreach (var wine in _vinhos)
                 {
-                    <div class="card" data-wine-name="@wine.Name" data-wine-tipo="@wine.Tipo" style="--i: @index">
+                    <div class="card" data-wine-id="@wine.VinhoId" style="--i: @index">
                         <img src="favicon.png" alt="@wine.Tipo" class="card-image"/>
                         <div class="card-headers">
                             <h3 class="card-header">@wine.Name</h3>
                             <h3 class="card-header">@wine.Tipo</h3>
                         </div>
                     </div>
+                    <input type="hidden" class="wine-id" value="@wine.VinhoId" />
 
                     index++;
                 }
@@ -100,38 +102,35 @@
                 <button class="btn btn-trash icons mt-5 me-5" onclick="handleButtonClick('dislike')">
                     <i class="bi bi-trash-fill" style="color: darkgreen"></i>
                 </button>
-                <button class="btn btn-fire icons mt-5" onclick="handleButtonClick('superLike')">
+                <button class="btn btn-fire icons mt-5" onclick="handleButtonClick('superlike')">
                     <i class="bi bi-fire" style="color: orangered"></i>
                 </button>
                 <button class="btn btn-heart icons mt-5 ms-5" onclick="handleButtonClick('like')">
                     <i class="bi bi-heart-fill" style="color: red"></i>
                 </button>
             </div>
-            
         </div>
+        <input type="hidden" id="apiUrl" value="@apiUrl" />
     }
 </div>
 
+<script src="js/swiper.js"></script>
+
 @code {
     private List<VinhoViewModel> _vinhos;
-    private List<UserChoice> userChoices;
+    private string? apiUrl;
 
     protected override async Task OnInitializedAsync()
     {
         _vinhos = await ApiHelper.GetFromApiAsync<List<VinhoViewModel>>("vinho");
+        apiUrl = Configuration["API_URL"];
     }
     
     public class VinhoViewModel
     {
+        public string VinhoId { get; set; }
         public string Name { get; set; }
         public int Tipo { get; set; }
-    }
-    
-    public class UserChoice
-    {
-        public string WineName { get; set; }
-        public int WineTipo { get; set; }
-        public string Action { get; set; }
     }
 
     private void DislikeVinho(VinhoViewModel vinho)

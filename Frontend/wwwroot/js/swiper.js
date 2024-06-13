@@ -1,27 +1,31 @@
-﻿
-function sayHi(str) {
-    console.log("Hi" + str)
-}
-
-function handleButtonClick(action) {
+﻿function handleButtonClick(action) {
     const swiper = document.getElementById("swiper");
     const cards = swiper.getElementsByClassName("card");
 
     if (cards.length > 0) {
         let card = cards[0];
+        const vinho_id = card.getAttribute('data-wine-id');
+
+        const interaction = {
+            user_id: getUserId(),
+            vinho_id: vinho_id,
+            tipo_interacao: 0
+        };
+        
         card.style.transition = "transform 0.5s, opacity 0.5s";
-        const wineName = card.getAttribute('data-wine-name');
-        const wineTipo = card.getAttribute('data-wine-tipo');
 
         switch (action) {
             case "dislike":
                 card.style.transform = "translateX(-130px) translateY(300px) scale(0.3)";
+                interaction.tipo_interacao = 0;
                 break;
             case "superLike":
                 card.style.transform = "translateY(300px) scale(0.3)";
+                interaction.tipo_interacao = 2;
                 break;
             case "like":
                 card.style.transform = "translateX(130px) translateY(300px) scale(0.3)";
+                interaction.tipo_interacao = 1;
                 break;
         }
 
@@ -30,6 +34,35 @@ function handleButtonClick(action) {
             card.remove();
             updateCardPositions();
         }, 500);
+
+
+        const apiUrl = document.getElementById('apiUrl').value;
+        
+        sendInteraction(interaction, apiUrl)
+            .then(() => {
+                console.log("Interaction sent successfully");
+            })
+            .catch((error) => {
+                console.error("Failed to send interaction", error);
+            });
+    }
+}
+
+function getUserId() {
+    return  sessionStorage.getItem('selectedUserId');
+}
+
+async function sendInteraction(interaction, apiUrl) {
+    
+    const response = await fetch(apiUrl + "create-interaction", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(interaction)
+    });
+    if (!response.ok) {
+        console.error("Failed to send interaction");
     }
 }
 
