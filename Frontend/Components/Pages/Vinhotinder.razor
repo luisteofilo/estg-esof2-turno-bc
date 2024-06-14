@@ -2,8 +2,6 @@
 @using Frontend.Helpers
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
-@inject IJSRuntime JsRuntime
-@inject IConfiguration Configuration
 
 <style>
     .container {
@@ -13,6 +11,26 @@
         display: flex;
         justify-content: space-around;
         align-items: center;
+    }
+
+    #warning-message {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #f8d7da; 
+        color: #721c24;
+        padding: 10px;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        z-index: 1000;
+        display: none; 
+    }
+
+    #warning-message a {
+        color: #721c24;
+        text-decoration: underline;
+        margin-left: 10px;
     }
 
     .card-container {
@@ -70,14 +88,20 @@
 
 <PageTitle>Vinho tinder</PageTitle>
 
-<div class="container" id="borders">
+<div class="container" id="blur">
+    <div id="warning-message" class="alert alert-warning" style="display:none;">
+        <span id="warning-text"></span>
+        <a id="warning-link" href="/UserControl">Go to User Control</a>
+    </div>
+
     @if (_vinhos == null)
     {
         <p>
             <em>Carregando...</em>
         </p>
     }
-    else{
+    else
+    {
         <div class="d-flex flex-column align-items-center">
             <div class="card-container" id="swiper">
                 @{
@@ -92,7 +116,7 @@
                             <h3 class="card-header">@wine.Tipo</h3>
                         </div>
                     </div>
-                    <input type="hidden" class="wine-id" value="@wine.VinhoId" />
+                    <input type="hidden" class="wine-id" value="@wine.VinhoId"/>
                     index++;
                 }
             </div>
@@ -108,11 +132,8 @@
                 </button>
             </div>
         </div>
-        <input type="hidden" id="apiUrl" value="@Configuration["API_URL"]" />
     }
 </div>
-
-<script src="js/swiper.js"></script>
 
 @code {
     private List<VinhoViewModel> _vinhos;

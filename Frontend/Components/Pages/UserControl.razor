@@ -4,11 +4,6 @@
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 
-@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
-@inject HttpClient HttpClient
-@inject NavigationManager NavigationManager
-@inject ProtectedSessionStorage ProtectedSessionStorage
-
 <PageTitle>User Control</PageTitle>
 
 <h3>User Control</h3>
@@ -27,8 +22,6 @@ else
             </li>
         }
     </ul>
-    
-    <script src="js/userControl.js"></script>
 }
 
 @code {

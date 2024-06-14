@@ -1,14 +1,20 @@
 ﻿function handleButtonClick(action) {
+    const userId = getUserId();
+    if (!userId) {
+        showWarning('User must be logged in. Please select one!', '/UserControl');
+        return;
+    }
+    
     const swiper = document.getElementById("swiper");
     const cards = swiper.getElementsByClassName("card");
 
     if (cards.length > 0) {
         let card = cards[0];
-        const vinho_id = card.getAttribute('data-wine-id');
+        const vinhoId = card.getAttribute('data-wine-id');
 
         const interaction = {
-            user_id: getUserId(),
-            vinho_id: vinho_id,
+            user_id: userId,
+            vinho_id: vinhoId,
             tipo_interacao: 0
         };
 
@@ -34,37 +40,55 @@
             card.remove();
             updateCardPositions();
         }, 500);
+        
 
-        const apiUrlElement = document.getElementById('apiUrl');
-        if (apiUrlElement) {
-            const apiUrl = apiUrlElement.value;
+        checkInteractionExists(interaction)
+            .then(exists => {
+                if (exists === 0) {
+                    createInteraction(interaction)
+                        .then(() => {
+                            console.log("Interaction sent successfully");
+                        })
+                        .catch((error) => {
+                            console.error("Failed to send interaction", error);
+                        });
+                } else if (exists === 1) {
+                    updateInteraction(interaction)
+                        .then(() => {
+                            console.log("Interaction updated successfully");
+                        })
+                        .catch((error) => {
+                            console.error("Failed to update interaction", error);
+                        });
+                }
+            })
+            .catch((error) => {
+                console.error("Failed to check interaction existence", error);
+            });
+    }
+}
 
-            checkInteractionExists(interaction)
-                .then(exists => {
-                    if (exists === 0) {
-                        sendInteraction(interaction, apiUrl)
-                            .then(() => {
-                                console.log("Interaction sent successfully");
-                            })
-                            .catch((error) => {
-                                console.error("Failed to send interaction", error);
-                            });
-                    } else if (exists === 1) {
-                        updateInteraction(interaction, apiUrl)
-                            .then(() => {
-                                console.log("Interaction updated successfully");
-                            })
-                            .catch((error) => {
-                                console.error("Failed to update interaction", error);
-                            });
-                    }
-                })
-                .catch((error) => {
-                    console.error("Failed to check interaction existence", error);
-                });
-        } else {
-            console.error("API URL element not found");
-        }
+function getUserId() {
+    return sessionStorage.getItem('selectedUserId');
+}
+
+function showWarning(message, link) {
+    const warningDiv = document.getElementById('warning-message');
+    const warningText = document.getElementById('warning-text');
+    const warningLink = document.getElementById('warning-link');
+
+    warningText.innerText = message;
+    warningLink.href = link;
+    warningDiv.style.display = 'block';
+}
+
+function updateCardPositions() {
+    const swiper = document.getElementById("swiper");
+    const cards = swiper.getElementsByClassName("card");
+    for (let i = 0; i < cards.length; i++) {
+        cards[i].style.transition = "none";
+        cards[i].style.transform = `translateZ(calc(-20px * ${i})) translateY(calc(-5px * ${i})) rotate(calc(-3deg * ${i}))`;
+        cards[i].style.opacity = "1";
     }
 }
 
@@ -76,11 +100,7 @@ async function checkInteractionExists(interaction) {
     return await response.json();
 }
 
-function getUserId() {
-    return sessionStorage.getItem('selectedUserId');
-}
-
-async function sendInteraction(interaction, apiUrl) {
+async function createInteraction(interaction) {
     const response = await fetch(`https://localhost:7103/create-interaction`, {
         method: "POST",
         headers: {
@@ -106,15 +126,5 @@ async function updateInteraction(interaction, apiUrl) {
         console.error("Failed to update interaction");
     } else {
         console.log("Interaction updated successfully");
-    }
-}
-
-function updateCardPositions() {
-    const swiper = document.getElementById("swiper");
-    const cards = swiper.getElementsByClassName("card");
-    for (let i = 0; i < cards.length; i++) {
-        cards[i].style.transition = "none";
-        cards[i].style.transform = `translateZ(calc(-20px * ${i})) translateY(calc(-5px * ${i})) rotate(calc(-3deg * ${i}))`;
-        cards[i].style.opacity = "1";
     }
 }

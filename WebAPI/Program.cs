@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
-            .WithOrigins("https://localhost:7261") // Your client's URL
+            .WithOrigins("https://localhost:7261")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -86,18 +86,15 @@ app.MapGet("/vinho", () =>
 app.MapGet("/get-interaction", async (Guid user_id, Guid vinho_id) =>
     {
         var db = new ApplicationDbContext();
-
-        // Verifica se já existe uma interação com o user_id e vinho_id fornecidos
+        
         var interaction = await db.Interacao
             .FirstOrDefaultAsync(i => i.user_id == user_id && i.vinho_id == vinho_id);
 
         if (interaction != null) {
-            // Se a interação existe, retorna os detalhes da interação
             return Results.Ok(1);
-        } else {
-            // Se a interação não existe, retorna um status 404 Not Found
-            return Results.Ok(0);
         }
+        return Results.Ok(0);
+
     })
     .WithName("GetInteraction")
     .WithOpenApi();
