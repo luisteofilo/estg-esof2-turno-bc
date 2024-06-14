@@ -1,7 +1,7 @@
 ﻿function handleButtonClick(action) {
     const userId = getUserId();
     if (!userId) {
-        showWarning('User must be logged in. Please select one!', '/UserControl');
+        showWarning('User must be logged in. Please select one!');
         return;
     }
     
@@ -72,13 +72,11 @@ function getUserId() {
     return sessionStorage.getItem('selectedUserId');
 }
 
-function showWarning(message, link) {
+function showWarning(message) {
     const warningDiv = document.getElementById('warning-message');
     const warningText = document.getElementById('warning-text');
-    const warningLink = document.getElementById('warning-link');
 
     warningText.innerText = message;
-    warningLink.href = link;
     warningDiv.style.display = 'block';
 }
 

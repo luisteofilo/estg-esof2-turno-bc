@@ -14,14 +14,25 @@
 }
 else
 {
-    <ul>
-        @foreach (var user in Users)
-        {
-            <li>
-                <button type="button" onclick="selectUser('@user.UserId')"> @user.Email</button>
-            </li>
-        }
-    </ul>
+    <table class="table table-striped" style="width: 100%;">
+        <thead>
+        <tr>
+            <th scope="col">Email</th>
+            <th scope="col" style="text-align: right;">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Users)
+            {
+                <tr>
+                    <td>@user.Email</td>
+                    <td style="text-align: right;">
+                        <button type="button" class="btn btn-success" onclick="logUser('@user.UserId')">Log in</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
