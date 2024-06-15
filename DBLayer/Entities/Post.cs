@@ -8,7 +8,7 @@ public class Post
     [Key]
     public Guid PostId { get; set; }
     
-    [Required, ForeignKey(nameof(Entities.User))]
+    [Required, ForeignKey("User")]
     public Guid CreatorId { get; set; }
     public User Creator { get; set; }
 
@@ -22,9 +22,12 @@ public class Post
 
     public PostVisibilityType VisibilityType { get; set; }
     
+    [NotMapped]
     public List<User> FavoriteUsers { get; set; }
+    [NotMapped]
     public List<User> HiddenUsers { get; set; }
+    [NotMapped]
     public List<User> ViewUsers { get; set; }
-
+    [NotMapped]
     public List<Tuple<User, User>> ShareUsers { get; set; }
 }

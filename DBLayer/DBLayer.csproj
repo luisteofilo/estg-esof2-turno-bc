@@ -22,4 +22,8 @@
       <ProjectReference Include="..\Helpers\Helpers.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Migrations\ApplicationDbContextModelSnapshot.cs" />
+    </ItemGroup>
+
 </Project>

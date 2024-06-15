@@ -6,15 +6,15 @@ namespace ESOF.WebApp.DBLayer.Entities;
 [PrimaryKey(nameof(SharedPostId), nameof(UserSentId), nameof(UserReceivedId))]
 public class PostUserShare
 {
-    [ForeignKey(nameof(Entities.Post))]
+    [ForeignKey("Post")]
     public Guid SharedPostId { get; set; }
-    public Post Post { get; set; }
+    public Post PostS { get; set; }
     
-    [ForeignKey(nameof(Entities.User))]
+    [ForeignKey("User")]
     public Guid UserSentId { get; set; }
     public User UserSent { get; set; }
     
-    [ForeignKey(nameof(Entities.User))]
+    [ForeignKey("User")]
     public Guid UserReceivedId { get; set; }
     public User UserReceived { get; set; }
 }

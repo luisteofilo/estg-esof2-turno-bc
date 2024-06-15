@@ -6,11 +6,11 @@ namespace ESOF.WebApp.DBLayer.Entities;
 [PrimaryKey(nameof(HiddenPostId), nameof(HiddenUserId))]
 public class PostUserHidden
 {
-    [ForeignKey(nameof(Entities.Post))]
+    [ForeignKey("Post")]
     public Guid HiddenPostId { get; set; }
-    public Post Post { get; set; }
+    public Post PostH { get; set; }
     
-    [ForeignKey(nameof(Entities.User))]
+    [ForeignKey("User")]
     public Guid HiddenUserId { get; set; }
-    public User User { get; set; }
+    public User UserH { get; set; }
 }
