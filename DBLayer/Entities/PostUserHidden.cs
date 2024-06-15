@@ -8,9 +8,9 @@ public class PostUserHidden
 {
     [ForeignKey("Post")]
     public Guid HiddenPostId { get; set; }
-    public Post PostH { get; set; }
+    public Post HiddenPost { get; set; }
     
     [ForeignKey("User")]
     public Guid HiddenUserId { get; set; }
-    public User UserH { get; set; }
+    public User HiddenUser { get; set; }
 }

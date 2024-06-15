@@ -9,8 +9,8 @@ public class Hashtag
     
     [Required]
     public string Name { get; set; }
-    
-    [Required]
-    public int NumPosts { get; set; }
+
+    [Required] 
+    public int NumPosts { get; set; } = 0;
     public List<Post> Posts { get; set; }
 }

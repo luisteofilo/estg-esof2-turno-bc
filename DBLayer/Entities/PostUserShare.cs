@@ -8,7 +8,7 @@ public class PostUserShare
 {
     [ForeignKey("Post")]
     public Guid SharedPostId { get; set; }
-    public Post PostS { get; set; }
+    public Post SharedPost { get; set; }
     
     [ForeignKey("User")]
     public Guid UserSentId { get; set; }

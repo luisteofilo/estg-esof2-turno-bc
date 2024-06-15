@@ -84,7 +84,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Text")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("VisibilityType")
@@ -118,12 +117,9 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Property<Guid>("MediaPostId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PostMPostId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("MediaId");
 
-                    b.HasIndex("PostMPostId");
+                    b.HasIndex("MediaPostId");
 
                     b.ToTable("PostMedia");
                 });
@@ -136,17 +132,9 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Property<Guid>("FavoriteUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PostFPostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserFUserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("FavoritePostId", "FavoriteUserId");
 
-                    b.HasIndex("PostFPostId");
-
-                    b.HasIndex("UserFUserId");
+                    b.HasIndex("FavoriteUserId");
 
                     b.ToTable("PostUserFavorite");
                 });
@@ -159,17 +147,9 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Property<Guid>("HiddenUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PostHPostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserHUserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("HiddenPostId", "HiddenUserId");
 
-                    b.HasIndex("PostHPostId");
-
-                    b.HasIndex("UserHUserId");
+                    b.HasIndex("HiddenUserId");
 
                     b.ToTable("PostUserHidden");
                 });
@@ -185,12 +165,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Property<Guid>("UserReceivedId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PostSPostId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("SharedPostId", "UserSentId", "UserReceivedId");
-
-                    b.HasIndex("PostSPostId");
 
                     b.HasIndex("UserReceivedId");
 
@@ -207,17 +182,9 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Property<Guid>("ViewedUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PostVPostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserVUserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("ViewedPostId", "ViewedUserId");
 
-                    b.HasIndex("PostVPostId");
-
-                    b.HasIndex("UserVUserId");
+                    b.HasIndex("ViewedUserId");
 
                     b.ToTable("PostUserView");
                 });
@@ -342,58 +309,58 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostMedia", b =>
                 {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "PostM")
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "MediaPost")
                         .WithMany("Media")
-                        .HasForeignKey("PostMPostId")
+                        .HasForeignKey("MediaPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PostM");
+                    b.Navigation("MediaPost");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserFavorite", b =>
                 {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "PostF")
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "FavoritePost")
                         .WithMany()
-                        .HasForeignKey("PostFPostId")
+                        .HasForeignKey("FavoritePostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "UserF")
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "FavoriteUser")
                         .WithMany()
-                        .HasForeignKey("UserFUserId")
+                        .HasForeignKey("FavoriteUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PostF");
+                    b.Navigation("FavoritePost");
 
-                    b.Navigation("UserF");
+                    b.Navigation("FavoriteUser");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserHidden", b =>
                 {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "PostH")
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "HiddenPost")
                         .WithMany()
-                        .HasForeignKey("PostHPostId")
+                        .HasForeignKey("HiddenPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "UserH")
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "HiddenUser")
                         .WithMany()
-                        .HasForeignKey("UserHUserId")
+                        .HasForeignKey("HiddenUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PostH");
+                    b.Navigation("HiddenPost");
 
-                    b.Navigation("UserH");
+                    b.Navigation("HiddenUser");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserShare", b =>
                 {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "PostS")
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "SharedPost")
                         .WithMany()
-                        .HasForeignKey("PostSPostId")
+                        .HasForeignKey("SharedPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -409,7 +376,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PostS");
+                    b.Navigation("SharedPost");
 
                     b.Navigation("UserReceived");
 
@@ -418,21 +385,21 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserView", b =>
                 {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "PostV")
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "ViewedPost")
                         .WithMany()
-                        .HasForeignKey("PostVPostId")
+                        .HasForeignKey("ViewedPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "UserV")
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "ViewedUser")
                         .WithMany()
-                        .HasForeignKey("UserVUserId")
+                        .HasForeignKey("ViewedUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PostV");
+                    b.Navigation("ViewedPost");
 
-                    b.Navigation("UserV");
+                    b.Navigation("ViewedUser");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.RolePermission", b =>

@@ -10,7 +10,7 @@ public class PostMedia
     
     [Required, ForeignKey("Post")]
     public Guid MediaPostId { get; set; }
-    public Post PostM { get; set; }
+    public Post MediaPost { get; set; }
     
     public string Filename { get; set; }
     public string FileExtension { get; set; }

@@ -8,9 +8,9 @@ public class PostUserFavorite
 {
     [ForeignKey("Post")]
     public Guid FavoritePostId { get; set; }
-    public Post PostF { get; set; }
+    public Post FavoritePost { get; set; }
     
     [ForeignKey("User")]
     public Guid FavoriteUserId { get; set; }
-    public User UserF { get; set; }
+    public User FavoriteUser { get; set; }
 }

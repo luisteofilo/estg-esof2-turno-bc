@@ -15,11 +15,12 @@ public class Post
     [Required]
     public DateTime DateTimePost { get; set; }
     
-    public string Text { get; set; }
+    public string? Text { get; set; }
 
     public List<PostMedia> Media { get; set; }
     public List<Hashtag> Hashtags { get; set; }
 
+    [Required]
     public PostVisibilityType VisibilityType { get; set; }
     
     [NotMapped]
