@@ -43,6 +43,10 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
+    
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<Hashtag> Hashtags { get; set; }
+    public DbSet<PostMedia> PostMedia { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
