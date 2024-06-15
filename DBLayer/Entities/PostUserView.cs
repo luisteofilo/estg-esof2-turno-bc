@@ -6,11 +6,11 @@ namespace ESOF.WebApp.DBLayer.Entities;
 [PrimaryKey(nameof(ViewedPostId), nameof(ViewedUserId))]
 public class PostUserView
 {
-    [ForeignKey("Post")]
     public Guid ViewedPostId { get; set; }
+    [ForeignKey(nameof(ViewedPostId))]
     public Post Post { get; set; }
     
-    [ForeignKey("User")]
     public Guid ViewedUserId { get; set; }
+    [ForeignKey(nameof(ViewedUserId))]
     public User User { get; set; }
 }

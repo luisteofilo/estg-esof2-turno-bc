@@ -8,8 +8,8 @@ public class Post
     [Key]
     public Guid PostId { get; set; }
     
-    [Required, ForeignKey("User")]
     public Guid CreatorId { get; set; }
+    [Required, ForeignKey(nameof(CreatorId))]
     public User Creator { get; set; }
 
     [Required]
