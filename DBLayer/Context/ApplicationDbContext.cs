@@ -47,6 +47,13 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Post> Posts { get; set; }
     public DbSet<Hashtag> Hashtags { get; set; }
     public DbSet<PostMedia> PostMedia { get; set; }
+    
+    public DbSet<PostUserFavorite> PostUserFavorite { get; set; }
+    public DbSet<PostUserHidden> PostUserHidden { get; set; }
+    public DbSet<PostUserShare> PostUserShare { get; set; }
+    public DbSet<PostUserView> PostUserView { get; set; }
+    
+    public DbSet<Follow> Follows { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
