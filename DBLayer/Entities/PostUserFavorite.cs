@@ -6,11 +6,11 @@ namespace ESOF.WebApp.DBLayer.Entities;
 [PrimaryKey(nameof(FavoritePostId), nameof(FavoriteUserId))]
 public class PostUserFavorite
 {
+    [ForeignKey(nameof(Entities.Post))]
     public Guid FavoritePostId { get; set; }
-    [ForeignKey(nameof(FavoritePostId))]
     public Post Post { get; set; }
     
+    [ForeignKey(nameof(Entities.User))]
     public Guid FavoriteUserId { get; set; }
-    [ForeignKey(nameof(FavoriteUserId))]
     public User User { get; set; }
 }

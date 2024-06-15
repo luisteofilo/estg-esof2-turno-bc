@@ -14,7 +14,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ESOF.WebApp.DBLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240615183409_Feed_Post_Entities")]
+    [Migration("20240615184302_Feed_Post_Entities")]
     partial class Feed_Post_Entities
     {
         /// <inheritdoc />

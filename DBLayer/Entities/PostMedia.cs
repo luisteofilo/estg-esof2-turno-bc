@@ -8,8 +8,8 @@ public class PostMedia
     [Key]
     public Guid MediaId { get; set; }
     
+    [Required, ForeignKey(nameof(Entities.Post))]
     public Guid MediaPostId { get; set; }
-    [Required, ForeignKey(nameof(MediaPostId))]
     public Post Post { get; set; }
     
     public string Filename { get; set; }
