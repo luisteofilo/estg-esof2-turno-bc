@@ -1,0 +1,63 @@
+﻿@page "/viewTaste2"
+@using Frontend.Helpers
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+
+<PageTitle>View Tastes</PageTitle>
+
+<h1>View Tastes</h1>
+@if (_wines == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <p><strong>Best Wine:</strong> @bestWine.WineName - Rating: @bestWine.AverageScore</p>
+    <p><strong>Worst Wine:</strong> @worstWine.WineName - Rating: @worstWine.AverageScore</p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Position</th>
+            <th>Wine</th>
+            <th>Rating</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < _wines.Length; i++)
+        {
+            <tr>
+                <td>@(i + 1)</td>
+                <td>@_wines[i].WineName</td>
+                <td>@_wines[i].AverageScore</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Wine[]? _wines;
+    private Wine bestWine;
+    private Wine worstWine;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var wineData = await ApiHelper.GetFromApiAsync<Wine[]>("wines/average-ratings");
+
+        if (wineData != null && wineData.Any())
+        {
+            _wines = wineData.OrderBy(w => w.AverageScore).ToArray();
+            bestWine = _wines.Last();
+            worstWine = _wines.First();
+        }
+    }
+
+    public class Wine
+    {
+        public int WineId { get; set; }
+        public string WineName { get; set; }
+        public double AverageScore { get; set; }
+    }
+}

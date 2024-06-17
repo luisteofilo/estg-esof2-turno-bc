@@ -43,6 +43,9 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
+    public DbSet<TasteEvaluation> TasteEvaluations { get; set; }
+    public DbSet<Wine> Wines { get; set; }
+    public DbSet<Event> Events { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -58,6 +61,9 @@ public partial class ApplicationDbContext : DbContext
         BuildPermissions(modelBuilder);
         BuildRolePermissions(modelBuilder);
         BuildUserRoles(modelBuilder);
+        BuildWines(modelBuilder);
+        BuildEvents(modelBuilder);
+        BuildTasteEvaluations(modelBuilder);
         base.OnModelCreating(modelBuilder);
     }
 }
