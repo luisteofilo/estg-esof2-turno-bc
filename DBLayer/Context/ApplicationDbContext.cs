@@ -3,61 +3,72 @@ using ESOF.WebApp.DBLayer.Entities;
 using Helpers;
 using Microsoft.EntityFrameworkCore;
 
-namespace ESOF.WebApp.DBLayer.Context;
-
-public partial class ApplicationDbContext : DbContext
+namespace ESOF.WebApp.DBLayer.Context
 {
-    private static readonly DbContextOptions DefaultOptions = new Func<DbContextOptions>(() =>
+    public partial class ApplicationDbContext : DbContext
     {
-        var optionsBuilder = new DbContextOptionsBuilder();
-        var db = EnvFileHelper.GetString("POSTGRES_DB");
-        var user = EnvFileHelper.GetString("POSTGRES_USER");
-        var password = EnvFileHelper.GetString("POSTGRES_PASSWORD");
-        var port = EnvFileHelper.GetString("POSTGRES_PORT");
-        var host = EnvFileHelper.GetString("POSTGRES_HOST");
-
-        if (string.IsNullOrEmpty(db) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(password) ||
-            string.IsNullOrEmpty(port) || string.IsNullOrEmpty(host))
+        private static readonly DbContextOptions DefaultOptions = new Func<DbContextOptions>(() =>
         {
-            throw new InvalidOperationException(
-                "Database connection information not fully specified in environment variables.");
+            var optionsBuilder = new DbContextOptionsBuilder();
+            var db = EnvFileHelper.GetString("POSTGRES_DB");
+            var user = EnvFileHelper.GetString("POSTGRES_USER");
+            var password = EnvFileHelper.GetString("POSTGRES_PASSWORD");
+            var port = EnvFileHelper.GetString("POSTGRES_PORT");
+            var host = EnvFileHelper.GetString("POSTGRES_HOST");
+
+            if (string.IsNullOrEmpty(db) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(password) ||
+                string.IsNullOrEmpty(port) || string.IsNullOrEmpty(host))
+            {
+                throw new InvalidOperationException(
+                    "Database connection information not fully specified in environment variables.");
+            }
+
+            var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={password}";
+            optionsBuilder.UseNpgsql(connectionString);
+            return optionsBuilder.Options;
+        })();
+
+        public ApplicationDbContext()
+            : base(DefaultOptions)
+        {
         }
 
-        var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={password}";
-        optionsBuilder.UseNpgsql(connectionString);
-        return optionsBuilder.Options;
-    })();
-    
-    public ApplicationDbContext()
-        : base(DefaultOptions)
-    {
-    }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
-    
-    public DbSet<User> Users { get; set; }
-    public DbSet<Role> Roles { get; set; }
-    public DbSet<Permission> Permissions { get; set; }
-    public DbSet<UserRole> UserRoles { get; set; }
-    public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<Wine> Wines { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Participant> Participants { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Region> Regions { get; set; }
+        public DbSet<WineCategoryLink> WineCategoryLinks { get; set; }
+        public DbSet<WineGrapeTypeLink> WineGrapeTypeLinks { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+        }
 
-
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        BuildUsers(modelBuilder);
-        BuildRoles(modelBuilder);
-        BuildPermissions(modelBuilder);
-        BuildRolePermissions(modelBuilder);
-        BuildUserRoles(modelBuilder);
-        base.OnModelCreating(modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            BuildUsers(modelBuilder);
+            BuildRoles(modelBuilder);
+            BuildPermissions(modelBuilder);
+            BuildRolePermissions(modelBuilder);
+            BuildUserRoles(modelBuilder);
+            BuildWines(modelBuilder);
+            BuildEvents(modelBuilder);
+            BuildParticipants(modelBuilder);
+            BuildBrands(modelBuilder);
+            BuildRegions(modelBuilder);
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
