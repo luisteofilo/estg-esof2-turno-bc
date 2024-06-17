@@ -1,4 +1,5 @@
 using ESOF.WebApp.DBLayer.Context;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,23 +48,28 @@ app.MapGet("/users/emails", () =>
     .WithName("GetUsersNames")
     .WithOpenApi();
 
-app.Run();
 
-app.MapGet("/wines/average-ratings", async (ApplicationDbContext db) =>
+
+app.MapGet("/wines/average-ratings", () =>
     {
-        var wineRatings = await db.TasteEvaluations
+        var db = new ApplicationDbContext();
+        var wineRatings = db.TasteEvaluations
             .GroupBy(te => te.WineId)
             .Select(g => new
             {
                 WineId = g.Key,
+                WineName = g.Select(te => te.Wine.WineName).FirstOrDefault(),
                 AverageScore = g.Average(te => te.WineScore)
             })
-            .ToListAsync();
+            .OrderByDescending(w => w.AverageScore) 
+            .ToList();
 
         return wineRatings;
     })
     .WithName("GetWinesAverageRatings")
     .WithOpenApi();
+
+
 
 app.Run();
 

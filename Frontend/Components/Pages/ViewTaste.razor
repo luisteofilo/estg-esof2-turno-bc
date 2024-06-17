@@ -1,4 +1,4 @@
-﻿@page "/viewTaste2"
+﻿@page "/viewTaste"
 @using Frontend.Helpers
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
@@ -14,8 +14,8 @@
 }
 else
 {
-    <p><strong>Best Wine:</strong> @bestWine.WineName - Rating: @bestWine.AverageScore</p>
-    <p><strong>Worst Wine:</strong> @worstWine.WineName - Rating: @worstWine.AverageScore</p>
+    <p><strong>Best Wine:</strong> @bestWine.WineName</p>
+    <p><strong>Worst Wine:</strong> @worstWine.WineName</p>
     <table class="table">
         <thead>
         <tr>
@@ -48,7 +48,7 @@ else
 
         if (wineData != null && wineData.Any())
         {
-            _wines = wineData.OrderBy(w => w.AverageScore).ToArray();
+            _wines = wineData.OrderByDescending(w => w.AverageScore).ToArray();
             bestWine = _wines.Last();
             worstWine = _wines.First();
         }
@@ -56,8 +56,9 @@ else
 
     public class Wine
     {
-        public int WineId { get; set; }
+        public string WineId { get; set; }
         public string WineName { get; set; }
         public double AverageScore { get; set; }
     }
+
 }
