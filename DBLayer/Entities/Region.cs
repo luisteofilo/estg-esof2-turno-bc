@@ -11,9 +11,14 @@ public class Region
     [Required]
     public string Name { get; set; }
     
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset? DeletedAt { get; set; }
     
     public ICollection<Wine> Wines { get; set; }
+    
+    public Region()
+    {
+        Wines = new List<Wine>();
+    }
 }

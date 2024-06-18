@@ -29,10 +29,10 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DeletedAt")
+                    b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -43,7 +43,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("BrandId");
@@ -58,17 +58,17 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DeletedAt")
+                    b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("GrapeTypeId");
@@ -99,22 +99,22 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DeletedAt")
+                    b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("RegionId");
 
-                    b.ToTable("Regions");
+                    b.ToTable("Regions", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Role", b =>
@@ -197,36 +197,38 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<double>("Alcohol")
+                    b.Property<double?>("Alcohol")
                         .HasColumnType("double precision");
 
                     b.Property<Guid>("BrandId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DeletedAt")
+                    b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LabelDesignation")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("MaximumPrice")
+                    b.Property<decimal?>("MaximumPrice")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("MinimumPrice")
+                    b.Property<decimal?>("MinimumPrice")
                         .HasColumnType("numeric");
 
                     b.Property<Guid>("RegionId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Year")
                         .HasColumnType("integer");
+
+                    b.Property<string>("category")
+                        .HasColumnType("text");
 
                     b.Property<string>("label")
                         .IsRequired()
@@ -241,57 +243,19 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("Wines");
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.WineCategoryLink", b =>
-                {
-                    b.Property<Guid>("WineCategoryLinkId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("WineId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("WineId1")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("WineCategoryLinkId");
-
-                    b.HasIndex("WineId");
-
-                    b.HasIndex("WineId1");
-
-                    b.ToTable("WineCategoryLinks");
-                });
-
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.WineGrapeTypeLink", b =>
                 {
                     b.Property<Guid>("WineGrapeTypeLinkId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("GrapeTypeId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("WineId")
@@ -348,49 +312,26 @@ namespace ESOF.WebApp.DBLayer.Migrations
                 {
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.Brand", "Brand")
                         .WithMany("Wines")
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BrandId");
 
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.Region", "Region")
                         .WithMany("Wines")
-                        .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RegionId");
 
                     b.Navigation("Brand");
 
                     b.Navigation("Region");
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.WineCategoryLink", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Wine", "Wine")
-                        .WithMany()
-                        .HasForeignKey("WineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Wine", null)
-                        .WithMany("WineCategoryLinks")
-                        .HasForeignKey("WineId1");
-
-                    b.Navigation("Wine");
-                });
-
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.WineGrapeTypeLink", b =>
                 {
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.GrapeType", "GrapeType")
                         .WithMany("WineGrapeTypes")
-                        .HasForeignKey("GrapeTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GrapeTypeId");
 
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.Wine", "Wine")
                         .WithMany("WineGrapeTypeLinks")
-                        .HasForeignKey("WineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WineId");
 
                     b.Navigation("GrapeType");
 
@@ -431,8 +372,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Wine", b =>
                 {
-                    b.Navigation("WineCategoryLinks");
-
                     b.Navigation("WineGrapeTypeLinks");
                 });
 #pragma warning restore 612, 618

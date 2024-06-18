@@ -12,25 +12,23 @@ public partial class ApplicationDbContext
         modelBuilder.Entity<Wine>()
             .Property(p => p.WineId)
             .HasDefaultValueSql("gen_random_uuid()");
-
-        modelBuilder.Entity<Wine>()
-            .HasMany(w => w.WineCategoryLinks)
-            .WithOne(wc => wc.Wine)
-            .HasForeignKey(wc => wc.WineCategoryLinkId);
-
+        
         modelBuilder.Entity<Wine>()
             .HasMany(w => w.WineGrapeTypeLinks)
             .WithOne(wgt => wgt.Wine)
-            .HasForeignKey(wgt => wgt.WineGrapeTypeLinkId);
+            .HasForeignKey(wgt => wgt.WineId)
+            .IsRequired(false);
         
         modelBuilder.Entity<Wine>()
             .HasOne(w => w.Brand)
             .WithMany(b => b.Wines)
-            .HasForeignKey(w => w.BrandId);
+            .HasForeignKey(w => w.BrandId)
+            .IsRequired(false);
 
         modelBuilder.Entity<Wine>()
             .HasOne(w => w.Region)
             .WithMany(r => r.Wines)
-            .HasForeignKey(w => w.RegionId);
+            .HasForeignKey(w => w.RegionId)
+            .IsRequired(false);
     }
 }

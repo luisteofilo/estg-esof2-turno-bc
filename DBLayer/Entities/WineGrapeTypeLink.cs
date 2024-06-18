@@ -11,8 +11,7 @@ public class WineGrapeTypeLink
     public Guid GrapeTypeId { get; set; }
     public GrapeType GrapeType { get; set; }
     
-    
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+ 
 }

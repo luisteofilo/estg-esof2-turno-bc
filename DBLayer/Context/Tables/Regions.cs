@@ -10,6 +10,7 @@ public partial class ApplicationDbContext
     private void BuildRegions(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Region>()
+            .ToTable("Regions")
             .Property(p => p.RegionId)
             .HasDefaultValueSql("gen_random_uuid()");
         

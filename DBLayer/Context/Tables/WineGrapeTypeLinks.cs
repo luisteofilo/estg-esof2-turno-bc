@@ -10,12 +10,15 @@ public partial class ApplicationDbContext
     private void BuildWineGrapeTypeLinks(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<WineGrapeTypeLink>()
-            .Property(p => p.WineGrapeTypeLinkId)
-            .HasDefaultValueSql("gen_random_uuid()");
-        
-        modelBuilder.Entity<WineGrapeTypeLink>()
             .HasOne(wgt => wgt.Wine)
             .WithMany(w => w.WineGrapeTypeLinks)
-            .HasForeignKey(wgt => wgt.WineId);
+            .HasForeignKey(wgt => wgt.WineId)
+            .IsRequired(false); 
+
+        modelBuilder.Entity<WineGrapeTypeLink>()
+            .HasOne(wgt => wgt.GrapeType)
+            .WithMany(gt => gt.WineGrapeTypes)
+            .HasForeignKey(wgt => wgt.GrapeTypeId)
+            .IsRequired(false); 
     }
 }
