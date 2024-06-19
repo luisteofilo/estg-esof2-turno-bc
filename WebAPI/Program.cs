@@ -1,4 +1,6 @@
 using ESOF.WebApp.DBLayer.Context;
+using ESOF.WebApp.DBLayer.Entities;
+using Helpers.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +46,32 @@ app.MapGet("/users/emails", () =>
         return db.Users.Select(u => u.Email);
     })
     .WithName("GetUsersNames")
+    .WithOpenApi();
+
+app.MapGet("/deleteaccess/allposts", () =>
+    {
+        var db = new ApplicationDbContext();
+        return new PostsList()
+        {
+            Lines = db.Posts.Select(p => new PostsListLine()
+            {
+                Author = p.Creator.Email,
+                Title = p.Text ?? "Empty"
+            }).ToList()
+        };
+    })
+    .WithName("GetAllPosts")
+    .WithOpenApi();
+
+app.MapGet("/deleteaccess/allpostshares", () =>
+    {
+        var db = new ApplicationDbContext();
+        Guid postId = new Guid();
+        Post post = db.Posts.Find(postId);
+        Guid userId = post.CreatorId;
+        return db.PostUserShare.Where(p => p.SharedPostId == postId && p.UserSentId == userId);
+    })
+    .WithName("GetAllSharesOfPostFromCreator")
     .WithOpenApi();
 
 app.Run();

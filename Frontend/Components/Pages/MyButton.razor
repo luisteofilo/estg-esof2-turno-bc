@@ -1,0 +1,21 @@
+﻿<button @onclick="OnClick" @attributes="AdditionalAtributes">@ChildContent</button>
+
+@code {
+    [Parameter] 
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+    
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAtributes { get; set; }
+
+    /*
+    <button @onclick="OnButtonClick">Click me!</button>
+    
+    private Task OnButtonClick(MouseEventArgs e)
+    {
+        return OnClick.InvokeAsync(e);
+    }
+    */
+}

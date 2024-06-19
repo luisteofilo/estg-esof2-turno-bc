@@ -1,0 +1,64 @@
+﻿@page "/DeleteThis"
+@page "/DeleteThis/{PostString}"
+@page "/DeleteThis2/{PostString?}"
+@page "/DeleteThisNumberOnly/{PostNumber:int?}"
+@rendermode InteractiveServer
+@layout Layout.MainLayout
+
+<PageTitle>Feed</PageTitle>
+
+<h2>Feed</h2>
+<p>"path segment" - recebemos esta string no url: @PostString</p>
+<p>"path segment" - recebemos este numero no url: @PostNumber</p>
+
+<MyButton OnClick="Incrementar" class="btn btn-success">O Meu Button</MyButton>
+
+<p role="status">Valor: @variavel</p>
+<div>
+    <input @onchange = "OnChange">
+    <p>@texto</p>
+    <input @oninput = "OnInput">
+    <p>@texto</p>
+</div>
+<div style="background-color: lightcoral" @onmouseover="MouseOver" @onmouseout="MouseOut">@divText</div>
+
+<button class="btn btn-primary" @onclick="Incrementar">Botão</button>
+
+<div class="mt-3">
+    <input value="@texto" @onchange="OnChange"/>
+    <button @onclick="OnClickClear">Clear</button>
+    <p>@texto</p>
+</div>
+
+<div class="mt-3">
+    <input @bind="texto" @bind:event="oninput" @bind:after="Search"/>
+    <button @onclick="OnClickClear">Clear</button>
+    <p>@texto</p>
+    <p>@searchResult</p>
+</div>
+
+
+@{
+    // int inlineVariable = 3 + 4;
+}
+
+@if (variavel > 5)
+{
+    <p>Ganhaste!!</p>
+}
+
+@if (variavel == 0)
+{
+    <p>Vazio</p>
+}
+else
+{
+    <ul>
+        @for (int i = 0; i < variavel; i++)
+        {
+            <li>Clicked</li>
+            // <DeleteThis Incrementp="2"/>
+        }
+    </ul>
+}
+}

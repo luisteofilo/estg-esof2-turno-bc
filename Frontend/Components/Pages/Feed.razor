@@ -1,0 +1,16 @@
+﻿@page "/Feed"
+@using Frontend.Helpers
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+<h3>Feed</h3>
+<div>
+    <p>Criar novo post</p>
+    <input @bind="_newPost"/>
+</div>
+<div>
+    @foreach (var p in _feedPosts)
+    {
+        <Post />
+    }
+</div>
