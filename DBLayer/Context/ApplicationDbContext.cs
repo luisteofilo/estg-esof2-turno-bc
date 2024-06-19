@@ -1,5 +1,7 @@
 using System.Linq.Expressions;
 using DotNetEnv;
+using ESOF.WebApp.DBLayer.Context;
+
 using ESOF.WebApp.DBLayer.Entities;
 using Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +62,11 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<PostUserView> PostUserView { get; set; }
     
     public DbSet<Follow> Follows { get; set; }
+    
+    public DbSet<Like> Likes { get; set; }
+    public DbSet<Comment> Comments { get; set; }
+    public DbSet<Friendship> Friendships { get; set; }
+    public DbSet<FriendRequest> FriendRequests { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -80,6 +87,11 @@ public partial class ApplicationDbContext : DbContext
         BuildRegions(modelBuilder);
         BuildGrapeTypes(modelBuilder);
         BuildWineGrapeTypeLinks(modelBuilder);
+        BuildPosts(modelBuilder);
+        BuildLikes(modelBuilder);
+        BuildComments(modelBuilder);
+        BuildFriendships(modelBuilder);
+        BuildFriendRequests(modelBuilder);
         base.OnModelCreating(modelBuilder);
         
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
