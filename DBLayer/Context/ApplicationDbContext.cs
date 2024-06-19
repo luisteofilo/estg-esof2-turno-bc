@@ -43,12 +43,12 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
+    public DbSet<FriendRequest> FriendRequests { get; set; }  // Adicionado
+    public DbSet<Friend> Friends { get; set; }  // Adicionado
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,6 +58,50 @@ public partial class ApplicationDbContext : DbContext
         BuildPermissions(modelBuilder);
         BuildRolePermissions(modelBuilder);
         BuildUserRoles(modelBuilder);
+        BuildFriendRequests(modelBuilder);  // Adicionado
+        BuildFriends(modelBuilder);  // Adicionado
         base.OnModelCreating(modelBuilder);
+    }
+
+    private void BuildFriendRequests(ModelBuilder modelBuilder)  // Adicionado
+    {
+        modelBuilder.Entity<FriendRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Sender)
+                  .WithMany()
+                  .HasForeignKey(e => e.SenderId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Receiver)
+                  .WithMany()
+                  .HasForeignKey(e => e.ReceiverId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.Property(e => e.RequestDate)
+                  .IsRequired();
+        });
+    }
+
+    private void BuildFriends(ModelBuilder modelBuilder)  // Adicionado
+    {
+        modelBuilder.Entity<Friend>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.User)
+                  .WithMany()
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.FriendUser)
+                  .WithMany()
+                  .HasForeignKey(e => e.FriendId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.Property(e => e.FriendsSince)
+                  .IsRequired();
+        });
     }
 }
