@@ -201,102 +201,101 @@ public class WineService
     }
 
 
-    public ResponseWineDto UpdateWine(Guid id, UpdateWineDto updateWineDto)
+public ResponseWineDto UpdateWine(Guid id, UpdateWineDto updateWineDto)
+{
+    using (var transaction = _context.Database.BeginTransaction())
     {
-        using (var transaction = _context.Database.BeginTransaction())
+        try
         {
-            try
+            var wine = _context.Wines
+                .Include(w => w.WineGrapeTypeLinks)
+                .ThenInclude(wgtl => wgtl.GrapeType)
+                .FirstOrDefault(w => w.WineId == id);
+
+            if (wine == null)
             {
-                var wine = _context.Wines
-                    .Include(w => w.WineGrapeTypeLinks)
-                    .ThenInclude(wgtl => wgtl.GrapeType)
-                    .FirstOrDefault(w => w.WineId == id);
+                throw new ArgumentException("Wine not found.");
+            }
 
-                if (wine == null)
-                {
-                    throw new ArgumentException("Wine not found.");
-                }
-                
-                if (string.IsNullOrWhiteSpace(updateWineDto.Label) || updateWineDto.Year == 0)
-                {
-                    throw new ArgumentException("Label and Year are required fields.");
-                }
+            wine.label = updateWineDto.Label ?? wine.label;
+            wine.Year = updateWineDto.Year ?? wine.Year;
+            wine.category = updateWineDto.Category ?? wine.category;
+            wine.LabelDesignation = updateWineDto.LabelDesignation ?? wine.LabelDesignation;
+            wine.Alcohol = updateWineDto.Alcohol ?? wine.Alcohol;
+            wine.MinimumPrice = updateWineDto.MinimumPrice ?? wine.MinimumPrice;
+            wine.MaximumPrice = updateWineDto.MaximumPrice ?? wine.MaximumPrice;
+            wine.UpdatedAt = DateTimeOffset.UtcNow;
 
-                if (updateWineDto.GrapeTypeIds == null || !updateWineDto.GrapeTypeIds.Any())
-                {
-                    throw new ArgumentException("At least one GrapeTypeId is required.");
-                }
-                
-                wine.label = updateWineDto.Label;
-                wine.Year = updateWineDto.Year;
-                wine.category = updateWineDto.Category ?? wine.category;
-                wine.LabelDesignation = updateWineDto.LabelDesignation ?? wine.LabelDesignation;
-                wine.Alcohol = updateWineDto.Alcohol ?? wine.Alcohol;
-                wine.MinimumPrice = updateWineDto.MinimumPrice ?? wine.MinimumPrice;
-                wine.MaximumPrice = updateWineDto.MaximumPrice ?? wine.MaximumPrice;
-                wine.BrandId = updateWineDto.BrandId; 
-                wine.RegionId = updateWineDto.RegionId; 
-                
-                var brand = _context.Brands.Find(updateWineDto.BrandId);
+            if (updateWineDto.BrandId.HasValue)
+            {
+                var brand = _context.Brands.Find(updateWineDto.BrandId.Value);
                 if (brand == null)
                 {
                     throw new ArgumentException("Brand not found.");
                 }
                 wine.Brand = brand;
+                wine.BrandId = updateWineDto.BrandId.Value;
+            }
 
-                var region = _context.Regions.Find(updateWineDto.RegionId);
+            if (updateWineDto.RegionId.HasValue)
+            {
+                var region = _context.Regions.Find(updateWineDto.RegionId.Value);
                 if (region == null)
                 {
                     throw new ArgumentException("Region not found.");
                 }
                 wine.Region = region;
-                
-                if (updateWineDto.GrapeTypeIds != null && updateWineDto.GrapeTypeIds.Any()) 
+                wine.RegionId = updateWineDto.RegionId.Value;
+            }
+
+            if (updateWineDto.GrapeTypeIds != null && updateWineDto.GrapeTypeIds.Any())
+            {
+                _context.WineGrapeTypeLinks.RemoveRange(wine.WineGrapeTypeLinks);
+
+                var grapeTypes = _grapeTypeService.GetGrapeTypesByIds(updateWineDto.GrapeTypeIds);
+
+                if (grapeTypes == null || !grapeTypes.Any())
                 {
-                    _context.WineGrapeTypeLinks.RemoveRange(wine.WineGrapeTypeLinks);
-                
-                    var grapeTypes = _grapeTypeService.GetGrapeTypesByIds(updateWineDto.GrapeTypeIds); 
+                    throw new ArgumentException("No grape types found for the provided IDs.");
+                }
 
-                    if (grapeTypes == null || !grapeTypes.Any())
-                    {
-                        throw new ArgumentException("No grape types found for the provided IDs.");
-                    }
-
-                    wine.WineGrapeTypeLinks = updateWineDto.GrapeTypeIds
-                        .Where(grapeTypeId => grapeTypes.Any(gt => gt.GrapeTypeId == grapeTypeId))
-                        .Select(grapeTypeId => new WineGrapeTypeLink
-                        {
-                            WineId = wine.WineId,
-                            GrapeTypeId = grapeTypeId
-                        })
-                        .ToList();
-                } 
-
-                _context.SaveChanges();
-                transaction.Commit();
-
-                    return new ResponseWineDto
+                wine.WineGrapeTypeLinks = updateWineDto.GrapeTypeIds
+                    .Where(grapeTypeId => grapeTypes.Any(gt => gt.GrapeTypeId == grapeTypeId))
+                    .Select(grapeTypeId => new WineGrapeTypeLink
                     {
                         WineId = wine.WineId,
-                        Label = wine.label,
-                        Year = wine.Year,
-                        Category = wine.category,
-                        LabelDesignation = wine.LabelDesignation,
-                        Alcohol = wine.Alcohol,
-                        MinimumPrice = wine.MinimumPrice,
-                        MaximumPrice = wine.MaximumPrice,
-                        BrandId = wine.BrandId,
-                        RegionId = wine.RegionId,
-                        GrapeTypeIds = wine.WineGrapeTypeLinks.Select(link => link.GrapeTypeId)
-                    };
-                }
-                catch (DbUpdateException ex)
-                {
-                    transaction.Rollback();
-                    throw new Exception("An error occurred while updating the wine.", ex);
-                }
+                        GrapeTypeId = grapeTypeId
+                    })
+                    .ToList();
             }
+            
+            _context.SaveChanges();
+            transaction.Commit();
+
+            return new ResponseWineDto
+            {
+                WineId = wine.WineId,
+                Label = wine.label,
+                Year = wine.Year,
+                Category = wine.category,
+                LabelDesignation = wine.LabelDesignation,
+                Alcohol = wine.Alcohol,
+                MinimumPrice = wine.MinimumPrice,
+                MaximumPrice = wine.MaximumPrice,
+                CreatedAt = wine.CreatedAt,
+                UpdatedAt = wine.UpdatedAt,
+                BrandId = wine.BrandId,
+                RegionId = wine.RegionId,
+                GrapeTypeIds = wine.WineGrapeTypeLinks.Select(link => link.GrapeTypeId)
+            };
         }
+        catch (DbUpdateException ex)
+        {
+            transaction.Rollback();
+            throw new Exception("An error occurred while updating the wine.", ex);
+        }
+    }
+}
     
 
     public void DeleteWine(Guid id)
