@@ -31,4 +31,12 @@ public class Post
     public List<User> ViewUsers { get; set; }
     [NotMapped]
     public List<Tuple<User, User>> ShareUsers { get; set; }
+    
+    
+    
+    public ICollection<Like> Likes { get; set; } 
+    public ICollection<Comment> Comments { get; set; } 
+    public int LikesCount { get; set; }
+    public int CommentCount { get; set; }
+    
 }
