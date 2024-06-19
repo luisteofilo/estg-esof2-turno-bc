@@ -9,7 +9,7 @@
     <input @bind="_newPost"/>
 </div>
 <div>
-    @foreach (var p in _feedPosts)
+    @foreach (var p in _feedPosts.Lines)
     {
         <Post />
     }

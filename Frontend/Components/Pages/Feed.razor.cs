@@ -5,6 +5,7 @@ namespace Frontend.Components.Pages;
 
 public partial class Feed
 {
+    private PostsListLine _newPost;
     private PostsList _feedPosts;
     protected override async Task OnInitializedAsync()
     {
