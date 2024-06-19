@@ -3,6 +3,7 @@ using System;
 using ESOF.WebApp.DBLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ESOF.WebApp.DBLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240619222154_CommentsFriendsAndLikesMigration")]
+    partial class CommentsFriendsAndLikesMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,34 +24,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Brand", b =>
-                {
-                    b.Property<Guid>("BrandId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("BrandId");
-
-                    b.ToTable("Brands");
-                });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Comment", b =>
                 {
@@ -96,31 +71,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("Follows");
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.GrapeType", b =>
-                {
-                    b.Property<Guid>("GrapeTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("GrapeTypeId");
-
-                    b.ToTable("GrapeTypes");
-                });
-            
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.FriendRequest", b =>
                 {
                     b.Property<Guid>("RequestId")
@@ -357,31 +307,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("PostUserView");
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Region", b =>
-                {
-                    b.Property<Guid>("RegionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("RegionId");
-
-                    b.ToTable("Regions", (string)null);
-                });
-
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Role", b =>
                 {
                     b.Property<Guid>("RoleId")
@@ -460,86 +385,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRoles");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Wine", b =>
-                {
-                    b.Property<Guid>("WineId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<double?>("Alcohol")
-                        .HasColumnType("double precision");
-
-                    b.Property<Guid>("BrandId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LabelDesignation")
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("MaximumPrice")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("MinimumPrice")
-                        .HasColumnType("numeric");
-
-                    b.Property<Guid>("RegionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("category")
-                        .HasColumnType("text");
-
-                    b.Property<string>("label")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("WineId");
-
-                    b.HasIndex("BrandId");
-
-                    b.HasIndex("RegionId");
-
-                    b.ToTable("Wines");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.WineGrapeTypeLink", b =>
-                {
-                    b.Property<Guid>("WineGrapeTypeLinkId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("GrapeTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("WineId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("WineGrapeTypeLinkId");
-
-                    b.HasIndex("GrapeTypeId");
-
-                    b.HasIndex("WineId");
-
-                    b.ToTable("WineGrapeTypeLinks");
                 });
 
             modelBuilder.Entity("HashtagPost", b =>
@@ -796,36 +641,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Wine", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Brand", "Brand")
-                        .WithMany("Wines")
-                        .HasForeignKey("BrandId");
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Region", "Region")
-                        .WithMany("Wines")
-                        .HasForeignKey("RegionId");
-
-                    b.Navigation("Brand");
-
-                    b.Navigation("Region");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.WineGrapeTypeLink", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.GrapeType", "GrapeType")
-                        .WithMany("WineGrapeTypes")
-                        .HasForeignKey("GrapeTypeId");
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Wine", "Wine")
-                        .WithMany("WineGrapeTypeLinks")
-                        .HasForeignKey("WineId");
-
-                    b.Navigation("GrapeType");
-
-                    b.Navigation("Wine");
-                });
-
             modelBuilder.Entity("HashtagPost", b =>
                 {
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.Hashtag", null)
@@ -841,16 +656,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Brand", b =>
-                {
-                    b.Navigation("Wines");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.GrapeType", b =>
-                {
-                    b.Navigation("WineGrapeTypes");
-                });
-
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
@@ -863,11 +668,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Navigation("Likes");
 
                     b.Navigation("Media");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Region", b =>
-                {
-                    b.Navigation("Wines");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Role", b =>
@@ -894,11 +694,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Navigation("SentFriendshipRequests");
 
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Wine", b =>
-                {
-                    b.Navigation("WineGrapeTypeLinks");
                 });
 #pragma warning restore 612, 618
         }
