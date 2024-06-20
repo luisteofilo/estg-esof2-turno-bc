@@ -9,5 +9,14 @@ public class WineComment
     [Required]
     public string Comment  { get; set; }
     [Required]
-    public decimal Evaluation { get; set; }
+    public int Evaluation { get; set; }
+    [Required]
+    public Guid WineId { get; set; }
+    public Guid UserId { get; set; }
+    public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public User? User { get; set; }
+
+    public Wine? Wine { get; set; }
+    
 }
