@@ -1,7 +1,6 @@
 using ESOF.WebApp.DBLayer.Context;
 using ESOF.WebApp.DBLayer.Entities;
 using ESOF.WebApp.WebAPI.Services;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +16,7 @@ builder.Services.AddScoped<RegionService>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<FriendshipService>();
 builder.Services.AddScoped<FriendRequestService>();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ApplicationDbContext>();
 
 var app = builder.Build();
 
@@ -31,5 +29,4 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
-
 app.Run();

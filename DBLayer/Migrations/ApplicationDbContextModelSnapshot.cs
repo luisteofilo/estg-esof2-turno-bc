@@ -136,8 +136,9 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Property<Guid>("RequesterId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("RequestId");
 
