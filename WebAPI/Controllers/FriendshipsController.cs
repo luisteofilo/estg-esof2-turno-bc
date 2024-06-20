@@ -22,12 +22,17 @@ public class FriendshipsController : ControllerBase
     }
 
     [HttpDelete("remove-friend")]
-    public IActionResult RemoveFriend(Guid userId1, Guid userId2)
+    public async Task<IActionResult> RemoveFriend(Guid userId1, Guid userId2)
     {
-        var success = _friendshipService.RemoveFriend(userId1, userId2);
-        if (!success)
+        try
+        {
+            await _friendshipService.RemoveFriendAsync(userId1, userId2);
+            return Ok("Friendship removed.");
+        }
+        catch (FriendshipNotFoundException)
+        {
             return NotFound("Friendship not found.");
-
-        return Ok("Friendship removed.");
+        }
     }
 }
+    

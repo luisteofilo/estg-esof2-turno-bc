@@ -22,5 +22,9 @@ public partial class ApplicationDbContext
             .WithMany(u => u.ReceivedFriendshipRequests)
             .HasForeignKey(fr => fr.ReceiverId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<FriendRequest>()
+            .Property(fr => fr.Status)
+            .HasConversion<string>(); 
     }
 }

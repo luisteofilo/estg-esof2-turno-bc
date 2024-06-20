@@ -15,29 +15,31 @@ public class FriendshipService
 
     public async Task<List<User>> GetFriendsForUserAsync(Guid userId)
     {
-        var friends1 = await _context.Friendships
-            .Where(f => f.UserId1 == userId)
-            .Select(f => f.User2)
+        var friends = await _context.Friendships
+            .Where(f => f.UserId1 == userId || f.UserId2 == userId)
+            .Select(f => f.UserId1 == userId ? f.User2 : f.User1)
             .ToListAsync();
 
-        var friends2 = await _context.Friendships
-            .Where(f => f.UserId2 == userId)
-            .Select(f => f.User1)
-            .ToListAsync();
-
-        return friends1.Concat(friends2).ToList();
+        return friends;
     }
-    
-    public bool RemoveFriend(Guid userId1, Guid userId2)
+        
+    public async Task RemoveFriendAsync(Guid userId1, Guid userId2)
     {
-        var friendship = _context.Friendships
-            .FirstOrDefault(f => (f.UserId1 == userId1 && f.UserId2 == userId2) || (f.UserId1 == userId2 && f.UserId2 == userId1));
+        var friendship = await _context.Friendships
+            .FirstOrDefaultAsync(f => (f.UserId1 == userId1 && f.UserId2 == userId2) || (f.UserId1 == userId2 && f.UserId2 == userId1));
 
         if (friendship == null)
-            return false;
+            throw new FriendshipNotFoundException("Friendship not found");
 
         _context.Friendships.Remove(friendship);
-        _context.SaveChanges();
-        return true;
+        await _context.SaveChangesAsync();
+    }
+}
+
+// Custom exception for friendship not found
+public class FriendshipNotFoundException : Exception
+{
+    public FriendshipNotFoundException(string message) : base(message)
+    {
     }
 }
