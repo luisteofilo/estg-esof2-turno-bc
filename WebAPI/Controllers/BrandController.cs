@@ -46,11 +46,11 @@ public class BrandController : ControllerBase
     }
 
     [HttpPost("store")]
-    public ActionResult<ResponseBrandDto> CreateBrand([FromBody] BrandDto brandDto)
+    public ActionResult<ResponseBrandDto> CreateBrand([FromBody] CreateBrandDto createBrandDto)
     {
         try
         {
-            var createdBrand = _brandService.CreateBrand(brandDto);
+            var createdBrand = _brandService.CreateBrand(createBrandDto);
             return CreatedAtAction(nameof(GetBrandById), new { id = createdBrand.BrandId }, createdBrand);
         }
         catch (Exception ex)
@@ -60,11 +60,11 @@ public class BrandController : ControllerBase
     }
 
     [HttpPut("update")]
-    public ActionResult<ResponseBrandDto> UpdateBrand(Guid id, [FromBody] BrandDto brandDto)
+    public ActionResult<ResponseBrandDto> UpdateBrand(Guid id, [FromBody] UpdateBrandDto updateBrandDto)
     {
         try
         {
-            return Ok(_brandService.UpdateBrand(id, brandDto));
+            return Ok(_brandService.UpdateBrand(id, updateBrandDto));
         }
         catch (ArgumentException ex)
         {

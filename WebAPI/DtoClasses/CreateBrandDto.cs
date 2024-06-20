@@ -1,7 +1,7 @@
 ﻿namespace ESOF.WebApp.WebAPI.DtoClasses;
 
-public class UpdateBrandDto
+public class CreateBrandDto
 {
-    public string? Name { get; set; }
+    public string Name { get; set; }
     public string? Description { get; set; }
 }

@@ -41,39 +41,39 @@ public class RegionController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            return NotFound(ex.Message); // Retorna NotFound se a região não for encontrada
+            return NotFound(ex.Message);
         }
     }
 
     [HttpPost("store")]
-    public ActionResult<ResponseRegionDto> CreateRegion([FromBody] RegionDto regionDto)
+    public ActionResult<ResponseRegionDto> CreateRegion([FromBody] CreateRegionDto createRegionDto)
     {
         try
         {
-            var createdRegion = _regionService.CreateRegion(regionDto);
+            var createdRegion = _regionService.CreateRegion(createRegionDto);
             return CreatedAtAction(nameof(GetRegionById), new { id = createdRegion.RegionId }, createdRegion);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message); // Retorna BadRequest em caso de erro geral
+            return BadRequest(ex.Message); 
         }
     }
 
     [HttpPut("update")]
-    public ActionResult<ResponseRegionDto> UpdateRegion(Guid id, [FromBody] RegionDto regionDto)
+    public ActionResult<ResponseRegionDto> UpdateRegion(Guid id, [FromBody] UpdateRegionDto updateRegionDto)
     {
         try
         {
-            var updatedRegion = _regionService.UpdateRegion(id, regionDto);
+            var updatedRegion = _regionService.UpdateRegion(id, updateRegionDto);
             return Ok(updatedRegion);
         }
         catch (ArgumentException ex)
         {
-            return NotFound(ex.Message); // Retorna NotFound se a região não for encontrada
+            return NotFound(ex.Message); 
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message); // Retorna BadRequest em caso de erro geral
+            return BadRequest(ex.Message); 
         }
     }
 
@@ -87,11 +87,11 @@ public class RegionController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            return NotFound(ex.Message); // Retorna NotFound se a região não for encontrada
+            return NotFound(ex.Message); 
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message); // Retorna BadRequest em caso de erro geral
+            return BadRequest(ex.Message); 
         }
     }
 }

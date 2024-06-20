@@ -52,13 +52,13 @@ public class GrapeTypeService
         };
     }
 
-    public ResponseGrapeTypeDto CreateGrapeType(GrapeTypeDto grapeTypeDto)
+    public ResponseGrapeTypeDto CreateGrapeType(CreateGrapeTypeDto createGrapeTypeDto)
     {
         try
         {
             var grapeType = new GrapeType
             {
-                Name = grapeTypeDto.Name
+                Name = createGrapeTypeDto.Name
             };
 
             _context.GrapeTypes.Add(grapeType);
@@ -78,7 +78,7 @@ public class GrapeTypeService
         }
     }
 
-    public ResponseGrapeTypeDto UpdateGrapeType(Guid id, GrapeTypeDto grapeTypeDto)
+    public ResponseGrapeTypeDto UpdateGrapeType(Guid id, UpdateGrapeTypeDto updateGrapeTypeDto)
     {
         var grapeType = _context.GrapeTypes.Find(id);
 
@@ -87,7 +87,7 @@ public class GrapeTypeService
             throw new ArgumentException("Grape type not found.");
         }
 
-        grapeType.Name = grapeTypeDto.Name;
+        grapeType.Name = updateGrapeTypeDto.Name?? grapeType.Name;
         grapeType.UpdatedAt = DateTimeOffset.UtcNow;
 
         _context.SaveChanges();

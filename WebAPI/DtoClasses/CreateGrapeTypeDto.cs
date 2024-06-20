@@ -1,6 +1,6 @@
 ﻿namespace ESOF.WebApp.WebAPI.DtoClasses;
 
-public class UpdateGrapeTypeDto
+public class CreateGrapeTypeDto
 {
-    public string? Name { get; set; }
+    public string Name { get; set; }
 }

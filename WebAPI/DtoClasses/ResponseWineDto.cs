@@ -15,6 +15,8 @@ public class ResponseWineDto
     public Guid BrandId { get; set; }     
     public Guid RegionId { get; set; }    
     public IEnumerable<Guid> GrapeTypeIds { get; set; } = new List<Guid>(); 
+    
+    // estes campos são para mostrar os dados relacionados em completa informação
     public ResponseBrandDto Brand { get; set; }
     public ResponseRegionDto Region { get; set; }
     public List<ResponseGrapeTypeDto> GrapeTypes { get; set; } 

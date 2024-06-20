@@ -44,21 +44,7 @@ public class WineController : ControllerBase
     {
         try
         {
-            var wine = new Wine
-            {
-                label = createWineDto.label,
-                Year = createWineDto.Year,
-                category = createWineDto.category,
-                LabelDesignation = createWineDto.LabelDesignation,
-                Alcohol = createWineDto.Alcohol,
-                MinimumPrice = createWineDto.MinimumPrice,
-                MaximumPrice = createWineDto.MaximumPrice,
-                BrandId = createWineDto.BrandId,
-                RegionId = createWineDto.RegionId
-            };
-
-            var createdWine = _wineService.CreateWine(wine, createWineDto.GrapeTypeIds, createWineDto.BrandId, createWineDto.RegionId);
-
+            var createdWine = _wineService.CreateWine(createWineDto);
             return CreatedAtAction(nameof(GetWineById), new { id = createdWine.WineId }, createdWine);
         }
         catch (ArgumentException ex)
@@ -73,7 +59,7 @@ public class WineController : ControllerBase
 
 
     [HttpPut("update")]
-    public ActionResult<ResponseWineDto> UpdateWine(Guid id, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] UpdateWineDto updateWineDto)
+    public ActionResult<ResponseWineDto> UpdateWine(Guid id,UpdateWineDto updateWineDto)
     {
         try
         {

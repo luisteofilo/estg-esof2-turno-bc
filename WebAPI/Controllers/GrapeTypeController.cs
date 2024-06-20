@@ -33,7 +33,7 @@ public class GrapeTypeController : ControllerBase
     }
 
     [HttpGet("show/{id}")]
-    public ActionResult<ResponseGrapeTypeDto> GetGrapeTypeById(Guid id) // Retorna ResponseGrapeTypeDto
+    public ActionResult<ResponseGrapeTypeDto> GetGrapeTypeById(Guid id) 
     {
         try
         {
@@ -46,11 +46,11 @@ public class GrapeTypeController : ControllerBase
     }
 
     [HttpPost("store")]
-    public ActionResult<ResponseGrapeTypeDto> CreateGrapeType([FromBody] GrapeTypeDto grapeTypeDto) // Recebe GrapeTypeDto
+    public ActionResult<ResponseGrapeTypeDto> CreateGrapeType([FromBody] CreateGrapeTypeDto createGrapeTypeDto)
     {
         try
         {
-            var createdGrapeType = _grapeTypeService.CreateGrapeType(grapeTypeDto);
+            var createdGrapeType = _grapeTypeService.CreateGrapeType(createGrapeTypeDto);
             return CreatedAtAction(nameof(GetGrapeTypeById), new { id = createdGrapeType.GrapeTypeId }, createdGrapeType);
         }
         catch (Exception ex)
@@ -60,11 +60,11 @@ public class GrapeTypeController : ControllerBase
     }
 
     [HttpPut("update")]
-    public ActionResult<ResponseGrapeTypeDto> UpdateGrapeType(Guid id, [FromBody] GrapeTypeDto grapeTypeDto) // Recebe ID e GrapeTypeDto
+    public ActionResult<ResponseGrapeTypeDto> UpdateGrapeType(Guid id, [FromBody] UpdateGrapeTypeDto updateGrapeTypeDto)
     {
         try
         {
-            var updatedGrapeType = _grapeTypeService.UpdateGrapeType(id, grapeTypeDto);
+            var updatedGrapeType = _grapeTypeService.UpdateGrapeType(id, updateGrapeTypeDto);
             return Ok(updatedGrapeType);
         }
         catch (ArgumentException ex)

@@ -54,14 +54,14 @@ public class BrandService
         };
     }
 
-    public ResponseBrandDto CreateBrand(BrandDto brandDto)
+    public ResponseBrandDto CreateBrand(CreateBrandDto createBrandDto)
     {
         try
         {
             var brand = new Brand
             {
-                Name = brandDto.Name,
-                Description = brandDto.Description
+                Name = createBrandDto.Name,
+                Description = createBrandDto.Description
             };
 
             _context.Brands.Add(brand);
@@ -82,7 +82,7 @@ public class BrandService
         }
     }
 
-    public ResponseBrandDto UpdateBrand(Guid id, BrandDto brandDto)
+    public ResponseBrandDto UpdateBrand(Guid id, UpdateBrandDto updateBrandDto)
     {
         var brand = _context.Brands.Find(id);
 
@@ -91,8 +91,8 @@ public class BrandService
             throw new ArgumentException("Brand not found.");
         }
 
-        brand.Name = brandDto.Name;
-        brand.Description = brandDto.Description;
+        brand.Name = updateBrandDto.Name?? brand.Name;
+        brand.Description = updateBrandDto.Description?? brand.Description;
         brand.UpdatedAt = DateTimeOffset.UtcNow;
 
         _context.SaveChanges();

@@ -11,7 +11,7 @@ public class Brand
     [Required]
     public string Name { get; set; }
     
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
 
     public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.UtcNow;

@@ -52,13 +52,13 @@ public class RegionService
         };
     }
 
-    public ResponseRegionDto CreateRegion(RegionDto regionDto)
+    public ResponseRegionDto CreateRegion(CreateRegionDto createRegionDto)
     {
         try
         {
             var region = new Region
             {
-                Name = regionDto.Name
+                Name = createRegionDto.Name
             };
 
             _context.Regions.Add(region);
@@ -78,7 +78,7 @@ public class RegionService
         }
     }
 
-    public ResponseRegionDto UpdateRegion(Guid id, RegionDto regionDto)
+    public ResponseRegionDto UpdateRegion(Guid id, UpdateRegionDto updateRegionDto)
     {
         var region = _context.Regions.Find(id);
 
@@ -87,7 +87,7 @@ public class RegionService
             throw new ArgumentException("Region not found.");
         }
 
-        region.Name = regionDto.Name;
+        region.Name = updateRegionDto.Name?? region.Name;
         region.UpdatedAt = DateTimeOffset.UtcNow;
 
         _context.SaveChanges();

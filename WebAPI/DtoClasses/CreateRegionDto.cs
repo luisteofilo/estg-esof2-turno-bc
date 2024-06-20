@@ -1,6 +1,6 @@
 ﻿namespace ESOF.WebApp.WebAPI.DtoClasses;
 
-public class UpdateRegionDto
+public class CreateRegionDto
 {
-    public string? Name { get; set; }
+    public string Name { get; set; }
 }
