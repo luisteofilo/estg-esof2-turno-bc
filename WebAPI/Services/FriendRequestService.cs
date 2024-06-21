@@ -105,13 +105,17 @@ public class FriendRequestService
         public async Task<List<FriendRequest>> GetReceivedFriendRequestsForUserAsync(Guid userId)
         {
             return await _context.FriendRequests
+                .Include(fr => fr.Requester)
+                .Include(fr => fr.Receiver)
                 .Where(fr => fr.ReceiverId == userId && fr.Status == FriendRequestState.PENDING)
                 .ToListAsync();
         }
-        
+
         public async Task<List<FriendRequest>> GetSentPendingFriendRequestsAsync(Guid userId)
         {
             return await _context.FriendRequests
+                .Include(fr => fr.Requester)
+                .Include(fr => fr.Receiver)
                 .Where(fr => fr.RequesterId == userId && fr.Status == FriendRequestState.PENDING)
                 .ToListAsync();
         }

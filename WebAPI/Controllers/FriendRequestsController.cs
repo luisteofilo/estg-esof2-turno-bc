@@ -63,14 +63,35 @@ public class FriendRequestsController : ControllerBase
         public async Task<IActionResult> GetPendingFriendRequests(Guid userId)
         {
             var friendRequests = await _friendRequestService.GetReceivedFriendRequestsForUserAsync(userId);
-            return Ok(friendRequests);
+            var friendRequestDtos = friendRequests.Select(fr => new FriendRequestDto
+            {
+                RequestId = fr.RequestId,
+                RequesterId = fr.RequesterId,
+                RequesterName = fr.Requester.UserName,
+                ReceiverId = fr.ReceiverId,
+                ReceiverName = fr.Receiver.UserName,
+                Status = fr.Status,
+                CreatedAt = fr.CreatedAt
+            }).ToList();
+
+            return Ok(friendRequestDtos);
         }
         
         [HttpGet("pending/sent/{userId}")]
         public async Task<IActionResult> GetSentPendingFriendRequests(Guid userId)
         {
             var sentRequests = await _friendRequestService.GetSentPendingFriendRequestsAsync(userId);
-            return Ok(sentRequests);
+            var sentRequestDtos = sentRequests.Select(fr => new FriendRequestDto
+            {
+                RequestId = fr.RequestId,
+                RequesterId = fr.RequesterId,
+                RequesterName = fr.Requester.UserName, 
+                ReceiverId = fr.ReceiverId,
+                ReceiverName = fr.Receiver.UserName, 
+                Status = fr.Status,
+                CreatedAt = fr.CreatedAt
+            }).ToList();
+
+            return Ok(sentRequestDtos);
         }
-        
     }

@@ -1,4 +1,5 @@
-﻿using ESOF.WebApp.WebAPI.Services;
+﻿using ESOF.WebApp.WebAPI.DtoClasses;
+using ESOF.WebApp.WebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ESOF.WebApp.WebAPI.Controllers;
