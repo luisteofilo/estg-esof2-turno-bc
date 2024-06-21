@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DotNetEnv;
 using ESOF.WebApp.DBLayer.Entities;
 using Helpers;
@@ -43,9 +44,11 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
-    public DbSet<Vinho> Vinho { get; set; }
-
-    public DbSet<Interacao> Interacao { get; set; }
+    public DbSet<Wine> Wines { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<Region> Regions { get; set; }
+    public DbSet<GrapeType> GrapeTypes { get; set; }
+    public DbSet<WineGrapeTypeLink> WineGrapeTypeLinks { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -57,12 +60,29 @@ public partial class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         BuildUsers(modelBuilder);
-        BuildInteracao(modelBuilder);
         BuildRoles(modelBuilder);
         BuildPermissions(modelBuilder);
-        BuildVinho(modelBuilder);
         BuildRolePermissions(modelBuilder);
         BuildUserRoles(modelBuilder);
+        BuildWines(modelBuilder);
+        BuildBrands(modelBuilder);
+        BuildRegions(modelBuilder);
+        BuildGrapeTypes(modelBuilder);
+        BuildWineGrapeTypeLinks(modelBuilder);
         base.OnModelCreating(modelBuilder);
+        
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            var deletedAtProperty = entityType.FindProperty("DeletedAt");
+            if (deletedAtProperty != null && deletedAtProperty.ClrType == typeof(DateTimeOffset?))
+            {
+                var parameter = Expression.Parameter(entityType.ClrType, "p");
+                var body = Expression.Equal(
+                    Expression.Call(typeof(EF), nameof(EF.Property), new[] { typeof(DateTimeOffset?) }, parameter, Expression.Constant("DeletedAt")),
+                    Expression.Constant(null));
+                var lambda = Expression.Lambda(body, parameter);
+                modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+            }
+        }
     }
 }
