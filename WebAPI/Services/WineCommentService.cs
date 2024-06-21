@@ -5,9 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ESOF.WebApp.WebAPI.Services;
 
-public class WineCommentService(ApplicationDbContext context)
+public class WineCommentService
 {
-    public CreateWineCommentDto CreateWineComment(CreateWineCommentDto createWineCommentDto)
+    private readonly ApplicationDbContext _context;
+    
+    public WineCommentService(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+    public async Task<WineComment> CreateWineComment(CreateWineCommentDto createWineCommentDto)
     {
         try
         {
@@ -19,15 +25,20 @@ public class WineCommentService(ApplicationDbContext context)
                 UserId = createWineCommentDto.UserId
             };
 
-            context.WineComments.Add(wineComment);
-            context.SaveChanges();
+            _context.WineComments.Add(wineComment);
+            await _context.SaveChangesAsync();
             
-            return createWineCommentDto;
-            
+            //return createWineCommentDto;
+            return wineComment;
         }
         catch (DbUpdateException ex)
         {
             throw new Exception("Error when creating a comment!", ex);
         }
     }
+    public async Task<List<WineComment>> GetWineComments(Guid wineId)//Esta função devolve todos os comentários de um vinho asynchronamente
+    {
+        return await _context.WineComments.Where(c => c.WineId == wineId).ToListAsync();
+    }
+    
 }
