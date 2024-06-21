@@ -13,7 +13,7 @@ public class Post
     public User Creator { get; set; }
 
     [Required]
-    public DateTime DateTimePost { get; set; }
+    public DateTimeOffset DateTimePost { get; set; }
     
     public string? Text { get; set; }
 
