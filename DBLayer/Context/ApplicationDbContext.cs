@@ -59,7 +59,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<PostUserHidden> PostUserHidden { get; set; }
     public DbSet<PostUserShare> PostUserShare { get; set; }
     public DbSet<PostUserView> PostUserView { get; set; }
-    public DbSet<Follow> Follows { get; set; }
+    
     public DbSet<Like> Likes { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Friendship> Friendships { get; set; }
