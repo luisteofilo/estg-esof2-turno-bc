@@ -59,20 +59,18 @@ public class FriendRequestsController : ControllerBase
             }
         }
 
-        [HttpGet("pending/{userId}")]
+        [HttpGet("pending/received/{userId}")]
         public async Task<IActionResult> GetPendingFriendRequests(Guid userId)
         {
-            var friendRequests = await _friendRequestService.GetFriendRequestsForUserAsync(userId);
+            var friendRequests = await _friendRequestService.GetReceivedFriendRequestsForUserAsync(userId);
             return Ok(friendRequests);
         }
-
-        [HttpGet("friendrequest-state")]
-        public IActionResult GetFriendRequestState(Guid requesterId, Guid receiverId)
+        
+        [HttpGet("pending/sent/{userId}")]
+        public async Task<IActionResult> GetSentPendingFriendRequests(Guid userId)
         {
-            var state = _friendRequestService.GetFriendRequestState(requesterId, receiverId);
-            if (state == null)
-                return NotFound("Friend request not found.");
-
-            return Ok(state);
+            var sentRequests = await _friendRequestService.GetSentPendingFriendRequestsAsync(userId);
+            return Ok(sentRequests);
         }
+        
     }
