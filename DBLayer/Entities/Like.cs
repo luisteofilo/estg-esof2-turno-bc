@@ -22,6 +22,6 @@ public class Like
     public DateTime CreatedAt { get; set; }
         
     [Required]
-    public bool IsActive { get; set; } // Indicates if the like is active or not
+    public bool IsActive { get; set; }
 
 }

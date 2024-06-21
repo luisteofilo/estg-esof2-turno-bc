@@ -57,7 +57,8 @@ public class PostService
             var post = new Post
             {
                 Text = createPostDto.Text,
-                CreatorId = createPostDto.CreatorId
+                CreatorId = createPostDto.CreatorId,
+                DateTimePost = DateTime.UtcNow
             };
 
             _context.Posts.Add(post);
