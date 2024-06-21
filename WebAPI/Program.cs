@@ -1,5 +1,6 @@
 using ESOF.WebApp.DBLayer.Context;
 using ESOF.WebApp.DBLayer.Entities;
+using ESOF.WebApp.WebAPI.Services;
 using Helpers.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
+builder.Services.AddScoped<WineService>();
+builder.Services.AddScoped<GrapeTypeService>();
+builder.Services.AddScoped<BrandService>();
+builder.Services.AddScoped<RegionService>();
+builder.Services.AddDbContext<ApplicationDbContext>();
+
+
 
 var app = builder.Build();
 
@@ -19,8 +28,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapControllers();
+app.Run();
 
-var summaries = new[]
+/*var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
@@ -48,17 +59,26 @@ app.MapGet("/users/emails", () =>
     .WithName("GetUsersNames")
     .WithOpenApi();
 
-app.MapGet("/deleteaccess/allposts", () =>
+app.MapGet("/feed/getposts", () =>
     {
         var db = new ApplicationDbContext();
-        return new PostsList()
+        var postsList = new PostsList()
         {
             Lines = db.Posts.Select(p => new PostsListLine()
             {
-                Author = p.Creator.Email,
-                Title = p.Text ?? "Empty"
+                CreatorId = p.CreatorId,
+                Text = p.Text ?? ""
             }).ToList()
         };
+        foreach (var p in postsList.Lines)
+        {
+            var user = db.Users.Find(p.CreatorId);
+            p.Creator = new PostsUser()
+            {
+                email = user.Email
+            };
+        }
+        return postsList;
     })
     .WithName("GetAllPosts")
     .WithOpenApi();
@@ -80,3 +100,4 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+*/

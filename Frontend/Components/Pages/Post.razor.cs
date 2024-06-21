@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Helpers.ViewModels;
+using Microsoft.AspNetCore.Components;
 
 namespace Frontend.Components.Pages;
 
 public partial class Post
 {
-    [Parameter] public string text { get; set; }
+    [Parameter] public PostsListLine PostLine { get; set; }
     
 }

@@ -23,16 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Migrations\20240615184302_Feed_Post_Entities.cs" />
-      <Compile Remove="Migrations\20240615184302_Feed_Post_Entities.Designer.cs" />
-      <Compile Remove="Migrations\20240615185257_MigrationName.cs" />
-      <Compile Remove="Migrations\20240615185257_MigrationName.Designer.cs" />
-      <Compile Remove="Migrations\20240615185328_MigrationName8.cs" />
-      <Compile Remove="Migrations\20240615185328_MigrationName8.Designer.cs" />
-      <Compile Remove="Migrations\20240615191732_MigrationName5.cs" />
-      <Compile Remove="Migrations\20240615191732_MigrationName5.Designer.cs" />
-      <Compile Remove="Migrations\20240615202506_MigrationName999.cs" />
-      <Compile Remove="Migrations\20240615202506_MigrationName999.Designer.cs" />
+      <Folder Include="Migrations\" />
     </ItemGroup>
 
 </Project>

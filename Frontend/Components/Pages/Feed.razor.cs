@@ -9,8 +9,9 @@ public partial class Feed
     private PostsList _feedPosts;
     protected override async Task OnInitializedAsync()
     {
-        _feedPosts = await ApiHelper.GetFromApiAsync<PostsList>("/deleteaccess/allposts");
+        _feedPosts = await ApiHelper.GetFromApiAsync<PostsList>("/feed/getposts");
     }
 
+    
     
 }
