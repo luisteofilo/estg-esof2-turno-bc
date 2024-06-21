@@ -102,19 +102,20 @@ public class FriendRequestService
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<FriendRequest>> GetFriendRequestsForUserAsync(Guid userId)
+        public async Task<List<FriendRequest>> GetReceivedFriendRequestsForUserAsync(Guid userId)
         {
             return await _context.FriendRequests
                 .Where(fr => fr.ReceiverId == userId && fr.Status == FriendRequestState.PENDING)
                 .ToListAsync();
         }
         
-        public FriendRequestState? GetFriendRequestState(Guid requesterId, Guid receiverId)
+        public async Task<List<FriendRequest>> GetSentPendingFriendRequestsAsync(Guid userId)
         {
-            var friendRequest = _context.FriendRequests
-                .FirstOrDefault(fr => fr.RequesterId == requesterId && fr.ReceiverId == receiverId);
-            return friendRequest?.Status;
+            return await _context.FriendRequests
+                .Where(fr => fr.RequesterId == userId && fr.Status == FriendRequestState.PENDING)
+                .ToListAsync();
         }
+        
     }
 
     // Custom exception for friend request not found

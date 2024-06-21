@@ -31,12 +31,41 @@ public class FriendshipService
         if (friendship == null)
             throw new FriendshipNotFoundException("Friendship not found");
 
-        _context.Friendships.Remove(friendship);
-        await _context.SaveChangesAsync();
+        using (var transaction = await _context.Database.BeginTransactionAsync())
+        {
+            try
+            {
+                // Remove the friendship
+                _context.Friendships.Remove(friendship);
+
+                // Decrement friends count for both users
+                var requester = await _context.Users.FindAsync(userId1);
+                var receiver = await _context.Users.FindAsync(userId2);
+
+                if (requester != null)
+                {
+                    requester.FriendsCount--;
+                }
+
+                if (receiver != null)
+                {
+                    receiver.FriendsCount--;
+                }
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
     }
+
 }
 
-// Custom exception for friendship not found
 public class FriendshipNotFoundException : Exception
 {
     public FriendshipNotFoundException(string message) : base(message)
