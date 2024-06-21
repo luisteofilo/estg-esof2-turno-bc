@@ -20,9 +20,16 @@ public class CommentsController : ControllerBase
     public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
     {
         var comment = await _commentService.CreateCommentAsync(dto.PostId, dto.UserId, dto.Content);
-        
+        var commentDto = new CommentDto
+        {
+            CommentId = comment.CommentId,
+            PostId = comment.PostId,
+            UserId = comment.UserId,
+            Content = comment.Content,
+            
+        };
 
-        return Ok(comment);
+        return Ok(commentDto);
     }
 
     [HttpPost("edit")]
@@ -30,9 +37,17 @@ public class CommentsController : ControllerBase
     {
         try
         {
-            var editedComment  = await _commentService.EditCommentAsync(dto.CommentId, dto.NewContent);
-            
-            return Ok(editedComment );
+            var comment   = await _commentService.EditCommentAsync(dto.CommentId, dto.NewContent);
+            var commentDto = new CommentDto
+            {
+                CommentId = comment.CommentId,
+                PostId = comment.PostId,
+                UserId = comment.UserId,
+                Content = comment.Content,
+                
+            };
+
+            return Ok(commentDto);
         }
         catch (CommentNotFoundException ex)
         {
@@ -59,5 +74,12 @@ public class CommentsController : ControllerBase
     {
         var comments = await _commentService.GetCommentsForPostAsync(postId);
         return Ok(comments);
+    }
+    
+    [HttpGet("post/{postId}/count")]
+    public async Task<IActionResult> GetCommentCountForPost(Guid postId)
+    {
+        var count = await _commentService.GetCommentCountForPostAsync(postId);
+        return Ok(count);
     }
 }

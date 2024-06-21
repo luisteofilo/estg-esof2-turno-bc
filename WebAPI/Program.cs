@@ -17,6 +17,7 @@ builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<FriendshipService>();
 builder.Services.AddScoped<FriendRequestService>();
 builder.Services.AddScoped<CommentService>();
+builder.Services.AddScoped<LikeService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 var app = builder.Build();

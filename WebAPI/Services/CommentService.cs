@@ -66,6 +66,12 @@ public class CommentService
                 .Where(c => c.PostId == postId)
                 .ToListAsync();
         }
+        //get count of comments in a post
+        public async Task<int> GetCommentCountForPostAsync(Guid postId)
+        {
+            return await _context.Comments
+                .CountAsync(c => c.PostId == postId);
+        }
     }
 
     public class CommentNotFoundException : Exception

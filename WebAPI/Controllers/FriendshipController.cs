@@ -6,11 +6,11 @@ namespace ESOF.WebApp.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class FriendshipsController : ControllerBase
+public class FriendshipController : ControllerBase
 {
     private readonly FriendshipService _friendshipService;
 
-    public FriendshipsController(FriendshipService friendshipService)
+    public FriendshipController(FriendshipService friendshipService)
     {
         _friendshipService = friendshipService;
     }
