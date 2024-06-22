@@ -147,12 +147,99 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("RolePermissions");
                 });
 
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteEvaluation", b =>
+                {
+                    b.Property<Guid>("TasteEvaluationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("WineId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("WineScore")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TasteEvaluationId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WineId");
+
+                    b.ToTable("TasteEvaluations");
+                });
+
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteEvaluationQuestion", b =>
+                {
+                    b.Property<Guid>("TasteEvaluationQuestionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("TasteEvaluationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TasteQuestionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("TasteEvaluationQuestionId");
+
+                    b.HasIndex("TasteEvaluationId");
+
+                    b.HasIndex("TasteQuestionId");
+
+                    b.ToTable("TasteEvaluationQuestions");
+                });
+
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteQuestion", b =>
+                {
+                    b.Property<Guid>("TasteQuestionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TasteQuestionTypeId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TasteQuestionId");
+
+                    b.HasIndex("TasteQuestionTypeId");
+
+                    b.ToTable("TasteQuestions");
+                });
+
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteQuestionType", b =>
+                {
+                    b.Property<Guid>("TasteQuestionTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("TasteQuestionTypeId");
+
+                    b.ToTable("TasteQuestionTypes");
+                });
+
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.User", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -167,9 +254,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("bytea");
 
                     b.HasKey("UserId");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -286,6 +370,55 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteEvaluation", b =>
+                {
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Wine", "Wine")
+                        .WithMany()
+                        .HasForeignKey("WineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("Wine");
+                });
+
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteEvaluationQuestion", b =>
+                {
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.TasteEvaluation", "TasteEvaluation")
+                        .WithMany()
+                        .HasForeignKey("TasteEvaluationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.TasteQuestion", "TasteQuestion")
+                        .WithMany()
+                        .HasForeignKey("TasteQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TasteEvaluation");
+
+                    b.Navigation("TasteQuestion");
+                });
+
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteQuestion", b =>
+                {
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.TasteQuestionType", "TasteQuestionType")
+                        .WithMany()
+                        .HasForeignKey("TasteQuestionTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TasteQuestionType");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.UserRole", b =>
