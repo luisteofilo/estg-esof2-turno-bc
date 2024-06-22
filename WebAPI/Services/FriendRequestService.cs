@@ -15,7 +15,6 @@ public class FriendRequestService
 
         public async Task SendFriendRequestAsync(Guid requesterId, Guid receiverId)
         {
-            // Check if requester and receiver exist
             var requesterExists = await _context.Users.AnyAsync(u => u.UserId == requesterId);
             var receiverExists = await _context.Users.AnyAsync(u => u.UserId == receiverId);
 
@@ -38,6 +37,17 @@ public class FriendRequestService
             if (existingRequest != null)
             {
                 throw new InvalidOperationException("A pending friend request already exists between these users.");
+            }
+
+            // Check if they are already friends
+            var existingFriendship = await _context.Friendships
+                .FirstOrDefaultAsync(f =>
+                    (f.UserId1 == requesterId && f.UserId2 == receiverId) ||
+                    (f.UserId1 == receiverId && f.UserId2 == requesterId));
+
+            if (existingFriendship != null)
+            {
+                throw new InvalidOperationException("The users are already friends.");
             }
 
             var friendRequest = new FriendRequest
@@ -73,7 +83,6 @@ public class FriendRequestService
 
             _context.Friendships.Add(friendship);
             
-            // Increment friends count for both users
             var requester = await _context.Users.FindAsync(friendRequest.RequesterId);
             var receiver = await _context.Users.FindAsync(friendRequest.ReceiverId);
 
@@ -120,9 +129,24 @@ public class FriendRequestService
                 .ToListAsync();
         }
         
+        public async Task RemovePendingFriendRequestAsync(Guid requestId)
+        {
+            var friendRequest = await _context.FriendRequests
+                .FirstOrDefaultAsync(fr =>
+                    fr.RequestId == requestId &&
+                    
+                    fr.Status == FriendRequestState.PENDING);
+
+            if (friendRequest == null)
+            {
+                throw new FriendRequestNotFoundException("Pending friend request not found");
+            }
+
+            _context.FriendRequests.Remove(friendRequest);
+            await _context.SaveChangesAsync();
+        }
     }
 
-    // Custom exception for friend request not found
     public class FriendRequestNotFoundException : Exception
     {
         public FriendRequestNotFoundException(string message) : base(message)

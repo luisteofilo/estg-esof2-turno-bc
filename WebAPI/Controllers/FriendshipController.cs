@@ -19,7 +19,14 @@ public class FriendshipController : ControllerBase
     public async Task<IActionResult> GetFriends(Guid userId)
     {
         var friendships = await _friendshipService.GetFriendsForUserAsync(userId);
-        return Ok(friendships);
+        var friendsDtos = friendships.Select(f => new UserDto
+        {
+            UserId = f.UserId,
+            UserName = f.UserName,
+            Email = f.Email
+        }).ToList();
+
+        return Ok(friendsDtos);
     }
 
     [HttpDelete("remove-friend")]
