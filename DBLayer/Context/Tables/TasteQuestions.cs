@@ -16,6 +16,8 @@ public partial class ApplicationDbContext
             entity.HasOne(te => te.TasteQuestionType)
                 .WithMany()
                 .HasForeignKey(te => te.TasteQuestionTypeId);
+            
+            // TODO: Add the event
         });
     }
 }

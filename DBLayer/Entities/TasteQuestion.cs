@@ -12,6 +12,7 @@ public class TasteQuestion
     public Guid TasteQuestionTypeId { get; set; }
     public TasteQuestionType TasteQuestionType { get; set; }
     
+    // TODO: Add the event
     // public Guid EventId { get; set; }
     // public Event Event { get; set; }
 }

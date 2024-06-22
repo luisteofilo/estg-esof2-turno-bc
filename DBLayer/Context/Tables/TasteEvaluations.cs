@@ -20,6 +20,8 @@ public partial class ApplicationDbContext
             entity.HasOne(te => te.Wine)
                 .WithMany()
                 .HasForeignKey(te => te.WineId);
+            
+            // TODO: Add the event
         });
     }
 }
