@@ -1,27 +1,31 @@
+body {
+    background-color: #e0e0e0; /* Fundo branco mais escuro */
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.main-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
 .card {
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     padding: 30px;
     width: 100%;
+    max-width: 900px; /* Ajuste de largura máxima do contêiner */
+    box-sizing: border-box; /* Garantir que o padding esteja incluído na largura */
+    background-color: #ffffff; /* Fundo branco do contêiner */
 }
 
 .rounded-circle {
     border-radius: 50%;
-}
-
-.wine-preferences {
-    margin-top: 50px;
-    width: 100%;
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-.wine-preferences h2 {
-    text-align: center;
-    color: #1b6ec2; /* Cor do título */
-    margin-bottom: 30px;
 }
 
 .form-group {
@@ -31,4 +35,28 @@
 .form-control-lg {
     font-size: 1.25rem;
     padding: 0.75rem 1.5rem;
+}
+
+hr {
+    border-top: 1px solid #000; /* Cor da linha */
+}
+
+.container-fluid {
+    width: 100%;
+    padding: 0;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinhar itens ao início */
+    text-align: left; /* Alinhar texto à esquerda */
+}
+
+.card-body img {
+    margin-bottom: 20px;
+}
+
+.bg-white {
+    background-color: #ffffff;
 }

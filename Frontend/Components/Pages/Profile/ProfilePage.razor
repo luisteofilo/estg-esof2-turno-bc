@@ -1,44 +1,44 @@
-﻿
-@page "/profilepage"
+﻿@page "/profilepage"
 
 @* Importar Bootstrap *@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
 @* Importar CSS personalizado *@
 <link rel="stylesheet" href="Pages/Profile/profilepage.css" />
 
-<div class="container mt-5">
-    <div class="card p-4">
-        <div class="card-body">
-            <div class="d-flex align-items-center">
-                <img src="profile-placeholder.png" alt="Profile Image" class="rounded-circle mr-4" style="width: 150px; height: 150px;">
-                <div class="ml-4">
-                    <h2 class="display-4">João Ralha</h2>
-                    <p class="lead">joaocarlosralha@gmail.pt</p>
-                 
-                    <button class="btn btn-primary btn-lg">Edit Profile</button>
+<div class="main-container mt-5">
+    <div class="container-fluid">
+        <div class="card p-4">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <img src="profile-placeholder.png" alt="Profile Image" class="rounded-circle mr-4" style="width: 150px; height: 150px;">
+                    <div class="ml-4">
+                        <h2 class="display-4">João Ralha</h2>
+                        <p class="lead">joaocarlosralha@gmail.pt</p>
+                        <button class="btn btn-primary btn-lg">Edit Profile</button>
+                    </div>
+                </div>
+                <hr />
+                <div class="mt-4">
+                    <h2 class="display-5 text-center">Preferência do Tipo de Vinho</h2>
+                    <hr />
+                    <div class="form-group">
+                        <label for="wineName">Vinho</label>
+                        <input type="text" class="form-control form-control-lg" id="wineName" value="Cabernet Sauvignon" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="region">Região</label>
+                        <input type="text" class="form-control form-control-lg" id="region" value="Bordeaux" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="brand">Marca</label>
+                        <input type="text" class="form-control form-control-lg" id="brand" value="Château Margaux" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="grapeType">Tipo de Uva</label>
+                        <input type="text" class="form-control form-control-lg" id="grapeType" value="Cabernet Sauvignon" readonly />
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="mt-5 wine-preferences p-4">
-        <h2 class="display-5 text-center">Preferência do Tipo de Vinho</h2>
-        <hr />
-        <div class="form-group">
-            <label for="wineName">Vinho</label>
-            <input type="text" class="form-control form-control-lg" id="wineName" value="Cabernet Sauvignon" readonly />
-        </div>
-        <div class="form-group">
-            <label for="region">Região</label>
-            <input type="text" class="form-control form-control-lg" id="region" value="Bordeaux" readonly />
-        </div>
-        <div class="form-group">
-            <label for="brand">Marca</label>
-            <input type="text" class="form-control form-control-lg" id="brand" value="Château Margaux" readonly />
-        </div>
-        <div class="form-group">
-            <label for="grapeType">Tipo de Uva</label>
-            <input type="text" class="form-control form-control-lg" id="grapeType" value="Cabernet Sauvignon" readonly />
         </div>
     </div>
 </div>
