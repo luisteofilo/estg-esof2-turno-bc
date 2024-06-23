@@ -2,27 +2,30 @@
 
 namespace Helpers.ViewModels;
 
-public class PostsListLine
+public class FeedPost
 {
+    public Guid PostId { get; set; }
     public string Text { get; set; }
     
     public Guid CreatorId { get; set; }
-    public PostsUser Creator { get; set; }
+    public FeedPostUser Creator { get; set; }
     
-    public IEnumerable<PostsMedia> Media { get; set; }
+    public DateTimeOffset DateTimePost { get; set; }
+    
+    public IEnumerable<FeedPostMedia> Media { get; set; }
 }
 
-public class PostsMedia
+public class FeedPostMedia
 {
     
 }
 
-public class PostsUser
+public class FeedPostUser
 {
     public string email;
 }
 
-public class PostsList
+public class FeedPostList
 {
-    public IEnumerable<PostsListLine> Lines { get; set; }
+    public IEnumerable<FeedPost> Lines { get; set; }
 }
