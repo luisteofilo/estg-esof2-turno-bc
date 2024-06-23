@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <PackageReference Include="DotNetEnv" Version="3.0.0" />
+      <PackageReference Include="QRCoder" Version="1.5.1" />
     </ItemGroup>
 
     <ItemGroup>

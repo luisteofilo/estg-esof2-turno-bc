@@ -1,0 +1,29 @@
+﻿@page "/events/{Slug}"
+@inject Frontend.Services.EventService EventService
+@using Frontend.DtoClasses
+
+<PageTitle>Event Detail</PageTitle>
+
+<h3>Event Detail</h3>
+
+@if (eventDto == null)
+{
+    <p><em>Event not found or error fetching event details.</em></p>
+}
+else
+{
+    <h4>@eventDto.Name</h4>
+    <p>ID: @eventDto.EventId</p>
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; }
+
+    private EventDto eventDto;
+
+    protected override async Task OnInitializedAsync()
+    {
+        eventDto = await EventService.GetEventBySlug(Slug);
+    }
+}

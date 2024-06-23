@@ -50,6 +50,82 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("Brands");
                 });
 
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Event", b =>
+                {
+                    b.Property<Guid>("EventId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("EventId");
+
+                    b.ToTable("Events");
+
+                    b.HasData(
+                        new
+                        {
+                            EventId = new Guid("5b50f84e-0cde-43e8-8048-8efdbff24818"),
+                            Name = "Event1",
+                            Slug = "event1"
+                        },
+                        new
+                        {
+                            EventId = new Guid("878d8256-50bd-4870-8f52-3e490537bc1c"),
+                            Name = "Event2",
+                            Slug = "event2"
+                        },
+                        new
+                        {
+                            EventId = new Guid("81ec015d-0d73-4f45-a098-01f5eb3cd084"),
+                            Name = "Event3",
+                            Slug = "event3"
+                        },
+                        new
+                        {
+                            EventId = new Guid("767a6963-6e91-469e-a6d9-2cac0d5bf145"),
+                            Name = "Event4",
+                            Slug = "event4"
+                        },
+                        new
+                        {
+                            EventId = new Guid("dac5b230-b134-4cd9-a73a-b22a73f76e6b"),
+                            Name = "Event5",
+                            Slug = "event5"
+                        });
+                });
+
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.EventParticipant", b =>
+                {
+                    b.Property<Guid>("EventParticipantId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("EventParticipantId");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EventParticipants");
+                });
+
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.GrapeType", b =>
                 {
                     b.Property<Guid>("GrapeTypeId")
@@ -269,6 +345,25 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("WineGrapeTypeLinks");
                 });
 
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.EventParticipant", b =>
+                {
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Event", "Event")
+                        .WithMany("EventParticipants")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "User")
+                        .WithMany("EventParticipants")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.RolePermission", b =>
                 {
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.Permission", "Permission")
@@ -342,6 +437,11 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Navigation("Wines");
                 });
 
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Event", b =>
+                {
+                    b.Navigation("EventParticipants");
+                });
+
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.GrapeType", b =>
                 {
                     b.Navigation("WineGrapeTypes");
@@ -366,6 +466,8 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.User", b =>
                 {
+                    b.Navigation("EventParticipants");
+
                     b.Navigation("UserRoles");
                 });
 
