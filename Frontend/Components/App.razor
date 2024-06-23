@@ -5,15 +5,20 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <base href="/"/>
+    <title>VinVenture</title>
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css"/>
     <link rel="stylesheet" href="app.css"/>
     <link rel="stylesheet" href="Frontend.styles.css"/>
     <link rel="icon" type="image/png" href="favicon.png"/>
-    <HeadOutlet/>
+    <HeadOutlet @rendermode="InteractiveServer"/>
 </head>
 
 <body>
-<Routes/>
+<Routes @rendermode="InteractiveServer"/>
+<script src="js/popper.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/sidebar.js"></script>
+<script src="bootstrap/bootstrap.min.js"></script>
 <script src="_framework/blazor.web.js"></script>
 </body>
 
