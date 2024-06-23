@@ -41,7 +41,7 @@ public class PostService
         if (post == null)
             throw new ArgumentException("Post not found.");
         
-        return new ResponsePostDto
+        return new FeedPostDto
         {
             PostId = post.PostId,
             Text = post.Text,
@@ -50,21 +50,21 @@ public class PostService
         };
     }
 
-    public ResponsePostDto CreatePost(CreatePostDto createPostDto)
+    public FeedPostDto CreatePost(CreateFeedPostDto createFeedPostDto)
     {
         try
         {
             var post = new Post
             {
-                Text = createPostDto.Text,
-                CreatorId = createPostDto.CreatorId,
-                DateTimePost = DateTime.UtcNow
+                Text = createFeedPostDto.Text,
+                CreatorId = createFeedPostDto.CreatorId,
+                DateTimePost = DateTimeOffset.UtcNow
             };
 
             _context.Posts.Add(post);
             _context.SaveChanges();
 
-            return new ResponsePostDto
+            return new FeedPostDto
             {
                 PostId = post.PostId,
                 Text = post.Text,
@@ -78,7 +78,7 @@ public class PostService
         }
     }
 
-    public ResponsePostDto UpdatePost(Guid id, UpdatePostDto updatePostDto)
+    public FeedPostDto UpdatePost(Guid id, FeedPostDto updatePostDto)
     {
         var post = _context.Posts.Find(id);
 
@@ -89,7 +89,7 @@ public class PostService
 
         _context.SaveChanges();
 
-        return new ResponsePostDto
+        return new FeedPostDto
         {
             PostId = post.PostId,
             Text = post.Text,

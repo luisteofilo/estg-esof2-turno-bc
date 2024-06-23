@@ -1,92 +1,171 @@
-﻿using ESOF.WebApp.DBLayer.Context;
-using ESOF.WebApp.WebAPI.DtoClasses;
-
-namespace ESOF.WebApp.WebAPI.Controllers;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ESOF.WebApp.DBLayer.Entities;
+using Microsoft.EntityFrameworkCore;
+using ESOF.WebApp.WebAPI.DtoClasses;
 using ESOF.WebApp.WebAPI.Services;
+using ESOF.WebApp.DBLayer.Entities;
+using ESOF.WebApp.DBLayer.Context;
 
-[Route("api/[controller]")]
-[ApiController]
-public class PostController : ControllerBase
+namespace ESOF.WebApp.WebAPI.Controllers
 {
-    private readonly PostService _postService;
-
-    public PostController()
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PostController : ControllerBase
     {
-        _postService =  new PostService(new ApplicationDbContext());
-    }
+        private readonly PostService _postService;
 
-    [HttpGet("index")]
-    public ActionResult<List<ResponsePostDto>> GetAllPosts()
-    {
-        try
+        public PostController()
         {
-            return Ok(_postService.GetAllPosts());
+            _postService =  new PostService(new ApplicationDbContext());
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
 
-    [HttpGet("show/{id}")]
-    public ActionResult<ResponsePostDto> GetPostById(Guid id)
-    {
-        try
+        [HttpGet("index")]
+        public ActionResult<List<FeedPostDto>> GetAllPosts()
         {
-            return Ok(_postService.GetPostById(id));
+            try
+            {
+                return Ok(_postService.GetAllPosts());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-        catch (ArgumentException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
 
-    [HttpPost("store")]
-    public ActionResult<ResponsePostDto> CreatePost([FromBody] CreatePostDto createPostDto)
-    {
-        try
+        [HttpGet("{id}")]
+        public ActionResult<FeedPostDto> GetPostById(Guid id)
         {
-            var createdPost = _postService.CreatePost(createPostDto);
-            return CreatedAtAction(nameof(GetPostById), new { id = createdPost.PostId }, createdPost);
+            try
+            {
+                return Ok(_postService.GetPostById(id));
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
 
-    [HttpPut("update")]
-    public ActionResult<ResponsePostDto> UpdatePost(Guid id, [FromBody] UpdatePostDto updatePostDto)
-    {
-        try
+        [HttpPost("create")]
+        public ActionResult<FeedPostDto> CreatePost([FromBody] CreateFeedPostDto createPostDto)
         {
-            return Ok(_postService.UpdatePost(id, updatePostDto));
+            try
+            {
+                var createdPost = _postService.CreatePost(createPostDto);
+                return CreatedAtAction(nameof(GetPostById), new { id = createdPost.PostId }, createdPost);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-        catch (ArgumentException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
 
-    [HttpDelete("delete/{id}")]
-    public ActionResult DeletePost(Guid id)
-    {
-        try
+        [HttpPut("{id}/update")]
+        public ActionResult<FeedPostDto> UpdatePost(Guid id, [FromBody] FeedPostDto updatePostDto)
         {
-            _postService.DeletePost(id);
-            return NoContent();
+            try
+            {
+                return Ok(_postService.UpdatePost(id, updatePostDto));
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-        catch (Exception ex)
+
+        [HttpDelete("{id}/delete")]
+        public ActionResult DeletePost(Guid id)
         {
-            return NotFound(ex.Message);
+            try
+            {
+                _postService.DeletePost(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
+
+        [HttpPut("{id}/media/add")]
+        public ActionResult AddMediaToPost(Guid id, [FromBody] FeedPostMediaDto postMediaDto)
+        {
+            try
+            {
+                // return Ok(_postService.AddMediaToPost(id, postMediaDto));
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpDelete("{id}/media/remove")]
+        public ActionResult RemoveMediaFromPost(Guid id, [FromBody] FeedPostMediaDto postMediaDto)
+        {
+            try
+            {
+                // return Ok(_postService.AddMediaToPost(id, postMediaDto));
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}/likes/add/{userId}")]
+        public ActionResult AddLikeToPost(Guid id, Guid userId)
+        {
+            try
+            {
+                // return Ok(_postService.AddLikeToPost(id, userDto));
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpPut("{id}/likes/remove/{userId}")]
+        public ActionResult RemoveLikeFromPost(Guid id, Guid userId)
+        {
+            try
+            {
+                // return Ok(_postService.RemoveLikeFromPost(id, userDto));
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        
     }
 }
