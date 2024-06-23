@@ -11,7 +11,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 20px
+    padding: 20px;
 }
 
 .card {
@@ -19,22 +19,9 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     padding: 20px;
     width: 100%;
-    max-width: 500px; /* Ajuste de largura máxima do contêiner */
+    max-width: 800px; /* Ajuste de largura máxima do contêiner */
     box-sizing: border-box; /* Garantir que o padding esteja incluído na largura */
     background-color: #ffffff; /* Fundo branco do contêiner */
-}
-
-.rounded-circle {
-    border-radius: 50%;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-control-sm {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
 }
 
 hr {
@@ -56,11 +43,6 @@ hr {
     text-align: center; /* Alinhar texto ao centro */
 }
 
-.card-body img {
-    margin-bottom: 20px;
-}
-
-.wine-info {
-    width: 250px; /* Definir uma largura fixa para os campos de entrada */
-    margin: 0 auto; /* Centralizar os campos de entrada */
+.form-group {
+    margin-bottom: 15px;
 }

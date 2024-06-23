@@ -1,0 +1,47 @@
+﻿@page "/editprofilepage"
+
+@* Importar Bootstrap *@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+@* Importar CSS personalizado *@
+<link rel="stylesheet" href="Pages/Profile/editprofilepage.css" />
+
+<div class="main-container mt-5">
+    <div class="container">
+        <div class="card p-4">
+            <div class="card-body">
+                <h2 class="h5 text-center">Editar Perfil</h2>
+                <hr />
+                <form>
+                    <div class="form-group">
+                        <label for="userName">Nome</label>
+                        <input type="text" class="form-control" id="userName" value="João Ralha" />
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email</label>
+                        <input type="email" class="form-control" id="userEmail" value="joaocarlosralha@gmail.pt" />
+                    </div>
+                    <h3 class="h5 text-center">Editar Preferência do Tipo de Vinho</h3>
+                    <hr />
+                    <div class="form-group">
+                        <label for="wineName">Vinho</label>
+                        <input type="text" class="form-control" id="wineName" value="Cabernet Sauvignon" />
+                    </div>
+                    <div class="form-group">
+                        <label for="region">Região</label>
+                        <input type="text" class="form-control" id="region" value="Bordeaux" />
+                    </div>
+                    <div class="form-group">
+                        <label for="brand">Marca</label>
+                        <input type="text" class="form-control" id="brand" value="Château Margaux" />
+                    </div>
+                    <div class="form-group">
+                        <label for="grapeType">Tipo de Uva</label>
+                        <input type="text" class="form-control" id="grapeType" value="Cabernet Sauvignon" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <a href="/profilepage" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
