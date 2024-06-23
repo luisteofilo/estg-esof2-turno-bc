@@ -9,7 +9,7 @@ public partial class Feed
     private FeedPostList _feedPosts;
     protected override async Task OnInitializedAsync()
     {
-        _feedPosts = await ApiHelper.GetFromApiAsync<FeedPostList>("api/post/index");
+        _feedPosts = await ApiHelper.GetFromApiAsync<FeedPostList>("api/Post/index");
     }
     
     private void CreatePost()

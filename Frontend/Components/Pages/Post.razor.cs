@@ -5,6 +5,6 @@ namespace Frontend.Components.Pages;
 
 public partial class Post
 {
-    [Parameter] public FeedPost PostLine { get; set; }
+    [Parameter] public FeedPost feedpost { get; set; }
     
 }

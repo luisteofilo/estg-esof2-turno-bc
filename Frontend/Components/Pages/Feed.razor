@@ -10,7 +10,7 @@
     <button @onclick="CreatePost">Add To Do</button>
 </div>
 <div>
-    @foreach (var p in _feedPosts.Lines)
+    @foreach (var p in _feedPosts.FeedPosts)
     {
         <Post PostLine="p"/>
     }

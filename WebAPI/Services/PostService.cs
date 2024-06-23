@@ -17,11 +17,11 @@ public class PostService
         _context = context;
     }
 
-    public List<ResponsePostDto> GetAllPosts()
+    public List<FeedPostDto> GetAllPosts()
     {
         try
         {
-            return _context.Posts.Select(p => new ResponsePostDto
+            return _context.Posts.Select(p => new FeedPostDto
             {
                 PostId = p.PostId,
                 Text = p.Text,
@@ -35,7 +35,7 @@ public class PostService
         }
     }
 
-    public ResponsePostDto GetPostById(Guid id)
+    public FeedPostDto GetPostById(Guid id)
     {
         var post = _context.Posts.Find(id);
         if (post == null)
