@@ -23,9 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Components\Pages\Post.razor.cs" />
-      <Compile Remove="Components\Pages\Feed.razor.cs" />
-      <Compile Remove="Components\Pages\PostPage.razor.cs" />
       <Compile Remove="Components\Pages\DeleteThis.razor.cs" />
     </ItemGroup>
 

@@ -6,26 +6,26 @@
     <div class="post-header">
         <img src="@ProfileImageUrl" alt="Profile Image" class="profile-image" />
         <div class="post-info">
-            <div class="post-author">@postline.Creator</div>
-            <div class="post-meta">@postline.DateTimePost · @postline.VisibilityType</div>
+            <div class="post-author">@PostLine.Creator</div>
+            <div class="post-meta">@PostLine.DateTimePost · @PostLine.VisibilityType</div>
         </div>
         <div class="post-menu">
             <button class="menu-button">⋮</button>
         </div>
     </div>
     <div class="post-content">
-        @postline.Text
+        @PostLine.Text
     </div>
 </div>
 <div>
     <hr/>
-    <p>@postline.Creator.email</p>
-    <p>@postline.Text</p>
+    <p>@PostLine.Creator.email</p>
+    <p>@PostLine.Text</p>
     <p></p>
 </div>
 
-@code
-{
-    [Parameter] 
-    public FeedPost postline { get; set; }
+@code{
+
+    [Parameter] public FeedPost PostLine { get; set; } = new FeedPost();
+
 }

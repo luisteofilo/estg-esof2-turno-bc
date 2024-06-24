@@ -11,23 +11,32 @@
     <button @onclick="CreatePost">Add To Do</button>
 </div>
 <div>
-    @foreach (var p in _feedPosts.FeedPosts)
+    @if (_feedPosts.Posts.Count == 0)
     {
-        <Post postline="p"/>
+        <h4>Não há posts</h4>
+    }
+    else
+    {
+        <h4>@_feedPosts.Posts.Count()</h4>
+        @foreach (FeedPost p in _feedPosts.Posts)
+        {
+            <p>@p.Text</p>
+            <Post PostLine=@p/>
+        }
     }
 </div>
 
-@code{
+@code
+{
     private FeedPost _newPost = new FeedPost();
     private FeedPostList _feedPosts = new FeedPostList();
     protected override async Task OnInitializedAsync()
     {
-        _feedPosts = await ApiHelper.GetFromApiAsync<FeedPostList>("api/Post/index");
+        _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
     }
     
-    private void CreatePost()
+    private async Task CreatePost()
     {
-        
+        await ApiHelper.PostToApiAsync<FeedPost>("api/Post/create", _newPost);
     }
-
 }
