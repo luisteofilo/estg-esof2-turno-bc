@@ -27,7 +27,8 @@ public class PostService
                 PostId = p.PostId,
                 Text = p.Text,
                 CreatorId = p.CreatorId,
-                DateTimePost = p.DateTimePost
+                DateTimePost = p.DateTimePost,
+                VisibilityType = p.VisibilityType
             }).ToListAsync();
         }
         catch (Exception ex)
@@ -47,7 +48,8 @@ public class PostService
             PostId = post.PostId,
             Text = post.Text,
             CreatorId = post.CreatorId,
-            DateTimePost = post.DateTimePost
+            DateTimePost = post.DateTimePost,
+            VisibilityType = post.VisibilityType
         };
     }
 
@@ -112,7 +114,8 @@ public class PostService
             PostId = post.PostId,
             Text = post.Text,
             CreatorId = post.CreatorId,
-            DateTimePost = post.DateTimePost
+            DateTimePost = post.DateTimePost,
+            VisibilityType = post.VisibilityType
         };
     }
 
