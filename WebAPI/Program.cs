@@ -12,6 +12,10 @@ builder.Services.AddScoped<WineService>();
 builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
+builder.Services.AddScoped<BlindEventService>();
+builder.Services.AddScoped<ParticipantService>();
+builder.Services.AddScoped<ParticipantWineService>();
+builder.Services.AddScoped<EvaluationService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 

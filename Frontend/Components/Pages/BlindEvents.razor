@@ -1,0 +1,49 @@
+﻿@page "/BlindEvent"
+@using Frontend.Helpers
+@using ESOF.WebApp.WebAPI.DtoClasses
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+
+<PageTitle>Blind Events</PageTitle>
+
+<h1>Blind Events</h1>
+
+<p>This component demonstrates showing data from the API.</p>
+
+@if (_blindEvents == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Event Date</th>
+            <th>Organizer</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var blindEvent in _blindEvents)
+        {
+            <tr>
+                <td>@blindEvent.Name</td>
+                <td>@blindEvent.EventDate.ToString("yyyy-MM-dd")</td>
+                <td>@blindEvent.Organizer.Email</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<ResponseBlindEventDto>? _blindEvents;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _blindEvents = await ApiHelper.GetFromApiAsync<List<ResponseBlindEventDto>>("api/BlindEvent/index");
+    }
+}

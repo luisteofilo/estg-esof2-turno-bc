@@ -31,9 +31,14 @@ public class Wine
     
     public ICollection<WineGrapeTypeLink> WineGrapeTypeLinks { get; set; }
     
+    public ICollection<Evaluation> Evaluations { get; set; }
+    public ICollection<ParticipantWine> ParticipantWines { get; set; }
+
     public Wine()
     {
         WineGrapeTypeLinks = new List<WineGrapeTypeLink>();
+        Evaluations = new List<Evaluation>();
+        ParticipantWines = new List<ParticipantWine>();
     }
 
 }

@@ -10,6 +10,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileHelper.GetString("API_URL")) });
 builder.Services.AddScoped<ApiHelper>();
+builder.Services.AddHttpClient<ApiHelper>();
+
 
 var app = builder.Build();
 

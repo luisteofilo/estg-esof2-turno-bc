@@ -16,4 +16,15 @@ public class User
     [Required]
     public byte[] PasswordSalt { get; set; }
     public ICollection<UserRole> UserRoles { get; set; }
+    
+    public ICollection<BlindEvent> OrganizedEvents { get; set; }
+
+    // Lista de eventos em que o utilizador está a participar
+    public ICollection<Participant> Participants { get; set; }
+
+    public User()
+    {
+        OrganizedEvents = new List<BlindEvent>();
+        Participants = new List<Participant>();
+    }
 }

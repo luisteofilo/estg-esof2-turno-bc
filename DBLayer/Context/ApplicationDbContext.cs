@@ -49,6 +49,10 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Region> Regions { get; set; }
     public DbSet<GrapeType> GrapeTypes { get; set; }
     public DbSet<WineGrapeTypeLink> WineGrapeTypeLinks { get; set; }
+    public DbSet<BlindEvent> BlindEvents { get; set; }
+    public DbSet<Participant> Participants { get; set; }
+    public DbSet<Evaluation> Evaluations { get; set; }
+    public DbSet<ParticipantWine> ParticipantWines { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -69,6 +73,10 @@ public partial class ApplicationDbContext : DbContext
         BuildRegions(modelBuilder);
         BuildGrapeTypes(modelBuilder);
         BuildWineGrapeTypeLinks(modelBuilder);
+        BuildBlindEvents(modelBuilder);
+        BuildParticipants(modelBuilder);
+        BuildEvaluations(modelBuilder);
+        BuildParticipantWines(modelBuilder);
         base.OnModelCreating(modelBuilder);
         
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
