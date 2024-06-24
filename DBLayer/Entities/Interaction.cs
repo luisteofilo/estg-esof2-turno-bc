@@ -2,19 +2,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ESOF.WebApp.DBLayer.Entities
 {
-    public class Interacao
+    public class Interaction
     {
         [Required]
-        public Guid user_id { get; set; }
+        public Guid UserId { get; set; }
         
         [Required]
-        public Guid vinho_id { get; set; }
+        public Guid WineId { get; set; }
         
         [Required]
-        public int tipo_interacao { get; set; }
+        public int InteractionType { get; set; }
 
         // Navegação para as entidades relacionadas
         public User User { get; set; }
-        public Vinho Vinho { get; set; }
+        public Wine Wine { get; set; }
     }
 }
