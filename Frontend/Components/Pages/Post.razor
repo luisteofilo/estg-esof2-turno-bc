@@ -3,13 +3,13 @@
 @using global::Helpers.ViewModels
 <div>
     <hr/>
-    <p>@post.Creator.email</p>
-    <p>@post.Text</p>
+    <p>@postline.Creator.email</p>
+    <p>@postline.Text</p>
     <p></p>
 </div>
 
 @code
 {
     [Parameter] 
-    public FeedPost post { get; set; }
+    public FeedPost postline { get; set; }
 }
