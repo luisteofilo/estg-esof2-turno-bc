@@ -54,5 +54,36 @@ namespace WebAPI.Controllers
 
             return Ok(eventDto);
         }
+        
+        [HttpGet("register/{eventId}/{userId}")]
+        public async Task<IActionResult> RegisterUserToEvent(Guid eventId, Guid? userId)
+        {
+            var _context = new ApplicationDbContext();
+            if (!userId.HasValue || userId == Guid.Empty)
+            {
+                // Handling not logged-in users
+                return Unauthorized("User not logged in.");
+            }
+
+            // Check if the user is already a participant
+            var isParticipant = await _context.EventParticipants
+                .AnyAsync(ep => ep.EventId == eventId && ep.UserId == userId.Value);
+            
+            if (isParticipant)
+            {
+                return Ok("Already Participating");
+            }
+
+            // Add user as a participant if not already
+            var participant = new EventParticipant 
+            {
+                EventId = eventId,
+                UserId = userId.Value
+            };
+            _context.EventParticipants.Add(participant);
+            await _context.SaveChangesAsync();
+
+            return Ok("Registration Successful");
+        }
     }
 }
