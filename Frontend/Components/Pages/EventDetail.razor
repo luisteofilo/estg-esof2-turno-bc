@@ -8,7 +8,6 @@
 @using ZXing
 @using ZXing.Common
 
-
 <PageTitle>Event Detail</PageTitle>
 
 <h3>Event Detail</h3>
@@ -21,9 +20,29 @@ else
 {
     <h4>@eventDto.Name</h4>
     <p>ID: @eventDto.EventId</p>
-    <div>
-        <img src="@qrCodeImage" alt="Event QR Code" />
-        <p>URL: @qrCodeUrl</p>
+    
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qrCodeModal">
+        Show QR Code
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="qrModalLabel">QR Code Invite for @eventDto.Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="@qrCodeImage" alt="Event QR Code" />
+                    <p>Debug URL: @qrCodeUrl</p>  <!-- PARA DEBUG, SENDO QUE NAO DA PRA LER CODIGOS QR EM LOCALHOST -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 }
 
@@ -58,7 +77,6 @@ else
 
     private string GenerateQRCodeImage(string url)
     {
-        // Create a barcode writer instance for QR codes
         var writer = new BarcodeWriterPixelData
         {
             Format = BarcodeFormat.QR_CODE,
@@ -71,26 +89,19 @@ else
             }
         };
 
-        // Generate QR code pixel data
         var pixelData = writer.Write(url);
-
-        // Convert pixel data to Bitmap and then to a Base64 string
         using (var bitmap = new Bitmap(pixelData.Width, pixelData.Height, PixelFormat.Format32bppRgb))
         {
-            // Lock the bits of the bitmap
             var bitmapData = bitmap.LockBits(new Rectangle(0, 0, pixelData.Width, pixelData.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
             try
             {
-                // Transfer the byte data to the bitmap
                 System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, bitmapData.Scan0, pixelData.Pixels.Length);
             }
             finally
             {
-                // Unlock the bits.
                 bitmap.UnlockBits(bitmapData);
             }
 
-            // Convert to base64 string
             using (var memoryStream = new MemoryStream())
             {
                 bitmap.Save(memoryStream, ImageFormat.Png);
