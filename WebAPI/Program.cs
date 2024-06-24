@@ -13,6 +13,7 @@ builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
 builder.Services.AddScoped<TasteEvaluationService>();
+builder.Services.AddScoped<TasteEvaluationQuestionService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 
