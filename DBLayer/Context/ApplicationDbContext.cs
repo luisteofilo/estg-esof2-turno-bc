@@ -69,6 +69,7 @@ public partial class ApplicationDbContext : DbContext
         BuildRegions(modelBuilder);
         BuildGrapeTypes(modelBuilder);
         BuildWineGrapeTypeLinks(modelBuilder);
+        BuildInteraction(modelBuilder);
         base.OnModelCreating(modelBuilder);
         
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())

@@ -1,6 +1,5 @@
 using ESOF.WebApp.DBLayer.Entities;
 using Microsoft.EntityFrameworkCore;
-using Interaction = Microsoft.VisualBasic.Interaction;
 
 // ReSharper disable once CheckNamespace
 namespace ESOF.WebApp.DBLayer.Context
@@ -11,14 +10,14 @@ namespace ESOF.WebApp.DBLayer.Context
         {
             modelBuilder.Entity<Interaction>()
                 .HasOne(i => i.User)
-                .WithMany(w => w.WineGrapeTypeLinks)
-                .HasForeignKey(wgt => wgt.WineId)
+                .WithMany(u => u.Interactions)
+                .HasForeignKey(i => i.UserId)
                 .IsRequired(false); 
-
-            modelBuilder.Entity<WineGrapeTypeLink>()
-                .HasOne(wgt => wgt.GrapeType)
-                .WithMany(gt => gt.WineGrapeTypes)
-                .HasForeignKey(wgt => wgt.GrapeTypeId)
+            
+            modelBuilder.Entity<Interaction>()
+                .HasOne(i => i.Wine)
+                .WithMany(w => w.WineInteractions)
+                .HasForeignKey(i => i.WineId)
                 .IsRequired(false); 
         }
     }

@@ -4,6 +4,8 @@ namespace ESOF.WebApp.DBLayer.Entities
 {
     public class Interaction
     {
+        [Key]
+        public Guid InteractionLinkId { get; set; } 
         [Required]
         public Guid UserId { get; set; }
         

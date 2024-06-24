@@ -48,49 +48,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "Vinho",
-                columns: table => new
-                {
-                    VinhoId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Tipo = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Vinho", x => x.VinhoId);
-                });
-            
-            migrationBuilder.CreateTable(
-                name: "Interacao",
-                columns: table => new
-                {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    vinho_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    tipo_interacao = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Interacao", x => new { x.user_id, x.vinho_id });
-
-                    table.ForeignKey(
-                        name: "FK_Interacao_User_user_id",
-                        column: x => x.user_id,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-
-                    table.ForeignKey(
-                        name: "FK_Interacao_Vinho_vinho_id",
-                        column: x => x.vinho_id,
-                        principalTable: "Vinho",
-                        principalColumn: "VinhoId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            
-            
             
             migrationBuilder.CreateTable(
                 name: "RolePermissions",
@@ -174,13 +131,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-            
-            migrationBuilder.DropTable(
-                name: "Vinho");
-        
-            
-            migrationBuilder.DropTable(
-                name: "Interacao");
         }
     }
 }
