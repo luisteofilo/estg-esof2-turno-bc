@@ -49,7 +49,7 @@ public class TasteEvaluationController : ControllerBase
      * 
      */
     [HttpGet("{id}")]
-    public ActionResult<ResponseBrandDto> Get(Guid id)
+    public ActionResult<ResponseTasteEvaluationDto> Get(Guid id)
     {
         try
         {

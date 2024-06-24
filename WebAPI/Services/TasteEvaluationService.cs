@@ -8,15 +8,8 @@ using ESOF.WebApp.DBLayer.Entities;
 using ESOF.WebApp.DBLayer.Context;
 using Microsoft.EntityFrameworkCore;
 
-public class TasteEvaluationService
+public class TasteEvaluationService(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext _context;
-
-    public TasteEvaluationService(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     /**
      *
      * Get all taste evaluations.
@@ -28,7 +21,7 @@ public class TasteEvaluationService
     {
         try
         {
-            return _context.TasteEvaluations.Select(tasteEvaluation => new ResponseTasteEvaluationDto
+            return context.TasteEvaluations.Select(tasteEvaluation => new ResponseTasteEvaluationDto
             {
                 TasteEvaluationId = tasteEvaluation.TasteEvaluationId,
                 UserId = tasteEvaluation.UserId,
@@ -57,7 +50,7 @@ public class TasteEvaluationService
      */
     public ResponseTasteEvaluationDto Get(Guid id)
     {
-        var tasteEvaluation = _context.TasteEvaluations.Find(id);
+        var tasteEvaluation = context.TasteEvaluations.Find(id);
         if (tasteEvaluation == null)
         {
             throw new ArgumentException("Error: That taste evaluation does not exist!");
@@ -100,8 +93,8 @@ public class TasteEvaluationService
                 WineScore = createTasteEvaluationDto.WineScore
             };
 
-            _context.TasteEvaluations.Add(tasteEvaluation);
-            _context.SaveChanges();
+            context.TasteEvaluations.Add(tasteEvaluation);
+            context.SaveChanges();
 
             return new ResponseTasteEvaluationDto
             {
@@ -133,7 +126,7 @@ public class TasteEvaluationService
      */
     public ResponseTasteEvaluationDto Update(Guid id, UpdateTasteEvaluationDto updateTasteEvaluationDto)
     {
-        var tasteEvaluation = _context.TasteEvaluations.Find(id);
+        var tasteEvaluation = context.TasteEvaluations.Find(id);
 
         if (tasteEvaluation == null)
         {
@@ -148,7 +141,7 @@ public class TasteEvaluationService
         
         tasteEvaluation.WineScore = updateTasteEvaluationDto.WineScore;
 
-        _context.SaveChanges();
+        context.SaveChanges();
 
         return new ResponseTasteEvaluationDto
         {
@@ -172,19 +165,19 @@ public class TasteEvaluationService
      */
     public void Delete(Guid id)
     {
-        using (var transaction = _context.Database.BeginTransaction())
+        using (var transaction = context.Database.BeginTransaction())
         {
             try
             {
-                var tasteEvaluation = _context.Brands.Find(id);
+                var tasteEvaluation = context.TasteEvaluations.Find(id);
 
                 if (tasteEvaluation == null)
                 {
                     throw new ArgumentException("Error: That taste evaluation does not exist!");
                 }
 
-                tasteEvaluation.DeletedAt = DateTimeOffset.UtcNow; 
-                _context.SaveChanges();
+                context.TasteEvaluations.Remove(tasteEvaluation);
+                context.SaveChanges();
                 
                 // if everything is correct, just commit the transaction
                 transaction.Commit();
