@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using ESOF.WebApp.DBLayer.Helpers;
 
 #nullable disable
 
@@ -44,7 +45,23 @@ namespace ESOF.WebApp.DBLayer.Migrations
                 name: "IX_Interaction_WineId",
                 table: "Interaction",
                 column: "WineId");
+            
+            var adminUserId = Guid.NewGuid();
+            var normalUserId = Guid.NewGuid();
+            PasswordHelper.CreatePasswordHash("root", out byte[] adminPasswordHash, out byte[] adminPasswordSalt);
+            PasswordHelper.CreatePasswordHash("normal", out byte[] normalPasswordHash, out byte[] normalPasswordSalt);
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "UserId", "Email", "PasswordHash", "PasswordSalt" },
+                values: new object[,]
+                {
+                    { adminUserId, "root@example.com", adminPasswordHash, adminPasswordSalt },
+                    { normalUserId, "normal@example.com", normalPasswordHash, normalPasswordSalt }
+                });
         }
+        
+        
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
