@@ -1,6 +1,15 @@
-﻿<div>
+﻿@page "/Post"
+
+@using global::Helpers.ViewModels
+<div>
     <hr/>
-    <p>@feedpost.Creator.email</p>
-    <p>@feedpost.Text</p>
-    <p>^ v</p>
+    <p>@post.Creator.email</p>
+    <p>@post.Text</p>
+    <p></p>
 </div>
+
+@code
+{
+    [Parameter] 
+    public FeedPost post { get; set; }
+}

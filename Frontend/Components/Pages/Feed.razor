@@ -1,5 +1,6 @@
 ﻿@page "/Feed"
 @using Frontend.Helpers
+@using global::Helpers.ViewModels
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
@@ -12,6 +13,21 @@
 <div>
     @foreach (var p in _feedPosts.FeedPosts)
     {
-        <Post PostLine="p"/>
+        <Post postl="p"/>
     }
 </div>
+
+@code{
+    private FeedPost _newPost;
+    private FeedPostList _feedPosts;
+    protected override async Task OnInitializedAsync()
+    {
+        _feedPosts = await ApiHelper.GetFromApiAsync<FeedPostList>("api/Post/index");
+    }
+    
+    private void CreatePost()
+    {
+        
+    }
+
+}
