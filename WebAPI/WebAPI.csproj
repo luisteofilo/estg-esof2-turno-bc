@@ -30,4 +30,9 @@
       <ProjectReference Include="..\DBLayer\DBLayer.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="DtoClasses\EventParticipantDto.cs" />
+      <Compile Remove="DtoClasses\EventDto.cs" />
+    </ItemGroup>
+
 </Project>

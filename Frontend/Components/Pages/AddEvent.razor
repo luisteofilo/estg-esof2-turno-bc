@@ -1,0 +1,36 @@
+﻿@page "/add-event"
+@inject Frontend.Services.EventService EventService
+@inject NavigationManager NavigationManager
+@using WebAPI.DtoClasses 
+
+<PageTitle>Adicionar Evento</PageTitle>
+
+<h3>Adicionar Novo Evento</h3>
+
+<EditForm Model="newEvent" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Nome do Evento</label>
+        <InputText id="name" class="form-control" @bind-Value="newEvent.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label for="slug" class="form-label">Slug do Evento</label>
+        <InputText id="slug" class="form-control" @bind-Value="newEvent.Slug" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Adicionar</button>
+</EditForm>
+
+@code {
+    private CreateEventDto newEvent = new CreateEventDto();
+
+    private async Task HandleValidSubmit()
+    {
+        await EventService.AddEvent(newEvent);
+        NavigationManager.NavigateTo("/events");
+    }
+
+}

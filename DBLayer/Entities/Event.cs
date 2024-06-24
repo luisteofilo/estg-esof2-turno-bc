@@ -11,6 +11,7 @@ namespace ESOF.WebApp.DBLayer.Entities
         public Guid EventId { get; set; }
         
         [Required]
+        [StringLength(255)]
         public string Name { get; set; }
         
         [Required]
@@ -18,7 +19,11 @@ namespace ESOF.WebApp.DBLayer.Entities
         
         public bool BlindTasting { get; set; }
         
+        [Required]
+        [StringLength(255)]
+        public string Slug { get; set; }
+        
         public ICollection<Wine> Wines { get; set; }
-        public ICollection<Participant> Participants { get; set; }
+        public ICollection<EventParticipant> EventParticipants { get; set; }
     }
 }

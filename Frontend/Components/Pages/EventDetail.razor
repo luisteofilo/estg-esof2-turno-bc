@@ -1,0 +1,131 @@
+﻿@page "/events/{Slug}"
+@inject Frontend.Services.EventService EventService
+@inject IJSRuntime JSRuntime
+@using Frontend.DtoClasses
+@using Frontend.Helpers 
+@using ZXing
+@using ZXing.Common
+@using System.Drawing
+@using System.Drawing.Imaging
+@using System.IO
+
+<PageTitle>Event Detail</PageTitle>
+
+<h3>Event Detail</h3>
+
+@if (eventDto == null)
+{
+    <p><em>Event not found or error fetching event details.</em></p>
+}
+else
+{
+    <h4>@eventDto.Name</h4>
+    <p>ID: @eventDto.EventId</p>
+    <div>
+        <img src="@qrCodeImage" alt="Event QR Code" />
+        <p>URL: @qrCodeUrl</p>
+    </div>
+
+    <h4>Participants</h4>
+    <ul>
+        @foreach (var participant in participants)
+        {
+            <li>@participant.Email <button @onclick="() => RemoveParticipant(participant.EventParticipantId)">Remove</button></li>
+        }
+    </ul>
+    <input type="email" @bind="newParticipantEmail" placeholder="Enter email" />
+    <button @onclick="AddParticipant">Add Participant</button>
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; }
+    private EventDto eventDto;
+    private List<EventParticipantDto> participants;
+    private string qrCodeUrl;
+    private string qrCodeImage;
+    private string newParticipantEmail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        eventDto = await EventService.GetEventBySlug(Slug);
+        if (eventDto != null)
+        {
+            qrCodeUrl = GenerateQRCodeUrl(eventDto.EventId.ToString());
+            qrCodeImage = GenerateQRCodeImage(qrCodeUrl);
+            participants = await EventService.GetParticipants(eventDto.EventId);
+        }
+    }
+
+    private string GenerateQRCodeUrl(string eventId)
+    {
+        if (UserState.LoggedInUserId.HasValue)
+        {
+            return $"http://localhost:5295/api/events/register/{eventId}/{UserState.LoggedInUserId.Value}";
+        }
+        else
+        {
+            return "http://localhost:5295/login";
+        }
+    }
+
+    private string GenerateQRCodeImage(string url)
+    {
+        var writer = new BarcodeWriterPixelData
+        {
+            Format = BarcodeFormat.QR_CODE,
+            Options = new EncodingOptions
+            {
+                Height = 250,
+                Width = 250,
+                Margin = 1,
+                PureBarcode = true
+            }
+        };
+
+        var pixelData = writer.Write(url);
+
+        using (var bitmap = new Bitmap(pixelData.Width, pixelData.Height, PixelFormat.Format32bppRgb))
+        {
+            var bitmapData = bitmap.LockBits(new Rectangle(0, 0, pixelData.Width, pixelData.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
+            try
+            {
+                System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, bitmapData.Scan0, pixelData.Pixels.Length);
+            }
+            finally
+            {
+                bitmap.UnlockBits(bitmapData);
+            }
+
+            using (var memoryStream = new MemoryStream())
+            {
+                bitmap.Save(memoryStream, ImageFormat.Png);
+                return $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}";
+            }
+        }
+    }
+
+    private async Task AddParticipant()
+    {
+        // Lookup the user ID by email (you would need an API endpoint for this)
+        var userId = await LookupUserIdByEmail(newParticipantEmail);
+        if (userId != Guid.Empty)
+        {
+            await EventService.AddParticipant(eventDto.EventId, userId);
+            participants = await EventService.GetParticipants(eventDto.EventId);
+        }
+    }
+
+    private async Task RemoveParticipant(Guid participantId)
+    {
+        await EventService.RemoveParticipant(eventDto.EventId, participantId);
+        participants = await EventService.GetParticipants(eventDto.EventId);
+    }
+
+    private async Task<Guid> LookupUserIdByEmail(string email)
+    {
+        // Implement this method to call an API endpoint to get the user ID by email
+        // For now, we'll return a dummy value
+        return Guid.NewGuid();
+    }
+}
