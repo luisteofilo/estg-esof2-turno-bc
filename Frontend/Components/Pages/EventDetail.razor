@@ -2,11 +2,12 @@
 @inject Services.EventService EventService
 @inject IJSRuntime JSRuntime
 @using Frontend.DtoClasses
-@using QRCoder
-@using System.Drawing
+@using System.Drawing 
+@using System.Drawing.Imaging
 @using Frontend.Helpers
 @using ZXing
 @using ZXing.Common
+
 
 <PageTitle>Event Detail</PageTitle>
 
@@ -20,29 +21,11 @@ else
 {
     <h4>@eventDto.Name</h4>
     <p>ID: @eventDto.EventId</p>
-    <button @onclick="ShowQRModal" class="btn btn-primary">Show QR Code</button>
-}
-
-<!-- Modal for QR Code -->
-<div class="modal fade" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="qrModalLabel">Event QR Code</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
+    <div>
         <img src="@qrCodeImage" alt="Event QR Code" />
         <p>URL: @qrCodeUrl</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
     </div>
-  </div>
-</div>
+}
 
 @code {
     [Parameter]
@@ -61,21 +44,15 @@ else
         }
     }
 
-    private async Task ShowQRModal()
-    {
-        var modal = await JSRuntime.InvokeAsync<IJSObjectReference>("bootstrap.Modal.getOrCreateInstance", "#qrModal");
-        await modal.InvokeVoidAsync("show");
-    }
-
     private string GenerateQRCodeUrl(string eventId)
     {
         if (UserState.LoggedInUserId.HasValue)
         {
-            return $"http://localhost:5000/api/events/register/{eventId}/{UserState.LoggedInUserId.Value}";
+            return $"http://localhost:5295/api/events/register/{eventId}/{UserState.LoggedInUserId.Value}";
         }
         else
         {
-            return "http://localhost:5000/login";
+            return "http://localhost:5295/login";
         }
     }
 
@@ -98,10 +75,10 @@ else
         var pixelData = writer.Write(url);
 
         // Convert pixel data to Bitmap and then to a Base64 string
-        using (var bitmap = new System.Drawing.Bitmap(pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb))
+        using (var bitmap = new Bitmap(pixelData.Width, pixelData.Height, PixelFormat.Format32bppRgb))
         {
             // Lock the bits of the bitmap
-            var bitmapData = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, pixelData.Width, pixelData.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            var bitmapData = bitmap.LockBits(new Rectangle(0, 0, pixelData.Width, pixelData.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
             try
             {
                 // Transfer the byte data to the bitmap
@@ -114,12 +91,11 @@ else
             }
 
             // Convert to base64 string
-            using (var memoryStream = new System.IO.MemoryStream())
+            using (var memoryStream = new MemoryStream())
             {
-                bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                bitmap.Save(memoryStream, ImageFormat.Png);
                 return $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}";
             }
         }
     }
-
 }
