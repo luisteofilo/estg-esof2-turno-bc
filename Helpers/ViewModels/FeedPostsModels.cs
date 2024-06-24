@@ -1,25 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Helpers.ViewModels;
 
-public enum FeedPostVisibilityType
-{
-    Public,
-    Followers
-}
-public class FeedPostHashtag
-{
-    public Guid HashtagId { get; set; }
-
-    public string Name { get; set; }
-    
-    public int NumPosts { get; set; } = 0;
-    public List<FeedPost> Posts { get; set; }
-}
-public class FeedPostList
-{
-    public IEnumerable<FeedPost> FeedPosts { get; set; }
-}
+[TypeConverter(typeof(FeedPostConverter))]
 public class FeedPost
 {
     public Guid PostId { get; set; } 
@@ -44,6 +28,28 @@ public class FeedPost
     
     public IEnumerable<Tuple<FeedPostUser, FeedPostUser>> ShareUsers { get; set; }
 }
+
+public enum FeedPostVisibilityType
+{
+    Public,
+    Followers
+}
+public class FeedPostHashtag
+{
+    public Guid HashtagId { get; set; }
+
+    public string Name { get; set; }
+    
+    public int NumPosts { get; set; } = 0;
+    public List<FeedPost> Posts { get; set; }
+}
+
+
+public class FeedPostList
+{
+    public List<FeedPost> Posts { get; set; } = new List<FeedPost>();
+}
+
 
 public class FeedPostMedia
 {

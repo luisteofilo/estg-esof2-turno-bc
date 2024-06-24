@@ -5,15 +5,15 @@ namespace Frontend.Components.Pages;
 
 public partial class Feed
 {
-    private FeedPost _newPost;
-    private FeedPostList _feedPosts;
+    private FeedPost _newPost = new FeedPost();
+    private FeedPostList _feedPosts = new FeedPostList();
     protected override async Task OnInitializedAsync()
     {
-        _feedPosts = await ApiHelper.GetFromApiAsync<FeedPostList>("api/Post/index");
+        _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
     }
     
-    private void CreatePost()
+    private async Task CreatePost()
     {
-        
+        await ApiHelper.PostToApiAsync<FeedPost>("api/Post/create", _newPost);
     }
 }
