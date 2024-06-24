@@ -1,0 +1,43 @@
+.post {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.post-info {
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+.post-author {
+    font-weight: bold;
+}
+
+.post-meta {
+    font-size: 0.85em;
+    color: #777;
+}
+
+.post-menu {
+    position: relative;
+}
+
+.menu-button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+}

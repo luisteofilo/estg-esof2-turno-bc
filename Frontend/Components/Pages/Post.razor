@@ -4,25 +4,24 @@
 
 <div class="post">
     <div class="post-header">
-        @* <img src="@ProfileImageUrl" alt="Profile Image" class="profile-image" /> *@
+         <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
         <div class="post-info">
             <div class="post-author">@PostLine.Creator</div>
             <div class="post-meta">@PostLine.DateTimePost · @PostLine.VisibilityType</div>
         </div>
         <div class="post-menu">
-            <button class="menu-button">⋮</button>
+            <button class="menu-button">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </button>
         </div>
     </div>
     <div class="post-content">
         @PostLine.Text
     </div>
 </div>
-<div>
-    <hr/>
-    <p>@PostLine.Creator.email</p>
-    <p>@PostLine.Text</p>
-    <p></p>
-</div>
+
 
 @code{
   
