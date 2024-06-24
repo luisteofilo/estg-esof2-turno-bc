@@ -1,5 +1,6 @@
 ﻿@page "/Feed"
 @using Frontend.Helpers
+@using global::Helpers.ViewModels
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
@@ -24,3 +25,18 @@
         }
     }
 </div>
+
+@code
+{
+    private FeedPost _newPost = new FeedPost();
+    private FeedPostList _feedPosts = new FeedPostList();
+    protected override async Task OnInitializedAsync()
+    {
+        _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
+    }
+    
+    private async Task CreatePost()
+    {
+        await ApiHelper.PostToApiAsync<FeedPost>("api/Post/create", _newPost);
+    }
+}
