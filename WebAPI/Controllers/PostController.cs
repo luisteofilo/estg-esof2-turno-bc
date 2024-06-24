@@ -24,11 +24,11 @@ namespace ESOF.WebApp.WebAPI.Controllers
         }
 
         [HttpGet("index")]
-        public ActionResult<List<FeedPostDto>> GetAllPosts()
+        public async Task<ActionResult<List<FeedPostDto>>> GetAllPosts()
         {
             try
             {
-                return Ok(_postService.GetAllPosts());
+                return Ok(await _postService.GetAllPosts());
             }
             catch (Exception ex)
             {
@@ -37,11 +37,11 @@ namespace ESOF.WebApp.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<FeedPostDto> GetPostById(Guid id)
+        public async Task<ActionResult<FeedPostDto>> GetPostById(Guid id)
         {
             try
             {
-                return Ok(_postService.GetPostById(id));
+                return Ok(await _postService.GetPostById(id));
             }
             catch (ArgumentException ex)
             {
@@ -50,11 +50,11 @@ namespace ESOF.WebApp.WebAPI.Controllers
         }
 
         [HttpPost("create")]
-        public ActionResult<FeedPostDto> CreatePost([FromBody] CreateFeedPostDto createPostDto)
+        public async Task<ActionResult<FeedPostDto>> CreatePost([FromBody] CreateFeedPostDto createPostDto)
         {
             try
             {
-                var createdPost = _postService.CreatePost(createPostDto);
+                var createdPost = await _postService.CreatePost(createPostDto);
                 return CreatedAtAction(nameof(GetPostById), new { id = createdPost.PostId }, createdPost);
             }
             catch (Exception ex)
@@ -64,11 +64,11 @@ namespace ESOF.WebApp.WebAPI.Controllers
         }
 
         [HttpPut("{id}/update")]
-        public ActionResult<FeedPostDto> UpdatePost(Guid id, [FromBody] FeedPostDto updatePostDto)
+        public async Task<ActionResult<FeedPostDto>> UpdatePost(Guid id, [FromBody] FeedPostDto updatePostDto)
         {
             try
             {
-                return Ok(_postService.UpdatePost(id, updatePostDto));
+                return Ok(await _postService.UpdatePost(id, updatePostDto));
             }
             catch (ArgumentException ex)
             {
@@ -81,11 +81,11 @@ namespace ESOF.WebApp.WebAPI.Controllers
         }
 
         [HttpDelete("{id}/delete")]
-        public ActionResult DeletePost(Guid id)
+        public async Task<ActionResult> DeletePost(Guid id)
         {
             try
             {
-                _postService.DeletePost(id);
+                await _postService.DeletePost(id);
                 return NoContent();
             }
             catch (Exception ex)
