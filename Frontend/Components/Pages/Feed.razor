@@ -18,8 +18,8 @@
 </div>
 
 @code{
-    private FeedPost _newPost;
-    private FeedPostList _feedPosts;
+    private FeedPost _newPost = new FeedPost();
+    private FeedPostList _feedPosts = new FeedPostList();
     protected override async Task OnInitializedAsync()
     {
         _feedPosts = await ApiHelper.GetFromApiAsync<FeedPostList>("api/Post/index");
