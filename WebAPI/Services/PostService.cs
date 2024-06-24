@@ -21,7 +21,6 @@ public class PostService
     {
         try
         {
-            throw new Exception("An error occurred while retrieving posts.");
             return await _context.Posts.Select(p => new FeedPostDto
             {
                 PostId = p.PostId,
