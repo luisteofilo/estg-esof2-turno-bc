@@ -17,17 +17,17 @@ public class PostService
         _context = context;
     }
 
-    public List<FeedPostDto> GetAllPosts()
+    public async Task<List<FeedPostDto>> GetAllPosts()
     {
         try
         {
-            return _context.Posts.Select(p => new FeedPostDto
+            return await _context.Posts.Select(p => new FeedPostDto
             {
                 PostId = p.PostId,
                 Text = p.Text,
                 CreatorId = p.CreatorId,
                 DateTimePost = p.DateTimePost
-            }).ToList();
+            }).ToListAsync();
         }
         catch (Exception ex)
         {
@@ -35,9 +35,9 @@ public class PostService
         }
     }
 
-    public FeedPostDto GetPostById(Guid id)
+    public async Task<FeedPostDto> GetPostById(Guid id)
     {
-        var post = _context.Posts.Find(id);
+        var post = await _context.Posts.FindAsync(id);
         if (post == null)
             throw new ArgumentException("Post not found.");
         
@@ -50,7 +50,7 @@ public class PostService
         };
     }
 
-    public FeedPostDto CreatePost(CreateFeedPostDto createFeedPostDto)
+    public async Task<FeedPostDto> CreatePost(CreateFeedPostDto createFeedPostDto)
     {
         try
         {
@@ -62,7 +62,7 @@ public class PostService
             };
 
             _context.Posts.Add(post);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return new FeedPostDto
             {
@@ -78,7 +78,7 @@ public class PostService
         }
     }
 
-    public FeedPostDto UpdatePost(Guid id, FeedPostDto updatePostDto)
+    public async Task<FeedPostDto> UpdatePost(Guid id, FeedPostDto updatePostDto)
     {
         var post = _context.Posts.Find(id);
 
@@ -87,7 +87,7 @@ public class PostService
         
         post.Text = updatePostDto.Text?? post.Text;
 
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return new FeedPostDto
         {
@@ -98,7 +98,7 @@ public class PostService
         };
     }
 
-    public void DeletePost(Guid id)
+    public async Task DeletePost(Guid id)
     {
         using (var transaction = _context.Database.BeginTransaction())
         {
@@ -109,12 +109,13 @@ public class PostService
                 if (post== null)
                     throw new ArgumentException("Post not found.");
 
-                _context.SaveChanges();
-                transaction.Commit();
+                _context.Posts.Remove(post);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 throw ex;
             }
         }
