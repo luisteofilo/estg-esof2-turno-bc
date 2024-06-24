@@ -1,4 +1,4 @@
-﻿using Frontend.Helpers;
+using Frontend.Helpers;
 using Helpers.ViewModels;
 
 namespace Frontend.Components.Pages;
