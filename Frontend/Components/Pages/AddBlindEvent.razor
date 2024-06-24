@@ -1,0 +1,52 @@
+﻿@page "/AddBlindEvent"
+@using Frontend.Helpers
+@using ESOF.WebApp.WebAPI.DtoClasses
+@inject ApiHelper ApiHelper
+@inject NavigationManager Navigation
+
+<PageTitle>Adicionar Blind Event</PageTitle>
+
+<h1>Adicionar Blind Event</h1>
+
+<EditForm Model="_blindEvent" OnValidSubmit="HandleValidSubmit" FormName="addBlindEventForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <InputText id="name" class="form-control" @bind-Value="_blindEvent.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label for="eventDate" class="form-label">Event Date</label>
+        <InputDate id="eventDate" class="form-control" @bind-Value="_blindEvent.EventDate" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Adicionar</button>
+</EditForm>
+
+@code {
+    private CreateBlindEventDto _blindEvent = new CreateBlindEventDto();
+
+    protected override void OnInitialized()
+    {
+        _blindEvent.OrganizerId = UserState.LoggedInUserId ?? Guid.Empty;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            Console.WriteLine("Submitting form");
+            Console.WriteLine($"Name: {_blindEvent.Name}");
+            Console.WriteLine($"EventDate: {_blindEvent.EventDate}");
+            Console.WriteLine($"OrganizerId: {_blindEvent.OrganizerId}");
+
+            await ApiHelper.PostToApiAsync("api/BlindEvent/store", _blindEvent);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}

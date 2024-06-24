@@ -1,26 +1,39 @@
-namespace Frontend.Helpers;
-
-public class ApiHelper
+namespace Frontend.Helpers
 {
-    private readonly HttpClient _httpClient;
-
-    public ApiHelper(HttpClient httpClient)
+    public class ApiHelper
     {
-        _httpClient = httpClient;
-    }
+        private readonly HttpClient _httpClient;
 
-    public async Task<T?> GetFromApiAsync<T>(string url)
-    {
-        try
+        public ApiHelper(HttpClient httpClient)
         {
-            Console.WriteLine($"Requesting URL: {_httpClient.BaseAddress}{url}"); // Adicione esta linha para depuração
-            var response = await _httpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
+            _httpClient = httpClient;
         }
-        catch (HttpRequestException e)
+
+        public async Task<T?> GetFromApiAsync<T>(string url)
         {
-            throw new ApplicationException($"Error fetching data from {url}: {e.Message}");
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<T>();
+            }
+            catch (HttpRequestException e)
+            {
+                throw new ApplicationException($"Error fetching data from {url}: {e.Message}");
+            }
+        }
+
+        public async Task PostToApiAsync<T>(string url, T data)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(url, data);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException e)
+            {
+                throw new ApplicationException($"Error posting data to {url}: {e.Message}");
+            }
         }
     }
 }

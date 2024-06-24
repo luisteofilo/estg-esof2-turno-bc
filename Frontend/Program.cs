@@ -8,9 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddAntiforgery();
+
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileHelper.GetString("API_URL")) });
 builder.Services.AddScoped<ApiHelper>();
-builder.Services.AddHttpClient<ApiHelper>();
+
 
 
 var app = builder.Build();
@@ -26,6 +28,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+app.UseRouting();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
