@@ -1,4 +1,5 @@
 ﻿using ESOF.WebApp.WebAPI.DtoClasses;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace ESOF.WebApp.WebAPI.Services;
 using System;
@@ -58,10 +59,26 @@ public class PostService
             {
                 Text = createFeedPostDto.Text,
                 CreatorId = createFeedPostDto.CreatorId,
-                DateTimePost = DateTimeOffset.UtcNow
+                DateTimePost = DateTimeOffset.UtcNow,
+                VisibilityType = createFeedPostDto.VisibilityType
             };
-
             _context.Posts.Add(post);
+            
+            if (createFeedPostDto.Media is not null)
+            {
+                foreach (var m in createFeedPostDto.Media)
+                {
+                    var media = new PostMedia()
+                    {
+                        Data = m.Data,
+                        FileExtension = m.FileExtension,
+                        Filename = m.Filename,
+                        MediaPostId = post.PostId,
+                    };
+                    _context.PostMedia.Add(media);
+                }
+            }
+            
             await _context.SaveChangesAsync();
 
             return new FeedPostDto
@@ -69,7 +86,8 @@ public class PostService
                 PostId = post.PostId,
                 Text = post.Text,
                 CreatorId = post.CreatorId,
-                DateTimePost = post.DateTimePost
+                DateTimePost = post.DateTimePost,
+                VisibilityType = post.VisibilityType
             };
         }
         catch (DbUpdateException ex)
