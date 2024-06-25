@@ -25,12 +25,13 @@ public class TasteQuestionService(ApplicationDbContext context)
             {
                 TasteQuestionId = tasteQuestion.TasteQuestionId,
                 Question = tasteQuestion.Question,
-                TasteQuestionTypeId = tasteQuestion.TasteQuestionTypeId
+                TasteQuestionTypeId = tasteQuestion.TasteQuestionTypeId,
+                EventId = tasteQuestion.EventId
             }).ToList();
         }
         catch (Exception ex)
         {
-            throw new Exception("Error: An error occurred while retrieving taste questions: " + ex.Message);
+            throw new Exception("Error: An error occurred while retrieving taste questions: " + ex.Message + "(" + ex.InnerException + ")");
         }
     }
 
@@ -55,7 +56,8 @@ public class TasteQuestionService(ApplicationDbContext context)
         {
             TasteQuestionId = tasteQuestion.TasteQuestionId,
             Question = tasteQuestion.Question,
-            TasteQuestionTypeId = tasteQuestion.TasteQuestionTypeId
+            TasteQuestionTypeId = tasteQuestion.TasteQuestionTypeId,
+            EventId = tasteQuestion.EventId
         };
     }
 
@@ -75,7 +77,8 @@ public class TasteQuestionService(ApplicationDbContext context)
             var tasteQuestion = new TasteQuestion
             {
                 Question = createTasteQuestionDto.Question,
-                TasteQuestionTypeId = createTasteQuestionDto.TasteQuestionTypeId
+                TasteQuestionTypeId = createTasteQuestionDto.TasteQuestionTypeId,
+                EventId = createTasteQuestionDto.EventId
             };
 
             context.TasteQuestions.Add(tasteQuestion);
@@ -85,12 +88,13 @@ public class TasteQuestionService(ApplicationDbContext context)
             {
                 TasteQuestionId = tasteQuestion.TasteQuestionId,
                 Question = tasteQuestion.Question,
-                TasteQuestionTypeId = tasteQuestion.TasteQuestionTypeId
+                TasteQuestionTypeId = tasteQuestion.TasteQuestionTypeId,
+                EventId = tasteQuestion.EventId
             };
         }
         catch (DbUpdateException ex)
         {
-            throw new Exception("Error: An error occurred while creating a taste question: " + ex.Message);
+            throw new Exception("Error: An error occurred while creating a taste question: " + ex.Message + "(" + ex.InnerException + ")");
         }
     }
 
@@ -115,6 +119,7 @@ public class TasteQuestionService(ApplicationDbContext context)
         
         tasteQuestion.Question = updateTasteQuestionDto.Question;
         tasteQuestion.TasteQuestionTypeId = updateTasteQuestionDto.TasteQuestionTypeId;
+        tasteQuestion.EventId = updateTasteQuestionDto.EventId;
 
         context.SaveChanges();
 
@@ -122,7 +127,8 @@ public class TasteQuestionService(ApplicationDbContext context)
         {
             TasteQuestionId = tasteQuestion.TasteQuestionId,
             Question = tasteQuestion.Question,
-            TasteQuestionTypeId = tasteQuestion.TasteQuestionTypeId
+            TasteQuestionTypeId = tasteQuestion.TasteQuestionTypeId,
+            EventId = tasteQuestion.EventId
         };
     }
 
@@ -156,7 +162,7 @@ public class TasteQuestionService(ApplicationDbContext context)
             {
                 transaction.Rollback();
                 
-                throw new Exception("Error: An error occurred while trying to delete the taste question: " + ex.Message);
+                throw new Exception("Error: An error occurred while trying to delete the taste question: " + ex.Message + "(" + ex.InnerException + ")");
             }
         }
     }
