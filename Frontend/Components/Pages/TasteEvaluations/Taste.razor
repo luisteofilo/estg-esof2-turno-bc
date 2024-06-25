@@ -1,10 +1,12 @@
-@page "/Taste"
+@page "/taste"
 @using Frontend.DtoClasses
 @using Frontend.Helpers
 @using Frontend.Services
 @attribute [StreamRendering]
 @inject Frontend.Services.TasteQuestionService TasteQuestionService
+@inject Frontend.Services.EventService EventService
 @inject ApiHelper ApiHelper
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 
 <PageTitle>Wine Tasting</PageTitle>
@@ -25,57 +27,60 @@
 
 <hr class="hr" />
 
-<div class="alert alert-danger d-flex justify-content-between" role="alert">
-    <p class="mb-0">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-        <span>ERROR_MESSAGE_HERE</span>
-    </p>
+<p>What do you want to do?</p>
+
+<div class="d-flex gap-2 justify-content-start">
+    <div class="card w-100">
+        <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll"><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg> Evaluations <span class="badge text-bg-warning">event-based</span>
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                Here you'll be able to:
+                <ul>
+                    <li>Create a form for a user to evaluate a wine</li>
+                    <li>Update a question type</li>
+                    <li>Delete a question type</li>
+                </ul>
+            </div>
+            <a href="taste/evaluations" class="btn btn-primary w-100">Go to questions page</a>
+        </div>
+    </div>
+    <div class="card w-100">
+        <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-question"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg> Questions <span class="badge text-bg-warning">event-based</span>
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                Here you'll be able to:
+                <ul>
+                    <li>Create a question</li>
+                    <li>Update a question</li>
+                    <li>Delete a question</li>
+                </ul>
+            </div>
+            <a href="taste/questions" class="btn btn-primary w-100">Go to questions page</a>
+        </div>
+    </div>
+    <div class="card w-100">
+        <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-pen"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5.5"/><path d="M4 13.5V6a2 2 0 0 1 2-2h2"/><path d="M13.378 15.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg> Question Types
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                Here you'll be able to:
+                <ul>
+                    <li>Create a question type</li>
+                    <li>Update a question type</li>
+                    <li>Delete a question type</li>
+                </ul>
+            </div>
+            <a href="taste/questions/types" class="btn btn-primary w-100">Go to question types page</a>
+        </div>
+    </div>
 </div>
 
-<h5>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-question"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-    <span>Questions</span>
-</h5>
-<p>Choose which questions will be appearing in the forms (by event)</p>
-
-<div class="table-responsive">
-    <table id="tasteTable" class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>Column 1</th>
-                <th>Column 2</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                @foreach (var question in _tasteQuestions)
-                {
-                    <tr>
-                        <td>@question.Question</td>
-                    </tr>
-                }
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<script>
-    $(function() {
-        $(document).ready(function() {
-            table = $('#tasteTable').DataTable({
-                paging: true
-            });
-        });
-    });
-</script>
-
-@code {
-    // TODO: Check if user is an administrator or a regular user
+@code
+{
     
-    private List<TasteQuestionDto> _tasteQuestions;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _tasteQuestions = await TasteQuestionService.Get();
-    }
 }
