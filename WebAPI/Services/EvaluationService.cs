@@ -152,6 +152,18 @@ namespace ESOF.WebApp.WebAPI.Services
                         throw new ArgumentException("Blind event not found.");
                     }
 
+                    // Check if evaluation already exists
+                    var existingEvaluation = _context.Evaluations.FirstOrDefault(e =>
+                        e.ParticipantId == createEvaluationDto.ParticipantId &&
+                        e.WineId == createEvaluationDto.WineId &&
+                        e.BlindEventId == createEvaluationDto.BlindEventId);
+
+                    if (existingEvaluation != null)
+                    {
+                        throw new ArgumentException(
+                            "Evaluation already exists for this wine and participant in the event.");
+                    }
+
                     var evaluation = new Evaluation
                     {
                         ParticipantId = createEvaluationDto.ParticipantId,

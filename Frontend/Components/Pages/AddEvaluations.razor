@@ -1,0 +1,102 @@
+﻿@page "/AddEvaluations/{eventId:guid}"
+@using Frontend.Helpers
+@using ESOF.WebApp.WebAPI.DtoClasses
+@rendermode InteractiveServer
+@inject ApiHelper ApiHelper
+@inject NavigationManager Navigation
+
+<PageTitle>Adicionar Avaliação</PageTitle>
+
+<h1>Adicionar Avaliação</h1>
+
+@if (_wines == null)
+{
+    <p>Loading wines...</p>
+}
+else if (_wines.Count == 0)
+{
+    <p>No wines available to evaluate.</p>
+}
+else
+{
+    <div class="form-container">
+        <label for="wineId" class="form-label">Wine</label>
+        <select class="form-control" id="wineId" @bind="wineId">
+            @foreach (var wine in _wines)
+            {
+                <option value="@wine.WineId">Wine @(_wines.IndexOf(wine) + 1)</option> <!-- Use an anonymized identifier -->
+            }
+        </select>
+        
+        <label for="grade" class="form-label">Grade</label>
+        <input type="number" class="form-control" id="grade" @bind="grade" min="1" max="100" />
+        
+        <button class="btn btn-primary" @onclick="AddEvaluation">Add Evaluation</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid EventId { get; set; }
+
+    private List<ResponseWineDto> _wines = new List<ResponseWineDto>();
+    private Guid wineId;
+    private int grade;
+    private Guid participantId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch wines and the current participant
+        var participant = await ApiHelper.GetFromApiAsync<ResponseParticipantDto>($"api/Participant/get-by-user-and-event/{UserState.LoggedInUserId}/{EventId}");
+        if (participant != null)
+        {
+            participantId = participant.ParticipantId;
+        }
+
+        // Fetch wines that are part of the event but not yet evaluated by this participant
+        var participantWines = await ApiHelper.GetFromApiAsync<List<ResponseParticipantWineDto>>($"api/ParticipantWine/index");
+        var winesInEvent = participantWines.Where(pw => pw.BlindEventId == EventId).Select(pw => pw.Wine).ToList();
+        
+        var evaluations = await ApiHelper.GetFromApiAsync<List<ResponseEvaluationDto>>($"api/Evaluation/index");
+        var evaluatedWineIds = evaluations.Where(e => e.BlindEventId == EventId && e.ParticipantId == participantId).Select(e => e.WineId).ToHashSet();
+        
+        _wines = winesInEvent.Where(w => !evaluatedWineIds.Contains(w.WineId)).ToList();
+    }
+
+    private async Task AddEvaluation()
+    {
+        try
+        {
+            var evaluation = new CreateEvaluationDto
+            {
+                ParticipantId = participantId,
+                WineId = wineId,
+                BlindEventId = EventId,
+                Grade = grade
+            };
+
+            var jsonContent = System.Text.Json.JsonSerializer.Serialize(evaluation);
+            Console.WriteLine($"Generated JSON: {jsonContent}");
+            
+            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+            Console.WriteLine($"Content-Type being sent: {content.Headers.ContentType}");
+
+            var response = await ApiHelper.PostToApiAsync("api/Evaluation/store", content);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Evaluation added successfully!");
+                Navigation.NavigateTo($"/BlindEvent");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to add evaluation. Status code: {response.StatusCode}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response content: {responseContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}
