@@ -1,8 +1,28 @@
-namespace ESOF.WebApp.DBLayer.Entities;
+// DBLayer/Entities/Event.cs
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-public class Event
+namespace ESOF.WebApp.DBLayer.Entities
 {
-    public Guid EventId { get; set; }
-    public string EventName { get; set; }
-    public ICollection<TasteEvaluation> TasteEvaluations { get; set; }
+    public class Event
+    {
+        [Key]
+        public Guid EventId { get; set; }
+        
+        [Required]
+        public string Name { get; set; }
+        
+        [Required]
+        public DateTime Date { get; set; }
+        
+        public bool BlindTasting { get; set; }
+        
+        public ICollection<Wine> Wines { get; set; }
+        public ICollection<Participant> Participants { get; set; }
+        public ICollection<TasteEvaluation> TasteEvaluations { get; set; }
+        public ICollection<TasteQuestion> TasteQuestions { get; set; }
+    }
+
+    
 }

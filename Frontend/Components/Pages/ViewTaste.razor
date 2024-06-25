@@ -1,4 +1,4 @@
-﻿@page "/viewTaste"
+﻿@page "/viewTaste/{eventId:guid}"
 @using Frontend.Helpers
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
@@ -6,10 +6,17 @@
 <PageTitle>View Tastes</PageTitle>
 
 <h1>View Tastes</h1>
+
 @if (_wines == null)
 {
     <p>
         <em>Loading...</em>
+    </p>
+}
+else if (_wines.Length == 0)
+{
+    <p>
+        <em>No tastings have been conducted.</em>
     </p>
 }
 else
@@ -27,38 +34,171 @@ else
         <tbody>
         @for (int i = 0; i < _wines.Length; i++)
         {
-            <tr>
-                <td>@(i + 1)</td>
-                <td>@_wines[i].WineName</td>
-                <td>@_wines[i].AverageScore</td>
-            </tr>
+        <tr>
+            <td>@(i + 1)</td>
+            <td>@_wines[i].WineName</td>
+            <td>@_wines[i].AverageScore</td>
+        </tr>
         }
         </tbody>
     </table>
 }
 
+@if (_yesNoQuestions == null && _multipleChoiceQuestions == null)
+{
+    <p>
+        <em>Loading questions...</em>
+    </p>
+}
+else
+{
+    @if ((_yesNoQuestions == null || _yesNoQuestions.Length == 0) && (_multipleChoiceQuestions == null || _multipleChoiceQuestions.Length == 0))
+    {
+        <p>
+            <em>No questions found for this event.</em>
+        </p>
+    }
+    else
+    {
+        @if (_yesNoQuestions != null && _yesNoQuestions.Length > 0)
+        {
+            <h2>Yes/No Question Results</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Yes (%)</th>
+                    <th>No (%)</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var question in _yesNoQuestions)
+                {
+                <tr>
+                    <td>@question.Question</td>
+                    <td>@question.YesPercentage</td>
+                    <td>@question.NoPercentage</td>
+                </tr>
+                }
+                </tbody>
+            </table>
+        }
+
+        @if (_multipleChoiceQuestions != null && _multipleChoiceQuestions.Length > 0)
+        {
+            <h2>Multiple Choice Question Results</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Options</th>
+                    <th>Counts</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var question in _multipleChoiceQuestions)
+                {
+                    <tr>
+                        <td>@question.Question</td>
+                        <td>
+                            <ul>
+                                @foreach (var option in question.Options)
+                                {
+                                <li>@option.OptionText: @option.CountOption</li>
+                                }
+                            </ul>
+                        </td>
+                        <td>@question.TotalResponses</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    }
+}
+
 @code {
+    [Parameter]
+    public Guid eventId { get; set; }
+
     private Wine[]? _wines;
     private Wine bestWine;
     private Wine worstWine;
+    private QuestionResult[]? _yesNoQuestions;
+    private QuestionResultWithOptions[]? _multipleChoiceQuestions;
 
     protected override async Task OnInitializedAsync()
     {
-        var wineData = await ApiHelper.GetFromApiAsync<Wine[]>("wines/average-ratings");
+        await LoadWineData();
+        await LoadQuestionData();
+    }
+
+    private async Task LoadWineData()
+    {
+        var wineData = await ApiHelper.GetFromApiAsync<Wine[]>($"wines/average-ratings/{eventId}");
 
         if (wineData != null && wineData.Any())
         {
             _wines = wineData.OrderByDescending(w => w.AverageScore).ToArray();
-            bestWine = _wines.Last();
-            worstWine = _wines.First();
+            bestWine = _wines.First();
+            worstWine = _wines.Last();
+        }
+        else
+        {
+            _wines = Array.Empty<Wine>();
+        }
+    }
+
+    private async Task LoadQuestionData()
+    {
+        var yesNoQuestionData = await ApiHelper.GetFromApiAsync<QuestionResult[]>($"questions/yesno-results/{eventId}");
+
+        if (yesNoQuestionData != null && yesNoQuestionData.Any())
+        {
+                _yesNoQuestions = yesNoQuestionData;
+        }
+        else
+        {
+            _yesNoQuestions = Array.Empty<QuestionResult>();
+        }
+
+        var multipleChoiceQuestionData = await ApiHelper.GetFromApiAsync<QuestionResultWithOptions[]>($"questions/multiple-choice-results/{eventId}");
+
+        if (multipleChoiceQuestionData != null && multipleChoiceQuestionData.Any())
+        {
+            _multipleChoiceQuestions = multipleChoiceQuestionData;
+        }
+        else
+        {
+            _multipleChoiceQuestions = Array.Empty<QuestionResultWithOptions>();
         }
     }
 
     public class Wine
     {
-        public string WineId { get; set; }
+        public Guid WineId { get; set; }
         public string WineName { get; set; }
         public double AverageScore { get; set; }
     }
 
+    public class QuestionResult
+    {
+        public Guid QuestionId { get; set; }
+        public string Question { get; set; }
+        public double YesPercentage { get; set; }
+        public double NoPercentage { get; set; }
+    }
+
+    public class QuestionResultWithOptions : QuestionResult
+    {
+        public List<OptionCount> Options { get; set; }
+        public int TotalResponses { get; set; }
+    }
+
+    public class OptionCount
+    {
+        public Guid OptionId { get; set; }
+        public string OptionText { get; set; }
+        public int CountOption { get; set; }
+    }
 }

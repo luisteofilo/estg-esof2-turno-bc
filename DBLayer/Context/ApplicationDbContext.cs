@@ -44,8 +44,16 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
     public DbSet<TasteEvaluation> TasteEvaluations { get; set; }
+    public DbSet<TasteQuestion> TasteQuestions { get; set; }
+    public DbSet<TasteQuestionsType> TasteQuestionsTypes { get; set; }
+    public DbSet<TasteEvaluationQuestion> TasteEvaluationQuestions { get; set; }
     public DbSet<Wine> Wines { get; set; }
     public DbSet<Event> Events { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<Region> Regions { get; set; }
+    public DbSet<GrapeType> GrapeTypes { get; set; }
+    public DbSet<WineGrapeTypeLink> WineGrapeTypeLinks { get; set; }
+    public DbSet<Participant> Participants { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -64,6 +72,15 @@ public partial class ApplicationDbContext : DbContext
         BuildWines(modelBuilder);
         BuildEvents(modelBuilder);
         BuildTasteEvaluations(modelBuilder);
+        BuildTasteQuestions(modelBuilder);
+        BuildTasteQuestionsType(modelBuilder);
+        BuildTasteEvaluationQuestion(modelBuilder);
+        BuildTasteQuestionOptions(modelBuilder);
+        BuildBrands(modelBuilder);
+        BuildRegions(modelBuilder);
+        BuildGrapeTypes(modelBuilder);
+        BuildWineGrapeTypeLinks(modelBuilder);
+        BuildParticipants(modelBuilder);
         base.OnModelCreating(modelBuilder);
     }
 }

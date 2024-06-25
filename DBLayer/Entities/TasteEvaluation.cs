@@ -10,4 +10,5 @@ public class TasteEvaluation
     public User User { get; set; }
     public Wine Wine { get; set; }
     public Event Event { get; set; }
+    public ICollection<TasteEvaluationQuestion> TasteEvaluationQuestions { get; set; }
 }
