@@ -21,4 +21,10 @@
       <ProjectReference Include="..\Helpers\Helpers.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\js\jquery.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\popper.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\js\sidebar.js" />
+    </ItemGroup>
+
 </Project>
