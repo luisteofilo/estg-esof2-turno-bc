@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+
 using DotNetEnv;
 using ESOF.WebApp.DBLayer.Entities;
 using Helpers;
@@ -49,7 +50,11 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Region> Regions { get; set; }
     public DbSet<GrapeType> GrapeTypes { get; set; }
     public DbSet<WineGrapeTypeLink> WineGrapeTypeLinks { get; set; }
-
+    
+    //QRCODE
+    public DbSet<Event> Events { get; set; }
+    public DbSet<EventParticipant> EventParticipants { get; set; }
+    //QRCODE
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
@@ -70,7 +75,10 @@ public partial class ApplicationDbContext : DbContext
         BuildGrapeTypes(modelBuilder);
         BuildWineGrapeTypeLinks(modelBuilder);
         base.OnModelCreating(modelBuilder);
-        
+        //QRCODE
+        BuildEvent(modelBuilder);
+        BuildEventParticipants(modelBuilder);
+        //QRCODE
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             var deletedAtProperty = entityType.FindProperty("DeletedAt");
@@ -84,5 +92,5 @@ public partial class ApplicationDbContext : DbContext
                 modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
             }
         }
-    }
+    }    
 }
