@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ESOF.WebApp.DBLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240624171542_BlindEvent")]
+    [Migration("20240625182627_BlindEvent")]
     partial class BlindEvent
     {
         /// <inheritdoc />

@@ -23,16 +23,23 @@ namespace Frontend.Helpers
             }
         }
 
-        public async Task PostToApiAsync<T>(string url, T data)
+        public async Task<HttpResponseMessage> PostToApiAsync(string url, HttpContent content)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(url, data);
-                response.EnsureSuccessStatusCode();
+                Console.WriteLine($"Content-Type being sent: {content.Headers.ContentType}");
+                
+                var response = await _httpClient.PostAsync(url, content);
+                return response;
             }
             catch (HttpRequestException e)
             {
-                throw new ApplicationException($"Error posting data to {url}: {e.Message}");
+                string errorMessage = string.Empty;
+                if (e.InnerException != null)
+                {
+                    errorMessage = e.InnerException.Message;
+                }
+                throw new ApplicationException($"Error posting data to {url}: {e.Message}. Inner Exception: {errorMessage}");
             }
         }
     }

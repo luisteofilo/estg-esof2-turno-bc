@@ -24,6 +24,7 @@ else
             <th>Name</th>
             <th>Event Date</th>
             <th>Organizer</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -33,6 +34,13 @@ else
                 <td>@blindEvent.Name</td>
                 <td>@blindEvent.EventDate.ToString("yyyy-MM-dd")</td>
                 <td>@blindEvent.Organizer.Email</td>
+                <td>
+                    <a href="@($"/BlindEventDetails/{blindEvent.BlindEventId}")" class="btn btn-primary">Details</a> |
+                    @if (UserState.LoggedInUserId.HasValue && UserState.LoggedInUserId != Guid.Empty)
+                    {
+                    <a href="@($"/AddParticipant/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Participant</a>
+                    }
+                </td>
             </tr>
         }
         </tbody>

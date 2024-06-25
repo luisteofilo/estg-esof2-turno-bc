@@ -10,18 +10,13 @@ namespace ESOF.WebApp.WebAPI.Services
 {
     public class BlindEventService
     {
-        private readonly ApplicationDbContext _context;
-
-        public BlindEventService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
+        
         public List<ResponseBlindEventDto> GetAllBlindEvents()
         {
             try
             {
-                var blindEvents = _context.BlindEvents
+                var db = new ApplicationDbContext();
+                var blindEvents = db.BlindEvents
                     .Include(be => be.Organizer)
                     .Include(be => be.Participants)
                     .Include(be => be.Evaluations)
@@ -75,9 +70,11 @@ namespace ESOF.WebApp.WebAPI.Services
         {
             try
             {
-                var blindEvent = _context.BlindEvents
+                var db = new ApplicationDbContext();
+                var blindEvent = db.BlindEvents
                     .Include(be => be.Organizer)
                     .Include(be => be.Participants)
+                        .ThenInclude(p => p.User)
                     .Include(be => be.Evaluations)
                     .Include(be => be.ParticipantWines)
                     .FirstOrDefault(be => be.BlindEventId == id);
@@ -105,7 +102,12 @@ namespace ESOF.WebApp.WebAPI.Services
                     {
                         ParticipantId = p.ParticipantId,
                         UserId = p.UserId,
-                        BlindEventId = p.BlindEventId
+                        BlindEventId = p.BlindEventId,
+                        User = new ResponseUserDto
+                        {
+                            UserId = p.User.UserId,
+                            Email = p.User.Email
+                        }
                     }).ToList(),
                     Evaluations = blindEvent.Evaluations.Select(e => new ResponseEvaluationDto
                     {
@@ -130,13 +132,15 @@ namespace ESOF.WebApp.WebAPI.Services
             }
         }
 
+
         public ResponseBlindEventDto CreateBlindEvent(CreateBlindEventDto createBlindEventDto)
         {
-            using (var transaction = _context.Database.BeginTransaction())
+            var db = new ApplicationDbContext();
+            using (var transaction = db.Database.BeginTransaction())
             {
                 try
                 {
-                    var organizer = _context.Users.Find(createBlindEventDto.OrganizerId);
+                    var organizer = db.Users.Find(createBlindEventDto.OrganizerId);
                     if (organizer == null)
                     {
                         throw new ArgumentException("Organizer not found.");
@@ -149,8 +153,8 @@ namespace ESOF.WebApp.WebAPI.Services
                         Name = createBlindEventDto.Name
                     };
 
-                    _context.BlindEvents.Add(blindEvent);
-                    _context.SaveChanges();
+                    db.BlindEvents.Add(blindEvent);
+                    db.SaveChanges();
 
                     transaction.Commit();
 
@@ -175,13 +179,15 @@ namespace ESOF.WebApp.WebAPI.Services
             }
         }
 
+
         public void DeleteBlindEvent(Guid id)
         {
-            using (var transaction = _context.Database.BeginTransaction())
+            var db = new ApplicationDbContext();
+            using (var transaction = db.Database.BeginTransaction())
             {
                 try
                 {
-                    var blindEvent = _context.BlindEvents
+                    var blindEvent = db.BlindEvents
                         .Include(be => be.Participants)
                         .Include(be => be.Evaluations)
                         .Include(be => be.ParticipantWines)
@@ -192,12 +198,12 @@ namespace ESOF.WebApp.WebAPI.Services
                         throw new ArgumentException("Blind event not found.");
                     }
 
-                    _context.Participants.RemoveRange(blindEvent.Participants);
-                    _context.Evaluations.RemoveRange(blindEvent.Evaluations);
-                    _context.ParticipantWines.RemoveRange(blindEvent.ParticipantWines);
-                    _context.BlindEvents.Remove(blindEvent);
+                    db.Participants.RemoveRange(blindEvent.Participants);
+                    db.Evaluations.RemoveRange(blindEvent.Evaluations);
+                    db.ParticipantWines.RemoveRange(blindEvent.ParticipantWines);
+                    db.BlindEvents.Remove(blindEvent);
 
-                    _context.SaveChanges();
+                    db.SaveChanges();
                     transaction.Commit();
                 }
                 catch (DbUpdateConcurrencyException ex)

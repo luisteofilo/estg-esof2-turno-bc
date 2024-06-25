@@ -1,6 +1,7 @@
 ﻿@page "/AddBlindEvent"
 @using Frontend.Helpers
 @using ESOF.WebApp.WebAPI.DtoClasses
+@rendermode InteractiveServer
 @inject ApiHelper ApiHelper
 @inject NavigationManager Navigation
 
@@ -8,41 +9,56 @@
 
 <h1>Adicionar Blind Event</h1>
 
-<EditForm Model="_blindEvent" OnValidSubmit="HandleValidSubmit" FormName="addBlindEventForm">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<div class="form-container">
+    <label for="name" class="form-label">Name</label>
+    <input type="text" class="form-control" id="name" @bind="name" />
+    
+    <label for="eventDate" class="form-label">Event Date</label>
+    <input type="date" class="form-control" id="eventDate" @bind="eventDate" />
 
-    <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <InputText id="name" class="form-control" @bind-Value="_blindEvent.Name" />
-    </div>
-
-    <div class="mb-3">
-        <label for="eventDate" class="form-label">Event Date</label>
-        <InputDate id="eventDate" class="form-control" @bind-Value="_blindEvent.EventDate" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Adicionar</button>
-</EditForm>
+    <button class="btn btn-primary" @onclick="CreateBlindEvent">Create</button>
+</div>
 
 @code {
-    private CreateBlindEventDto _blindEvent = new CreateBlindEventDto();
-
-    protected override void OnInitialized()
-    {
-        _blindEvent.OrganizerId = UserState.LoggedInUserId ?? Guid.Empty;
-    }
-
-    private async Task HandleValidSubmit()
+    private string name = string.Empty;
+    private DateTime eventDate = DateTime.Now;
+    private Guid organizerID = UserState.LoggedInUserId ?? Guid.Empty;
+    
+    private async Task CreateBlindEvent()
     {
         try
         {
-            Console.WriteLine("Submitting form");
-            Console.WriteLine($"Name: {_blindEvent.Name}");
-            Console.WriteLine($"EventDate: {_blindEvent.EventDate}");
-            Console.WriteLine($"OrganizerId: {_blindEvent.OrganizerId}");
+            // Convertendo a data para UTC
+            var utcEventDate = DateTime.SpecifyKind(eventDate, DateTimeKind.Utc);
 
-            await ApiHelper.PostToApiAsync("api/BlindEvent/store", _blindEvent);
+            var blindEvent = new CreateBlindEventDto
+            {
+                OrganizerId = organizerID,
+                EventDate = utcEventDate,
+                Name = name,
+                ParticipantIds = new List<Guid>(),
+                EvaluationIds = new List<Guid>(),
+                ParticipantWineIds = new List<Guid>()
+            };
+
+            var jsonContent = System.Text.Json.JsonSerializer.Serialize(blindEvent);
+            Console.WriteLine($"Generated JSON: {jsonContent}");
+            
+            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+            Console.WriteLine($"Content-Type being sent: {content.Headers.ContentType}");
+
+            var response = await ApiHelper.PostToApiAsync("api/BlindEvent/store", content);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Blind event created successfully!");
+                Navigation.NavigateTo("/BlindEvent");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to create blind event. Status code: {response.StatusCode}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response content: {responseContent}");
+            }
         }
         catch (Exception ex)
         {

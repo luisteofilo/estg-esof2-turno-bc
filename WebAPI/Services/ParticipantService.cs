@@ -186,6 +186,28 @@ namespace ESOF.WebApp.WebAPI.Services
                 }
             }
         }
+        
+        public List<ResponseUserDto> GetAvailableUsers()
+        {
+            try
+            {
+                var users = _context.Users
+                    .Where(u => !_context.Participants.Any(p => p.UserId == u.UserId))
+                    .Select(u => new ResponseUserDto
+                    {
+                        UserId = u.UserId,
+                        Email = u.Email
+                    }).ToList();
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving users.", ex);
+            }
+        }
+
+
     }
 }
     

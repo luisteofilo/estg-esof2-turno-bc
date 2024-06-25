@@ -68,4 +68,20 @@ public class ParticipantController : ControllerBase
             return NotFound(ex.Message);
         }
     }
+    
+    [HttpGet("available-users")]
+    public ActionResult<List<ResponseUserDto>> GetAvailableUsers()
+    {
+        try
+        {
+            var users = _participantService.GetAvailableUsers();
+            return Ok(users);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
 }

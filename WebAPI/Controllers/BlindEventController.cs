@@ -13,9 +13,9 @@ public class BlindEventController : ControllerBase
 {
     private readonly BlindEventService _blindEventService;
 
-    public BlindEventController()
+    public BlindEventController(BlindEventService blindEventService)
     {
-        _blindEventService = new BlindEventService(new ApplicationDbContext());
+        _blindEventService = blindEventService;
     }
 
     [HttpGet("index")]
@@ -47,11 +47,11 @@ public class BlindEventController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            return NotFound(ex.Message);
+            return NotFound(new { Message = ex.Message, Error = ex.ToString() });
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new { Message = ex.Message, Error = ex.ToString() });
         }
     }
 
