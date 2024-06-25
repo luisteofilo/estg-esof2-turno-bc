@@ -16,7 +16,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
                 name: "Interaction",
                 columns: table => new
                 {
-                    InteractionLinkId = table.Column<Guid>(type: "uuid", nullable: false),
+                    InteractionLinkId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     WineId = table.Column<Guid>(type: "uuid", nullable: false),
                     InteractionType = table.Column<int>(type: "integer", nullable: false)

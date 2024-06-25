@@ -6,18 +6,17 @@ namespace ESOF.WebApp.WebAPI.Controllers;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using ESOF.WebApp.DBLayer.Entities;
 using ESOF.WebApp.WebAPI.Services;
 
 [Route("api/[controller]")]
 [ApiController]
-public class InteractionsController : ControllerBase
+public class InteractionController : ControllerBase
 {
-    private readonly InteractionsService _interactionService;
+    private readonly InteractionService _interactionService;
 
-    public InteractionsController()
+    public InteractionController()
     {
-        _interactionService = new InteractionsService(new ApplicationDbContext());
+        _interactionService = new InteractionService(new ApplicationDbContext());
     }
 
     [HttpGet("index")]
@@ -33,12 +32,12 @@ public class InteractionsController : ControllerBase
         }
     }
 
-    [HttpGet("show/{id}")]
-    public ActionResult<ResponseInteractionDto> GetInteractionById(Guid id)
+    [HttpGet("show")]
+    public ActionResult<ResponseInteractionDto> GetInteractionById([FromQuery] Guid userId, [FromQuery] Guid wineId)
     {
         try
         {
-            return Ok(_interactionService.GetInteractionById(id));
+            return Ok(_interactionService.GetInteractionById(userId, wineId));
         }
         catch (ArgumentException ex)
         {
@@ -52,7 +51,7 @@ public class InteractionsController : ControllerBase
         try
         {
             var createdInteraction = _interactionService.CreateInteraction(createInteractionDto);
-            return CreatedAtAction(nameof(GetInteractionById), new { id = createdInteraction.InteractionLinkId }, createdInteraction);
+            return CreatedAtAction(nameof(GetInteractionById), new { userId = createdInteraction.UserId, wineId = createdInteraction.WineId }, createdInteraction);
         }
         catch (Exception ex)
         {
@@ -60,12 +59,12 @@ public class InteractionsController : ControllerBase
         }
     }
 
-    [HttpPut("update/{id}")]
-    public ActionResult<ResponseInteractionDto> UpdateInteraction(Guid id, [FromBody] UpdateInteractionDto updateInteractionDto)
+    [HttpPut("update")]
+    public ActionResult<ResponseInteractionDto> UpdateInteraction([FromQuery] Guid userId, [FromQuery] Guid wineId, [FromBody] UpdateInteractionDto updateInteractionDto)
     {
         try
         {
-            return Ok(_interactionService.UpdateInteraction(id, updateInteractionDto));
+            return Ok(_interactionService.UpdateInteraction(userId, wineId, updateInteractionDto));
         }
         catch (ArgumentException ex)
         {
@@ -77,12 +76,12 @@ public class InteractionsController : ControllerBase
         }
     }
 
-    [HttpDelete("delete/{id}")]
-    public ActionResult DeleteInteraction(Guid id)
+    [HttpDelete("delete")]
+    public ActionResult DeleteInteraction([FromQuery] Guid userId, [FromQuery] Guid wineId)
     {
         try
         {
-            _interactionService.DeleteInteraction(id);
+            _interactionService.DeleteInteraction(userId, wineId);
             return NoContent();
         }
         catch (Exception ex)

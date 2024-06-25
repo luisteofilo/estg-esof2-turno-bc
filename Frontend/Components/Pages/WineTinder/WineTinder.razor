@@ -1,5 +1,6 @@
-@page "/vinhotinder"
+@page "/wineTinder"
 @using Frontend.Helpers
+@using global::Helpers.ViewModels
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 
@@ -86,7 +87,7 @@
     }
 </style>
 
-<PageTitle>Vinho tinder</PageTitle>
+<PageTitle>Wine Tinder</PageTitle>
 
 <div class="container" id="blur">
     <div id="warning-message" class="alert alert-warning" style="display:none;">
@@ -94,7 +95,7 @@
         <a id="warning-link" href="/UserControl">Go to User Control</a>
     </div>
 
-    @if (_vinhos == null)
+    @if (Wines == null)
     {
         <p>
             <em>Carregando...</em>
@@ -107,16 +108,14 @@
                 @{
                     var index = 0;
                 }
-                @foreach (var wine in _vinhos)
+                @foreach (var wine in Wines)
                 {
-                    <div class="card" data-wine-id="@wine.VinhoId" style="--i: @index">
-                        <img src="favicon.png" alt="@wine.Tipo" class="card-image"/>
+                    <div class="card" data-wine-id="@wine.WineId" style="--i: @index">
                         <div class="card-headers">
-                            <h3 class="card-header">@wine.Name</h3>
-                            <h3 class="card-header">@wine.Tipo</h3>
+                            <h3 class="card-header">@wine.Brand</h3>
+                            <h3 class="card-header">@wine.Label</h3>
                         </div>
                     </div>
-                    <input type="hidden" class="wine-id" value="@wine.VinhoId"/>
                     index++;
                 }
             </div>
@@ -136,17 +135,5 @@
 </div>
 
 @code {
-    private List<VinhoViewModel> _vinhos;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _vinhos = await ApiHelper.GetFromApiAsync<List<VinhoViewModel>>("vinho");
-    }
-    
-    public class VinhoViewModel
-    {
-        public string VinhoId { get; set; }
-        public string Name { get; set; }
-        public int Tipo { get; set; }
-    }
+    [Parameter] public List<ResponseWineDto> Wines { get; set; } = new List<ResponseWineDto>();
 }

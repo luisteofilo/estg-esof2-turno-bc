@@ -12,6 +12,7 @@ builder.Services.AddScoped<WineService>();
 builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
+builder.Services.AddScoped<InteractionService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 
@@ -28,6 +29,14 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
+
+app.MapGet("/usersdois", () =>
+    {
+        var db = new ApplicationDbContext();
+        return db.Users.Select(u => new { u.UserId, u.Email }).ToList();
+    })
+    .WithName("GetUsersDois")
+    .WithOpenApi();
 
 /*var summaries = new[]
 {
