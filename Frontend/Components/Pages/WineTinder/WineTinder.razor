@@ -12,10 +12,10 @@
         <a id="warning-link" href="/UserControl">Go to User Control</a>
     </div>
 
-    @if (_wines == null)
+    @if (_wines.Wines.Count == 0)
     {
         <p>
-            <em>Carregando...</em>
+            <em>No Wines Available!</em>
         </p>
     }
     else
