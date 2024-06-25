@@ -15,6 +15,19 @@ public class User
     
     [Required]
     public byte[] PasswordSalt { get; set; }
+    
+    [Required]
+    public string FirstName { get; set; }
+    
+    [Required]
+    public string LastName { get; set; }
+    
+    [Required]
+    public DateTime BirthdayDate { get; set; }
+    
+    [Required]
+    public string Address { get; set; }
+    
     public ICollection<UserRole> UserRoles { get; set; }
     public ICollection<EventParticipant> EventParticipants { get; set; }
 }
