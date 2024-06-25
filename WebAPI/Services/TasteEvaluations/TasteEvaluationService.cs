@@ -26,16 +26,13 @@ public class TasteEvaluationService(ApplicationDbContext context)
                 TasteEvaluationId = tasteEvaluation.TasteEvaluationId,
                 UserId = tasteEvaluation.UserId,
                 WineId = tasteEvaluation.WineId,
-                
-                // TODO: Add the event
-                // EventId = tasteEvaluation.EventId,
-                
+                EventId = tasteEvaluation.EventId,
                 WineScore = tasteEvaluation.WineScore
             }).ToList();
         }
         catch (Exception ex)
         {
-            throw new Exception("Error: An error occurred while retrieving taste evaluations.", ex);
+            throw new Exception("Error: An error occurred while retrieving the TasteEvaluation: " + ex.Message);
         }
     }
 
@@ -61,10 +58,7 @@ public class TasteEvaluationService(ApplicationDbContext context)
             TasteEvaluationId = tasteEvaluation.TasteEvaluationId,
             UserId = tasteEvaluation.UserId,
             WineId = tasteEvaluation.WineId,
-            
-            // TODO: Add the event
-            // EventId = tasteEvaluation.EventId,
-            
+            EventId = tasteEvaluation.EventId,
             WineScore = tasteEvaluation.WineScore
         };
     }
@@ -86,10 +80,7 @@ public class TasteEvaluationService(ApplicationDbContext context)
             {
                 UserId = createTasteEvaluationDto.UserId,
                 WineId = createTasteEvaluationDto.WineId,
-                
-                // TODO: Add the event
-                // EventId = createTasteEvaluationDto.EventId,
-                
+                EventId = createTasteEvaluationDto.EventId,
                 WineScore = createTasteEvaluationDto.WineScore
             };
 
@@ -101,16 +92,13 @@ public class TasteEvaluationService(ApplicationDbContext context)
                 TasteEvaluationId = tasteEvaluation.TasteEvaluationId,
                 UserId = tasteEvaluation.UserId,
                 WineId = tasteEvaluation.WineId,
-                
-                // TODO: Add the event
-                // EventId = tasteEvaluation.EventId,
-                
+                EventId = tasteEvaluation.EventId,
                 WineScore = tasteEvaluation.WineScore
             };
         }
         catch (DbUpdateException ex)
         {
-            throw new Exception("Error: An error occurred while creating the TasteEvaluation.", ex);
+            throw new Exception("Error: An error occurred while creating the TasteEvaluation: " + ex.Message);
         }
     }
 
@@ -135,10 +123,7 @@ public class TasteEvaluationService(ApplicationDbContext context)
 
         tasteEvaluation.UserId = updateTasteEvaluationDto.UserId;
         tasteEvaluation.WineId = updateTasteEvaluationDto.WineId;
-        
-        // TODO: Add the event
-        // tasteEvaluation.EventId = updateTasteEvaluationDto.EventId;
-        
+        tasteEvaluation.EventId = updateTasteEvaluationDto.EventId;
         tasteEvaluation.WineScore = updateTasteEvaluationDto.WineScore;
 
         context.SaveChanges();
@@ -148,10 +133,7 @@ public class TasteEvaluationService(ApplicationDbContext context)
             TasteEvaluationId = tasteEvaluation.TasteEvaluationId,
             UserId = tasteEvaluation.UserId,
             WineId = tasteEvaluation.WineId,
-            
-            // TODO: Add the event
-            // EventId = tasteEvaluation.EventId,
-            
+            EventId = tasteEvaluation.EventId,
             WineScore = tasteEvaluation.WineScore
         };
     }
@@ -186,7 +168,7 @@ public class TasteEvaluationService(ApplicationDbContext context)
             {
                 transaction.Rollback();
                 
-                throw new Exception("Error: An error occurred while trying to delete the TasteEvaluation.", ex);
+                throw new Exception("Error: An error occurred while trying to delete the TasteEvaluation: " + ex.Message);
             }
         }
     }

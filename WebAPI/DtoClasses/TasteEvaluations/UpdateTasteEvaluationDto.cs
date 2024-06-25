@@ -6,8 +6,7 @@ public class UpdateTasteEvaluationDto
     
     public Guid WineId { get; set; }
     
-    // TODO: Add the event
-    // public Guid EventId { get; set; }
+    public Guid EventId { get; set; }
     
     public int WineScore { get; set; }
 }
