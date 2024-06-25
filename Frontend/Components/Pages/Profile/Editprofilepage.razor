@@ -11,7 +11,7 @@
             <div class="card-body">
                 <h2 class="h5 text-center">Editar Perfil</h2>
                 <hr />
-                <form>
+                <form onsubmit="return confirm('Tem certeza que deseja fazer as alterações?');">
                     <div class="form-group">
                         <label for="userName">Nome</label>
                         <input type="text" class="form-control" id="userName" value="João Ralha" />
@@ -38,7 +38,7 @@
                         <label for="grapeType">Tipo de Uva</label>
                         <input type="text" class="form-control" id="grapeType" value="Cabernet Sauvignon" />
                     </div>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
                     <a href="/profilepage" class="btn btn-secondary">Cancelar</a>
                 </form>
             </div>
