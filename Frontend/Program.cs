@@ -13,6 +13,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileH
 builder.Services.AddScoped<ApiHelper>();
 builder.Services.AddScoped<EventService>();
 //builder.Services.AddScoped<EventParticipantService>(); to be implemented
+builder.Services.AddScoped<TasteQuestionService>();
 
 var app = builder.Build();
 
