@@ -4,98 +4,15 @@
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 
-<style>
-    .container {
-        background: radial-gradient(circle, lightblue 0%, white 70%);
-        width: 100%;
-        height: 90vh;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-    }
-
-    #warning-message {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #f8d7da; 
-        color: #721c24;
-        padding: 10px;
-        border: 1px solid #f5c6cb;
-        border-radius: 5px;
-        z-index: 1000;
-        display: none; 
-    }
-
-    #warning-message a {
-        color: #721c24;
-        text-decoration: underline;
-        margin-left: 10px;
-    }
-
-    .card-container {
-        position: relative;
-        width: 300px;
-        height: 500px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    #swiper {
-        aspect-ratio: 2/3;
-        perspective: 1000px;
-        perspective-origin: center 50%;
-        transform-style: preserve-3d;
-    }
-
-    .card {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border-radius: 15px;
-        filter: drop-shadow(0px 0px 10px #454545);
-        background-color: #fff;
-        transform: translateZ(calc(-20px * var(--i)))
-                    translateY(calc(-5px * var(--i)))
-                    rotate(calc(-3deg * var(--i)));
-        cursor: pointer;
-        user-select: none;
-    }
-
-    .card-image {
-        width: 100%;
-        height: 80%;
-        object-fit: cover;
-    }
-
-    .card-headers {
-        display: flex;
-        justify-content: space-around;
-        padding: 10px;
-    }
-
-    .card-header {
-        font-size: 1.2em;
-        margin: 0;
-        background-color: #fff;
-    }
-    
-    .icons{
-        font-size: 55px;
-    }
-</style>
-
 <PageTitle>Wine Tinder</PageTitle>
 
-<div class="container" id="blur">
-    <div id="warning-message" class="alert alert-warning" style="display:none;">
+<div class="container d-flex justify-content-around align-items-center" id="blur">
+    <div id="warning-message" class="alert alert-warning position-absolute" style="display:none;">
         <span id="warning-text"></span>
         <a id="warning-link" href="/UserControl">Go to User Control</a>
     </div>
 
-    @if (Wines == null)
+    @if (_wines == null)
     {
         <p>
             <em>Carregando...</em>
@@ -104,16 +21,21 @@
     else
     {
         <div class="d-flex flex-column align-items-center">
-            <div class="card-container" id="swiper">
+            <div class="card-container position-relative d-flex justify-content-center align-items-center" id="swiper">
                 @{
                     var index = 0;
                 }
-                @foreach (var wine in Wines)
+                @foreach (var wine in _wines.Wines)
                 {
-                    <div class="card" data-wine-id="@wine.WineId" style="--i: @index">
-                        <div class="card-headers">
-                            <h3 class="card-header">@wine.Brand</h3>
-                            <h3 class="card-header">@wine.Label</h3>
+                    <div class="card position-absolute" data-wine-id="@wine.WineId" style="--i: @index">
+                        <img src="sample_wine.jpg" alt="@wine.Label" class="card-img-top">
+                        <div class="card-body">
+                            <h3 class="card-title">@wine.Brand?.Name</h3>
+                            <h4 class="card-subtitle">@wine.Label</h4>
+                            <p class="card-text">@wine.Region?.Name - @wine.Year</p>
+                            <p class="card-text">@wine.Category</p>
+                            <p class="card-text">Alcohol: @wine.Alcohol%</p>
+                            <p class="card-text">Price: @wine.MinimumPrice€ - @wine.MaximumPrice€</p>
                         </div>
                     </div>
                     index++;
@@ -135,5 +57,33 @@
 </div>
 
 @code {
-    [Parameter] public List<ResponseWineDto> Wines { get; set; } = new List<ResponseWineDto>();
+    private WinesList _wines = new WinesList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _wines.Wines = await ApiHelper.GetFromApiAsync<List<ResponseWineDto>>("api/Wine/index");
+            ShuffleWines(_wines.Wines);
+        } 
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to fetch posts: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
+    }
+    
+    private void ShuffleWines(List<ResponseWineDto> wines)
+    {
+        var random = new Random();
+        for (int i = wines.Count - 1; i > 0; i--)
+        {
+            int j = random.Next(i + 1);
+            (wines[i], wines[j]) = (wines[j], wines[i]);
+        }
+    }
+    
 }

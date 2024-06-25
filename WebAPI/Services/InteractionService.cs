@@ -28,7 +28,6 @@ public class InteractionService
                 InteractionType = i.InteractionType
             })
             .ToList();
-
     }
 
     public ResponseInteractionDto GetInteractionById(Guid userId, Guid wineId)
@@ -38,7 +37,7 @@ public class InteractionService
 
         if (interaction == null)
         {
-            throw new ArgumentException("Interaction not found");
+            return new ResponseInteractionDto();
         }
 
         return new ResponseInteractionDto

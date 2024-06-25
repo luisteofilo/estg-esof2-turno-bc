@@ -49,3 +49,8 @@ public class ResponseGrapeTypeDto
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; }
 }
+
+public class WinesList
+{
+    public List<ResponseWineDto> Wines { get; set; } = new List<ResponseWineDto>();
+}

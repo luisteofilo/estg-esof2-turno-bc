@@ -15,7 +15,14 @@ builder.Services.AddScoped<RegionService>();
 builder.Services.AddScoped<InteractionService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("https://localhost:7261")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -26,9 +33,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
 app.MapControllers();
-app.Run();
 
 app.MapGet("/usersdois", () =>
     {
@@ -38,6 +45,7 @@ app.MapGet("/usersdois", () =>
     .WithName("GetUsersDois")
     .WithOpenApi();
 
+app.Run();
 /*var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"

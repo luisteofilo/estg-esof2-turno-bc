@@ -10,12 +10,12 @@
 
     if (cards.length > 0) {
         let card = cards[0];
-        const vinhoId = card.getAttribute('data-wine-id');
+        const wineId = card.getAttribute('data-wine-id');
 
         const interaction = {
-            user_id: userId,
-            vinho_id: vinhoId,
-            tipo_interacao: 0
+            UserId: userId,
+            WineId: wineId,
+            InteractionType: 0
         };
 
         card.style.transition = "transform 0.5s, opacity 0.5s";
@@ -23,15 +23,15 @@
         switch (action) {
             case "dislike":
                 card.style.transform = "translateX(-130px) translateY(300px) scale(0.3)";
-                interaction.tipo_interacao = 0;
+                interaction.InteractionType = 0;
                 break;
             case "superLike":
                 card.style.transform = "translateY(300px) scale(0.3)";
-                interaction.tipo_interacao = 2;
+                interaction.InteractionType = 2;
                 break;
             case "like":
                 card.style.transform = "translateX(130px) translateY(300px) scale(0.3)";
-                interaction.tipo_interacao = 1;
+                interaction.InteractionType = 1;
                 break;
         }
 
@@ -44,7 +44,7 @@
 
         checkInteractionExists(interaction)
             .then(exists => {
-                if (exists === 0) {
+                if (exists.interactionLinkId === "00000000-0000-0000-0000-000000000000"){
                     createInteraction(interaction)
                         .then(() => {
                             console.log("Interaction sent successfully");
@@ -52,7 +52,7 @@
                         .catch((error) => {
                             console.error("Failed to send interaction", error);
                         });
-                } else if (exists === 1) {
+                } else {
                     updateInteraction(interaction)
                         .then(() => {
                             console.log("Interaction updated successfully");
@@ -91,15 +91,13 @@ function updateCardPositions() {
 }
 
 async function checkInteractionExists(interaction) {
-    const response = await fetch(`https://localhost:7103/get-interaction?user_id=${interaction.user_id}&vinho_id=${interaction.vinho_id}`);
-    if (!response.ok) {
-        throw new Error("Failed to check interaction existence");
-    }
+    const response = await fetch(`https://localhost:7103/api/Interaction/show?userId=${interaction.UserId}&wineId=${interaction.WineId}`);
+    
     return await response.json();
 }
 
 async function createInteraction(interaction) {
-    const response = await fetch(`https://localhost:7103/create-interaction`, {
+    const response = await fetch(`https://localhost:7103/api/Interaction/store`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -111,8 +109,8 @@ async function createInteraction(interaction) {
     }
 }
 
-async function updateInteraction(interaction, apiUrl) {
-    const response = await fetch(`https://localhost:7103/update-interaction`, {
+async function updateInteraction(interaction) {
+    const response = await fetch(`https://localhost:7103/api/Interaction/update?userId=${interaction.UserId}&wineId=${interaction.WineId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -122,7 +120,5 @@ async function updateInteraction(interaction, apiUrl) {
 
     if (!response.ok) {
         console.error("Failed to update interaction");
-    } else {
-        console.log("Interaction updated successfully");
     }
 }
