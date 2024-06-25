@@ -25,6 +25,10 @@ public partial class ApplicationDbContext
         
         modelBuilder.Entity<FriendRequest>()
             .Property(fr => fr.Status)
-            .HasConversion<string>(); 
+            .HasConversion(
+                v => v.ToString(),
+                v => (FriendRequestState)Enum.Parse(typeof(FriendRequestState), v))
+            .HasColumnType("text")
+            .IsRequired();
     }
 }
