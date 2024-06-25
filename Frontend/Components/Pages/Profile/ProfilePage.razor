@@ -5,26 +5,42 @@
 @* Importar CSS personalizado *@
 <link rel="stylesheet" href="Pages/Profile/profilepage.css" />
 
+<div class="main-container mt-5">
+    <div class="container">
+        <div class="card p-4 mb-4">
             <div class="card-body">
                 <div class="d-flex align-items-center">
+                    <img src="profile-placeholder.png" alt="Profile Image" class="rounded-circle mr-4" style="width: 100px; height: 100px;">
                     <div class="ml-4">
+                        <h2 class="h4">João Ralha</h2>
+                        <p class="lead">joaocarlosralha@gmail.pt</p>
+                        <a href="/editprofilepage" class="btn btn-primary btn-sm">Edit Profile</a>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="card p-4">
+            <div class="card-body">
+                <h2 class="h5 text-center">Preferência do Tipo de Vinho</h2>
                 <hr />
                 <div class="form-group">
                     <label for="wineName">Vinho</label>
+                    <input type="text" class="form-control form-control-sm" id="wineName" value="Cabernet Sauvignon" readonly />
                 </div>
                 <div class="form-group">
                     <label for="region">Região</label>
+                    <input type="text" class="form-control form-control-sm" id="region" value="Bordeaux" readonly />
                 </div>
                 <div class="form-group">
                     <label for="brand">Marca</label>
+                    <input type="text" class="form-control form-control-sm" id="brand" value="Château Margaux" readonly />
                 </div>
                 <div class="form-group">
                     <label for="grapeType">Tipo de Uva</label>
+                    <input type="text" class="form-control form-control-sm" id="grapeType" value="Cabernet Sauvignon" readonly />
+                </div>
+            </div>
         </div>
     </div>
 </div>
