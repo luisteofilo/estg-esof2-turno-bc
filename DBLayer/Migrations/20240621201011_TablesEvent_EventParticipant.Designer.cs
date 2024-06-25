@@ -3,6 +3,7 @@ using System;
 using ESOF.WebApp.DBLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ESOF.WebApp.DBLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240621201011_TablesEvent_EventParticipant")]
+    partial class TablesEvent_EventParticipant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,21 +51,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasKey("BrandId");
 
                     b.ToTable("Brands");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Follow", b =>
-                {
-                    b.Property<Guid>("FollowerUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserFollowedId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("FollowerUserId", "UserFollowedId");
-
-                    b.HasIndex("UserFollowedId");
-
-                    b.ToTable("Follows");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Event", b =>
@@ -166,24 +154,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("GrapeTypes");
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Hashtag", b =>
-                {
-                    b.Property<Guid>("HashtagId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("NumPosts")
-                        .HasColumnType("integer");
-
-                    b.HasKey("HashtagId");
-
-                    b.ToTable("Hashtags");
-                });
-
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Permission", b =>
                 {
                     b.Property<Guid>("PermissionId")
@@ -198,124 +168,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasKey("PermissionId");
 
                     b.ToTable("Permissions");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Post", b =>
-                {
-                    b.Property<Guid>("PostId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("DateTimePost")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("text");
-
-                    b.Property<int>("VisibilityType")
-                        .HasColumnType("integer");
-
-                    b.HasKey("PostId");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostMedia", b =>
-                {
-                    b.Property<Guid>("MediaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<byte[]>("Data")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.Property<string>("FileExtension")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Filename")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("MediaPostId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("MediaId");
-
-                    b.HasIndex("MediaPostId");
-
-                    b.ToTable("PostMedia");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserFavorite", b =>
-                {
-                    b.Property<Guid>("FavoritePostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("FavoriteUserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("FavoritePostId", "FavoriteUserId");
-
-                    b.HasIndex("FavoriteUserId");
-
-                    b.ToTable("PostUserFavorite");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserHidden", b =>
-                {
-                    b.Property<Guid>("HiddenPostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("HiddenUserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("HiddenPostId", "HiddenUserId");
-
-                    b.HasIndex("HiddenUserId");
-
-                    b.ToTable("PostUserHidden");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserShare", b =>
-                {
-                    b.Property<Guid>("SharedPostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserSentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserReceivedId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("SharedPostId", "UserSentId", "UserReceivedId");
-
-                    b.HasIndex("UserReceivedId");
-
-                    b.HasIndex("UserSentId");
-
-                    b.ToTable("PostUserShare");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserView", b =>
-                {
-                    b.Property<Guid>("ViewedPostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ViewedUserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ViewedPostId", "ViewedUserId");
-
-                    b.HasIndex("ViewedUserId");
-
-                    b.ToTable("PostUserView");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Region", b =>
@@ -496,146 +348,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("WineGrapeTypeLinks");
                 });
 
-            modelBuilder.Entity("HashtagPost", b =>
-                {
-                    b.Property<Guid>("HashtagsHashtagId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PostsPostId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("HashtagsHashtagId", "PostsPostId");
-
-                    b.HasIndex("PostsPostId");
-
-                    b.ToTable("HashtagPost");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Follow", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "FollowerUser")
-                        .WithMany()
-                        .HasForeignKey("FollowerUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "UserFollowed")
-                        .WithMany()
-                        .HasForeignKey("UserFollowedId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FollowerUser");
-
-                    b.Navigation("UserFollowed");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Post", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostMedia", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "MediaPost")
-                        .WithMany("Media")
-                        .HasForeignKey("MediaPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MediaPost");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserFavorite", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "FavoritePost")
-                        .WithMany()
-                        .HasForeignKey("FavoritePostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "FavoriteUser")
-                        .WithMany()
-                        .HasForeignKey("FavoriteUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FavoritePost");
-
-                    b.Navigation("FavoriteUser");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserHidden", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "HiddenPost")
-                        .WithMany()
-                        .HasForeignKey("HiddenPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "HiddenUser")
-                        .WithMany()
-                        .HasForeignKey("HiddenUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("HiddenPost");
-
-                    b.Navigation("HiddenUser");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserShare", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "SharedPost")
-                        .WithMany()
-                        .HasForeignKey("SharedPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "UserReceived")
-                        .WithMany()
-                        .HasForeignKey("UserReceivedId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "UserSent")
-                        .WithMany()
-                        .HasForeignKey("UserSentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SharedPost");
-
-                    b.Navigation("UserReceived");
-
-                    b.Navigation("UserSent");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserView", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", "ViewedPost")
-                        .WithMany()
-                        .HasForeignKey("ViewedPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "ViewedUser")
-                        .WithMany()
-                        .HasForeignKey("ViewedUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ViewedPost");
-
-                    b.Navigation("ViewedUser");
-                });
-
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.EventParticipant", b =>
                 {
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.Event", "Event")
@@ -723,21 +435,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Navigation("Wine");
                 });
 
-            modelBuilder.Entity("HashtagPost", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Hashtag", null)
-                        .WithMany()
-                        .HasForeignKey("HashtagsHashtagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Post", null)
-                        .WithMany()
-                        .HasForeignKey("PostsPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Brand", b =>
                 {
                     b.Navigation("Wines");
@@ -756,11 +453,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Post", b =>
-                {
-                    b.Navigation("Media");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Region", b =>
