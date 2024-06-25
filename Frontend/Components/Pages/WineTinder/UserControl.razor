@@ -1,6 +1,7 @@
 @page "/UserControl"
 
 @using Frontend.Helpers
+@using global::Helpers.ViewModels
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 
@@ -8,7 +9,7 @@
 
 <h3>User Control</h3>
 
-@if (Users == null)
+@if (_users == null)
 {
     <p>Loading...</p>
 }
@@ -22,11 +23,11 @@ else
         </tr>
         </thead>
         <tbody>
-            @foreach (var user in Users)
+            @foreach (var user in _users.Users)
             {
                 <tr>
                     <td>@user.Email</td>
-                    <td style="text-align: right;">
+                    <td style="text-align: right">
                         <button type="button" class="btn btn-success" onclick="logUser('@user.UserId')">Log in</button>
                     </td>
                 </tr>
@@ -36,16 +37,22 @@ else
 }
 
 @code {
-    private List<UserDto> Users;
+    private UserList _users = new UserList();
 
     protected override async Task OnInitializedAsync()
     {
-        Users = await  ApiHelper.GetFromApiAsync<List<UserDto>>("usersdois");
+        try
+        {
+            _users.Users = await  ApiHelper.GetFromApiAsync<List<ResponseUserDto>>("api/User/index");
+        }
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to fetch users: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
     }
-
-    public class UserDto
-    {
-        public Guid UserId { get; set; }
-        public string Email { get; set; }
-    }
+    
 }

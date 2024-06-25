@@ -13,6 +13,7 @@ builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
 builder.Services.AddScoped<InteractionService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 builder.Services.AddCors(options =>
@@ -36,15 +37,6 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
 app.MapControllers();
-
-app.MapGet("/usersdois", () =>
-    {
-        var db = new ApplicationDbContext();
-        return db.Users.Select(u => new { u.UserId, u.Email }).ToList();
-    })
-    .WithName("GetUsersDois")
-    .WithOpenApi();
-
 app.Run();
 /*var summaries = new[]
 {
