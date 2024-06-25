@@ -54,6 +54,11 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<TasteQuestion> TasteQuestions { get; set; }
     public DbSet<TasteEvaluation> TasteEvaluations { get; set; }
     public DbSet<TasteEvaluationQuestion> TasteEvaluationQuestions { get; set; }
+    
+    //QRCODE
+    public DbSet<Event> Events { get; set; }
+    public DbSet<EventParticipant> EventParticipants { get; set; }
+    //QRCODE
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -81,7 +86,10 @@ public partial class ApplicationDbContext : DbContext
         BuildTasteEvaluationQuestions(modelBuilder);
         
         base.OnModelCreating(modelBuilder);
-        
+        //QRCODE
+        BuildEvent(modelBuilder);
+        BuildEventParticipants(modelBuilder);
+        //QRCODE
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             var deletedAtProperty = entityType.FindProperty("DeletedAt");
