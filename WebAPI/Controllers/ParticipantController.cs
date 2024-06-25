@@ -82,6 +82,24 @@ public class ParticipantController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+    
+    [HttpGet("get-by-user-and-event/{userId}/{eventId}")]
+    public ActionResult<ResponseParticipantDto> GetParticipantByUserAndEvent(Guid userId, Guid eventId)
+    {
+        try
+        {
+            var participant = _participantService.GetParticipantByUserAndEvent(userId, eventId);
+            if (participant == null)
+            {
+                return NotFound("Participant not found.");
+            }
+            return Ok(participant);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
 
 }

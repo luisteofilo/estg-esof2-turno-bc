@@ -1,0 +1,94 @@
+﻿@page "/AddWine/{eventId:guid}"
+@using Frontend.Helpers
+@using ESOF.WebApp.WebAPI.DtoClasses
+@rendermode InteractiveServer
+@inject ApiHelper ApiHelper
+@inject NavigationManager Navigation
+
+<PageTitle>Adicionar Vinho ao Evento</PageTitle>
+
+<h1>Adicionar Vinho ao Evento</h1>
+
+@if (_wines == null)
+{
+    <p>Loading wines...</p>
+}
+else if (_wines.Count == 0)
+{
+    <p>No wines available to add.</p>
+}
+else
+{
+    <div class="form-container">
+        <label for="wineId" class="form-label">Wine</label>
+        <select class="form-control" id="wineId" @bind="wineId">
+            @foreach (var wine in _wines)
+            {
+                <option value="@wine.WineId">@wine.Label (@wine.Year)</option>
+            }
+        </select>
+        
+        <button class="btn btn-primary" @onclick="AddWines">Add Wine</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid EventId { get; set; }
+
+    private List<ResponseWineDto> _wines = new List<ResponseWineDto>();
+    private Guid wineId;
+    private Guid participantId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch wines and the current participant
+        _wines = await ApiHelper.GetFromApiAsync<List<ResponseWineDto>>("api/Wine/index");
+        var participant = await ApiHelper.GetFromApiAsync<ResponseParticipantDto>($"api/Participant/get-by-user-and-event/{UserState.LoggedInUserId}/{EventId}");
+        if (participant != null)
+        {
+            participantId = participant.ParticipantId;
+        }
+
+        // Filter out wines that are already added to the event
+        var participantWines = await ApiHelper.GetFromApiAsync<List<ResponseParticipantWineDto>>($"api/ParticipantWine/index");
+        var wineIdsInEvent = participantWines.Where(pw => pw.BlindEventId == EventId).Select(pw => pw.WineId).ToHashSet();
+        _wines = _wines.Where(w => !wineIdsInEvent.Contains(w.WineId)).ToList();
+    }
+
+    private async Task AddWines()
+    {
+        try
+        {
+            var participantWine = new CreateParticipantWineDto
+            {
+                ParticipantId = participantId,
+                WineId = wineId,
+                BlindEventId = EventId
+            };
+
+            var jsonContent = System.Text.Json.JsonSerializer.Serialize(participantWine);
+            Console.WriteLine($"Generated JSON: {jsonContent}");
+            
+            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+            Console.WriteLine($"Content-Type being sent: {content.Headers.ContentType}");
+
+            var response = await ApiHelper.PostToApiAsync("api/ParticipantWine/store", content);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Wine added to event successfully!");
+                Navigation.NavigateTo($"/BlindEventDetails/{EventId}");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to add wine. Status code: {response.StatusCode}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response content: {responseContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}

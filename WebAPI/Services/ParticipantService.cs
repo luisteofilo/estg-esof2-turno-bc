@@ -206,6 +206,38 @@ namespace ESOF.WebApp.WebAPI.Services
                 throw new Exception("An error occurred while retrieving users.", ex);
             }
         }
+        
+        public ResponseParticipantDto GetParticipantByUserAndEvent(Guid userId, Guid eventId)
+        {
+            var participant = _context.Participants
+                .Include(p => p.User)
+                .Include(p => p.BlindEvent)
+                .FirstOrDefault(p => p.UserId == userId && p.BlindEventId == eventId);
+
+            if (participant == null)
+            {
+                return null;
+            }
+
+            return new ResponseParticipantDto
+            {
+                ParticipantId = participant.ParticipantId,
+                UserId = participant.UserId,
+                BlindEventId = participant.BlindEventId,
+                User = new ResponseUserDto
+                {
+                    UserId = participant.User.UserId,
+                    Email = participant.User.Email
+                },
+                BlindEvent = new ResponseBlindEventDto
+                {
+                    BlindEventId = participant.BlindEvent.BlindEventId,
+                    EventDate = participant.BlindEvent.EventDate,
+                    Name = participant.BlindEvent.Name,
+                    OrganizerId = participant.BlindEvent.OrganizerId
+                }
+            };
+        }
 
 
     }

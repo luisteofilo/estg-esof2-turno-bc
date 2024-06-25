@@ -74,9 +74,9 @@ namespace ESOF.WebApp.WebAPI.Services
                 var blindEvent = db.BlindEvents
                     .Include(be => be.Organizer)
                     .Include(be => be.Participants)
-                        .ThenInclude(p => p.User)
-                    .Include(be => be.Evaluations)
+                    .ThenInclude(p => p.User) // Inclua informações do usuário do participante
                     .Include(be => be.ParticipantWines)
+                    .ThenInclude(pw => pw.Wine)
                     .FirstOrDefault(be => be.BlindEventId == id);
 
                 if (blindEvent == null)
@@ -109,20 +109,45 @@ namespace ESOF.WebApp.WebAPI.Services
                             Email = p.User.Email
                         }
                     }).ToList(),
-                    Evaluations = blindEvent.Evaluations.Select(e => new ResponseEvaluationDto
-                    {
-                        EvaluationId = e.EvaluationId,
-                        ParticipantId = e.ParticipantId,
-                        WineId = e.WineId,
-                        BlindEventId = e.BlindEventId,
-                        Grade = e.Grade
-                    }).ToList(),
                     ParticipantWines = blindEvent.ParticipantWines.Select(pw => new ResponseParticipantWineDto
                     {
                         ParticipantWineId = pw.ParticipantWineId,
                         ParticipantId = pw.ParticipantId,
                         WineId = pw.WineId,
-                        BlindEventId = pw.BlindEventId
+                        BlindEventId = pw.BlindEventId,
+                        Wine = new ResponseWineDto
+                        {
+                            WineId = pw.Wine.WineId,
+                            Label = pw.Wine.label,
+                            Year = pw.Wine.Year,
+                            Category = pw.Wine.category,
+                            LabelDesignation = pw.Wine.LabelDesignation,
+                            Alcohol = pw.Wine.Alcohol,
+                            MinimumPrice = pw.Wine.MinimumPrice,
+                            MaximumPrice = pw.Wine.MaximumPrice,
+                            CreatedAt = pw.Wine.CreatedAt,
+                            UpdatedAt = pw.Wine.UpdatedAt,
+                            BrandId = pw.Wine.BrandId,
+                            RegionId = pw.Wine.RegionId
+                        },
+                        Participant = new ResponseParticipantDto
+                        {
+                            ParticipantId = pw.Participant.ParticipantId,
+                            UserId = pw.Participant.UserId,
+                            BlindEventId = pw.Participant.BlindEventId,
+                            User = new ResponseUserDto
+                            {
+                                UserId = pw.Participant.User.UserId,
+                                Email = pw.Participant.User.Email
+                            }
+                        },
+                        BlindEvent = new ResponseBlindEventDto
+                        {
+                            BlindEventId = pw.BlindEvent.BlindEventId,
+                            EventDate = pw.BlindEvent.EventDate,
+                            Name = pw.BlindEvent.Name,
+                            OrganizerId = pw.BlindEvent.OrganizerId
+                        }
                     }).ToList()
                 };
             }
@@ -131,7 +156,6 @@ namespace ESOF.WebApp.WebAPI.Services
                 throw new Exception($"An error occurred while retrieving blind event with ID {id}.", ex);
             }
         }
-
 
         public ResponseBlindEventDto CreateBlindEvent(CreateBlindEventDto createBlindEventDto)
         {

@@ -150,6 +150,14 @@ namespace ESOF.WebApp.WebAPI.Services
                         throw new ArgumentException("Blind event not found.");
                     }
 
+                    var existingParticipantWine = _context.ParticipantWines
+                        .FirstOrDefault(pw => pw.BlindEventId == createParticipantWineDto.BlindEventId && pw.WineId == createParticipantWineDto.WineId);
+
+                    if (existingParticipantWine != null)
+                    {
+                        throw new ArgumentException("This wine has already been added to the event.");
+                    }
+
                     var participantWine = new ParticipantWine
                     {
                         ParticipantId = createParticipantWineDto.ParticipantId,

@@ -21,20 +21,31 @@ else
 
         <h3>Participants</h3>
         <ul>
-            @if (blindEvent.Participants != null && blindEvent.Participants.Any())
+            @foreach (var participant in blindEvent.Participants)
             {
-                @foreach (var participant in blindEvent.Participants)
-                {
-                    <li>@participant.User.Email</li>
-                }
-            }
-            else
-            {
-                <li>No participants</li>
+                <li>@participant.User.Email</li>
             }
         </ul>
 
-        <a href="@($"/AddParticipant/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Participant</a>
+        <h3>Wines</h3>
+        @if (blindEvent.ParticipantWines != null && blindEvent.ParticipantWines.Any())
+        {
+            <ul>
+                @foreach (var participantWine in blindEvent.ParticipantWines)
+                {
+                    <li>@participantWine.Wine.Label (@participantWine.Wine.Year) - added by @participantWine.Participant.User.Email</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No wines have been added to this event yet.</p>
+        }
+
+        @if (UserState.LoggedInUserId.HasValue && UserState.LoggedInUserId != Guid.Empty)
+        {
+            <a href="@($"/AddParticipant/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Participant</a>
+        }
     </div>
 }
 
@@ -46,14 +57,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            blindEvent = await ApiHelper.GetFromApiAsync<ResponseBlindEventDto>($"api/BlindEvent/show/{EventId}");
-            Console.WriteLine($"Loaded Blind Event: {System.Text.Json.JsonSerializer.Serialize(blindEvent)}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading blind event details: {ex.Message}");
-        }
+        blindEvent = await ApiHelper.GetFromApiAsync<ResponseBlindEventDto>($"api/BlindEvent/show/{EventId}");
     }
 }
