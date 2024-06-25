@@ -74,31 +74,31 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasData(
                         new
                         {
-                            EventId = new Guid("5b50f84e-0cde-43e8-8048-8efdbff24818"),
+                            EventId = new Guid("641bfa3a-601f-4914-9f74-f1acdf0df6ad"),
                             Name = "Event1",
                             Slug = "event1"
                         },
                         new
                         {
-                            EventId = new Guid("878d8256-50bd-4870-8f52-3e490537bc1c"),
+                            EventId = new Guid("8de65f3c-0c19-4edb-b096-ea8a0290445d"),
                             Name = "Event2",
                             Slug = "event2"
                         },
                         new
                         {
-                            EventId = new Guid("81ec015d-0d73-4f45-a098-01f5eb3cd084"),
+                            EventId = new Guid("f1f1de1e-2017-4ee5-a030-fb565c33e3fb"),
                             Name = "Event3",
                             Slug = "event3"
                         },
                         new
                         {
-                            EventId = new Guid("767a6963-6e91-469e-a6d9-2cac0d5bf145"),
+                            EventId = new Guid("ea3d1924-64a8-4fa8-9776-c9669f560191"),
                             Name = "Event4",
                             Slug = "event4"
                         },
                         new
                         {
-                            EventId = new Guid("dac5b230-b134-4cd9-a73a-b22a73f76e6b"),
+                            EventId = new Guid("3d3c51e6-a947-4277-b15b-db9df775f1be"),
                             Name = "Event5",
                             Slug = "event5"
                         });
