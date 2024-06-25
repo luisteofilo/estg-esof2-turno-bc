@@ -93,8 +93,7 @@ public partial class ApplicationDbContext : DbContext
                 modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
             }
         }
-    }
-        //QRCODE
+        
         BuildEvent(modelBuilder);
         BuildEventParticipants(modelBuilder);
         //QRCODE
@@ -111,5 +110,5 @@ public partial class ApplicationDbContext : DbContext
                 modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
             }
         }
-    }    
+    }
 }
