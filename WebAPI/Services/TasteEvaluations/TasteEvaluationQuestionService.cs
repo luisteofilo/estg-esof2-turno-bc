@@ -31,7 +31,7 @@ public class TasteEvaluationQuestionService(ApplicationDbContext context)
         }
         catch (Exception ex)
         {
-            throw new Exception("Error: An error occurred while retrieving the taste evaluation questions.", ex);
+            throw new Exception("Error: An error occurred while retrieving the taste evaluation questions: " + ex.Message);
         }
     }
 
@@ -94,7 +94,7 @@ public class TasteEvaluationQuestionService(ApplicationDbContext context)
         }
         catch (DbUpdateException ex)
         {
-            throw new Exception("Error: An error occurred while creating the taste evaluation question.", ex);
+            throw new Exception("Error: An error occurred while creating the taste evaluation question: " + ex.Message);
         }
     }
 
@@ -162,7 +162,7 @@ public class TasteEvaluationQuestionService(ApplicationDbContext context)
             {
                 transaction.Rollback();
                 
-                throw new Exception("Error: An error occurred while trying to delete the taste evaluation question.", ex);
+                throw new Exception("Error: An error occurred while trying to delete the taste evaluation question: " + ex.Message);
             }
         }
     }
