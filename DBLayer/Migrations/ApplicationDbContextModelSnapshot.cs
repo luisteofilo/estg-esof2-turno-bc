@@ -81,6 +81,46 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Follow", b =>
+                {
+                    b.Property<Guid>("FollowerUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserFollowedId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("FollowerUserId", "UserFollowedId");
+
+                    b.HasIndex("UserFollowedId");
+
+                    b.ToTable("Follows");
+                });
+
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.GrapeType", b =>
+                {
+                    b.Property<Guid>("GrapeTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("GrapeTypeId");
+
+                    b.ToTable("GrapeTypes");
+                });
+            
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.FriendRequest", b =>
                 {
                     b.Property<Guid>("RequestId")
@@ -131,31 +171,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasIndex("UserId2");
 
                     b.ToTable("Friendships");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.GrapeType", b =>
-                {
-                    b.Property<Guid>("GrapeTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("GrapeTypeId");
-
-                    b.ToTable("GrapeTypes");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Hashtag", b =>
@@ -225,11 +240,17 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("CommentCount")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("CreatorId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset>("DateTimePost")
+                    b.Property<DateTime>("DateTimePost")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LikesCount")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Text")
                         .HasColumnType("text");
@@ -554,6 +575,25 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Follow", b =>
+                {
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "FollowerUser")
+                        .WithMany()
+                        .HasForeignKey("FollowerUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "UserFollowed")
+                        .WithMany()
+                        .HasForeignKey("UserFollowedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FollowerUser");
+
+                    b.Navigation("UserFollowed");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.FriendRequest", b =>
