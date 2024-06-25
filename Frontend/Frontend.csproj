@@ -11,7 +11,6 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
-      <Content Remove="Components\Pages\p.razor" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,9 +29,6 @@
 
     <ItemGroup>
       <None Remove="Components\Pages\Post.css" />
-      <None Update="Components\Pages\P.razor.css">
-        <DependentUpon>Post.razor</DependentUpon>
-      </None>
     </ItemGroup>
 
 </Project>
