@@ -6,9 +6,12 @@
 @inject ApiHelper ApiHelper
 <h3>Feed</h3>
 <div>
-    <p>Criar novo post</p>
-    <input @bind="_newPost"/>
-    <button @onclick="CreatePost">Add To Do</button>
+    <div class = feed-create-post>
+        <span>Criar novo post: </span>
+        <input @bind="_newPost.Text"/>
+        <button @onclick="CreatePost">Create Post</button>
+    </div>
+    <hr/>
 </div>
 <div>
     @if (_feedPosts.Posts.Count == 0)
@@ -17,7 +20,6 @@
     }
     else
     {
-        <h4>@_feedPosts.Posts.Count()</h4>
         @foreach (FeedPost p in _feedPosts.Posts)
         {
             <Post PostLine="p"/>

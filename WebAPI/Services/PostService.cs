@@ -22,7 +22,7 @@ public class PostService
     {
         try
         {
-            return await _context.Posts.Select(p => new FeedPostDto
+            var posts = await _context.Posts.Select(p => new FeedPostDto
             {
                 PostId = p.PostId,
                 Text = p.Text,
@@ -30,6 +30,18 @@ public class PostService
                 DateTimePost = p.DateTimePost,
                 VisibilityType = p.VisibilityType
             }).ToListAsync();
+
+            foreach (var p in posts)
+            {
+                var creator = await _context.Users.FindAsync(p.CreatorId);
+                p.Creator = new FeedPostUserDto()
+                {
+                    UserId = creator.UserId,
+                    Email = creator.Email
+                };
+            }
+            
+            return posts;
         }
         catch (Exception ex)
         {
@@ -51,7 +63,14 @@ public class PostService
             DateTimePost = post.DateTimePost,
             VisibilityType = post.VisibilityType,
         };
-
+        
+        var creator = await _context.Users.FindAsync(postDto.CreatorId);
+        postDto.Creator = new FeedPostUserDto()
+        {
+            UserId = creator.UserId,
+            Email = creator.Email
+        };
+        
         var media = await _context.PostMedia
             .Where(m => 
                 m.MediaPostId == post.PostId)
