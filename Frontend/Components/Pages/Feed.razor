@@ -1,16 +1,55 @@
 ﻿@page "/Feed"
 @using Frontend.Helpers
+@using global::Helpers.ViewModels
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 <h3>Feed</h3>
 <div>
-    <p>Criar novo post</p>
-    <input @bind="_newPost"/>
+    <div class = feed-create-post>
+        <span>Criar novo post: </span>
+        <input @bind="_newPost.Text"/>
+        <button @onclick="CreatePost">Create Post</button>
+    </div>
+    <hr/>
 </div>
 <div>
-    @foreach (var p in _feedPosts.Lines)
+    @if (_feedPosts.Posts.Count == 0)
     {
-        <Post PostLine="p"/>
+        <h4>Não há posts</h4>
+    }
+    else
+    {
+        @foreach (FeedPost p in _feedPosts.Posts)
+        {
+            <Post PostLine="p"/>
+        }
     }
 </div>
+
+
+@code
+{
+    private FeedPost _newPost = new FeedPost();
+    private FeedPostList _feedPosts = new FeedPostList();
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
+        }
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to fetch posts: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
+    }
+    
+    private async Task CreatePost()
+    {
+        await ApiHelper.PostToApiAsync<FeedPost>("api/Post/create", _newPost);
+    }
+}

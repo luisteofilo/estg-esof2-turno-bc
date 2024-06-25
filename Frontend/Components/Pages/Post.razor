@@ -1,6 +1,51 @@
-﻿<div>
-    <hr/>
-    <p>@PostLine.Creator.email</p>
-    <p>@PostLine.Text</p>
-    <p>^ v</p>
+﻿@page "/Post"
+@using Frontend.Helpers
+@using global::Helpers.ViewModels
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+
+<div class="post">
+    <div class="post-header">
+        <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
+        <div class="post-info">
+            <div class="post-author">@PostLine.Creator.email</div>
+            <div class="post-meta">@PostLine.DateTimePost · @PostLine.VisibilityType</div>
+        </div>
+        <div class="post-menu">
+            <button class="menu-button">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </button>
+        </div>
+    </div>
+    <div class="post-content">
+        @PostLine.Text
+    </div>
 </div>
+
+
+@code{
+  
+    [Parameter] public FeedPost PostLine { get; set; } = new FeedPost();
+    private FeedPostList _feedPosts = new FeedPostList();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
+            PostLine = _feedPosts.Posts[0];
+        }
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to fetch posts: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+}

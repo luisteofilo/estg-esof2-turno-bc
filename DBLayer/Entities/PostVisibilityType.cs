@@ -2,6 +2,6 @@
 
 public enum PostVisibilityType
 {
-    Public,
-    Followers
+    Public = 0,
+    Friends = 1
 }

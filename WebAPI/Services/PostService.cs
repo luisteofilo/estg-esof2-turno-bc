@@ -1,4 +1,5 @@
 ﻿using ESOF.WebApp.WebAPI.DtoClasses;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace ESOF.WebApp.WebAPI.Services;
 using System;
@@ -17,17 +18,30 @@ public class PostService
         _context = context;
     }
 
-    public List<ResponsePostDto> GetAllPosts()
+    public async Task<List<FeedPostDto>> GetAllPosts()
     {
         try
         {
-            return _context.Posts.Select(p => new ResponsePostDto
+            var posts = await _context.Posts.Select(p => new FeedPostDto
             {
                 PostId = p.PostId,
                 Text = p.Text,
                 CreatorId = p.CreatorId,
-                DateTimePost = p.DateTimePost
-            }).ToList();
+                DateTimePost = p.DateTimePost,
+                VisibilityType = p.VisibilityType
+            }).ToListAsync();
+
+            foreach (var p in posts)
+            {
+                var creator = await _context.Users.FindAsync(p.CreatorId);
+                p.Creator = new FeedPostUserDto()
+                {
+                    UserId = creator.UserId,
+                    Email = creator.Email
+                };
+            }
+            
+            return posts;
         }
         catch (Exception ex)
         {
@@ -35,41 +49,109 @@ public class PostService
         }
     }
 
-    public ResponsePostDto GetPostById(Guid id)
+    public async Task<FeedPostDto> GetPostById(Guid id)
     {
-        var post = _context.Posts.Find(id);
+        var post = await _context.Posts.FindAsync(id);
         if (post == null)
             throw new ArgumentException("Post not found.");
-        
-        return new ResponsePostDto
+
+        var postDto = new FeedPostDto
         {
             PostId = post.PostId,
             Text = post.Text,
             CreatorId = post.CreatorId,
-            DateTimePost = post.DateTimePost
+            DateTimePost = post.DateTimePost,
+            VisibilityType = post.VisibilityType,
         };
+        
+        var creator = await _context.Users.FindAsync(postDto.CreatorId);
+        postDto.Creator = new FeedPostUserDto()
+        {
+            UserId = creator.UserId,
+            Email = creator.Email
+        };
+        
+        var media = await _context.PostMedia
+            .Where(m => 
+                m.MediaPostId == post.PostId)
+            .ToListAsync();
+        
+        var mediaDto = new List<FeedPostMediaDto>();
+        
+        foreach (var m in media)
+        {
+            mediaDto.Add(new FeedPostMediaDto()
+            {
+                MediaId = m.MediaId,
+                Data = m.Data,
+                FileExtension = m.FileExtension,
+                Filename = m.Filename,
+                MediaPostId = postDto.PostId
+            });
+        }
+        
+        postDto.Media = mediaDto;
+
+        var hashtags = await _context.Hashtags
+            .Where(h =>
+                h.Posts.Any(p =>
+                    p.PostId == postDto.PostId))
+            .ToListAsync();
+        
+        var hashtagsDto = new List<FeedPostHashtagDto>();
+        
+        foreach (var h in hashtags)
+        {
+            hashtagsDto.Add(new FeedPostHashtagDto()
+            {
+                HashtagId = h.HashtagId,
+                Name = h.Name,
+                NumPosts = h.NumPosts
+            });
+        }
+
+        postDto.Hashtags = hashtagsDto;
+        
+        return postDto;
     }
 
-    public ResponsePostDto CreatePost(CreatePostDto createPostDto)
+    public async Task<FeedPostDto> CreatePost(CreateFeedPostDto createFeedPostDto)
     {
         try
         {
             var post = new Post
             {
-                Text = createPostDto.Text,
-                CreatorId = createPostDto.CreatorId,
-                DateTimePost = DateTime.UtcNow
+                Text = createFeedPostDto.Text,
+                CreatorId = createFeedPostDto.CreatorId,
+                DateTimePost = DateTimeOffset.UtcNow,
+                VisibilityType = createFeedPostDto.VisibilityType
             };
-
             _context.Posts.Add(post);
-            _context.SaveChanges();
+            
+            if (createFeedPostDto.Media is not null)
+            {
+                foreach (var m in createFeedPostDto.Media)
+                {
+                    var media = new PostMedia()
+                    {
+                        Data = m.Data,
+                        FileExtension = m.FileExtension,
+                        Filename = m.Filename,
+                        MediaPostId = post.PostId,
+                    };
+                    _context.PostMedia.Add(media);
+                }
+            }
+            
+            await _context.SaveChangesAsync();
 
-            return new ResponsePostDto
+            return new FeedPostDto
             {
                 PostId = post.PostId,
                 Text = post.Text,
                 CreatorId = post.CreatorId,
-                DateTimePost = post.DateTimePost
+                DateTimePost = post.DateTimePost,
+                VisibilityType = post.VisibilityType
             };
         }
         catch (DbUpdateException ex)
@@ -78,7 +160,7 @@ public class PostService
         }
     }
 
-    public ResponsePostDto UpdatePost(Guid id, UpdatePostDto updatePostDto)
+    public async Task<FeedPostDto> UpdatePost(Guid id, FeedPostDto updatePostDto)
     {
         var post = _context.Posts.Find(id);
 
@@ -87,18 +169,19 @@ public class PostService
         
         post.Text = updatePostDto.Text?? post.Text;
 
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
-        return new ResponsePostDto
+        return new FeedPostDto
         {
             PostId = post.PostId,
             Text = post.Text,
             CreatorId = post.CreatorId,
-            DateTimePost = post.DateTimePost
+            DateTimePost = post.DateTimePost,
+            VisibilityType = post.VisibilityType
         };
     }
 
-    public void DeletePost(Guid id)
+    public async Task DeletePost(Guid id)
     {
         using (var transaction = _context.Database.BeginTransaction())
         {
@@ -109,12 +192,13 @@ public class PostService
                 if (post== null)
                     throw new ArgumentException("Post not found.");
 
-                _context.SaveChanges();
-                transaction.Commit();
+                _context.Posts.Remove(post);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (Exception ex)
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 throw ex;
             }
         }

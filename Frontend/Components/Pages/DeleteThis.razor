@@ -37,16 +37,10 @@
     <p>@searchResult</p>
 </div>
 
-
-@{
-    // int inlineVariable = 3 + 4;
-}
-
 @if (variavel > 5)
 {
     <p>Ganhaste!!</p>
 }
-
 @if (variavel == 0)
 {
     <p>Vazio</p>
@@ -61,4 +55,36 @@ else
         }
     </ul>
 }
+}
+
+@code{
+    private int variavel = 0;
+    [Parameter] public string PostString { get; set; }
+    [Parameter] public int PostNumber { get; set; } = 5;
+    [Parameter] public int Incrementp { get; set; } = 1;
+    private string texto = "";
+    private string divText = "Mouse out";
+    private void Incrementar()
+    {
+        variavel= variavel + Incrementp;
+    }
+    private void OnChange(ChangeEventArgs e)
+    {
+        texto = (string)e.Value!;
+    }
+    private void OnInput(ChangeEventArgs e) => texto = (string)e.Value!;
+    private void MouseOver(MouseEventArgs e) => divText = "Mouse over";
+    private void MouseOut(MouseEventArgs e) => divText = "Mouse out";
+    private void OnClickClear()
+    {
+        texto = "";
+    }
+    private string searchResult = "";
+    async Task Search()
+    {
+        searchResult = "Searching...";
+        //só simular ir à base de dados
+        await Task.Delay(2000);
+        searchResult = $"Found {Random.Shared.Next()} results";
+    }
 }
