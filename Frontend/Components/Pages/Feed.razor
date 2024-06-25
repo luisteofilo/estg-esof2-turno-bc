@@ -20,10 +20,7 @@
         <h4>@_feedPosts.Posts.Count()</h4>
         @foreach (FeedPost p in _feedPosts.Posts)
         {
-            <p>@p.Text</p>
-            <Post PostLine="@p"/>
-
-
+            <Post PostLine="p"/>
         }
     }
 </div>

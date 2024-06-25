@@ -10,9 +10,9 @@ public class CreateFeedPostDto
     
     public DateTimeOffset DateTimePost { get; set; }
     
-    public IEnumerable<FeedPostMediaDto>? Media { get; set; }
+    public IEnumerable<CreateFeedPostMediaDto>? Media { get; set; }
     
-    public IEnumerable<FeedPostHashtagDto>? Hashtags { get; set; }
+    public IEnumerable<CreateFeedPostHashtagDto>? Hashtags { get; set; }
     
     public PostVisibilityType VisibilityType { get; set; }
 }
