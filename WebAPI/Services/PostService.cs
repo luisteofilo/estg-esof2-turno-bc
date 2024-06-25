@@ -42,15 +42,58 @@ public class PostService
         var post = await _context.Posts.FindAsync(id);
         if (post == null)
             throw new ArgumentException("Post not found.");
-        
-        return new FeedPostDto
+
+        var postDto = new FeedPostDto
         {
             PostId = post.PostId,
             Text = post.Text,
             CreatorId = post.CreatorId,
             DateTimePost = post.DateTimePost,
-            VisibilityType = post.VisibilityType
+            VisibilityType = post.VisibilityType,
         };
+
+        var media = await _context.PostMedia
+            .Where(m => 
+                m.MediaPostId == post.PostId)
+            .ToListAsync();
+        
+        var mediaDto = new List<FeedPostMediaDto>();
+        
+        foreach (var m in media)
+        {
+            mediaDto.Add(new FeedPostMediaDto()
+            {
+                MediaId = m.MediaId,
+                Data = m.Data,
+                FileExtension = m.FileExtension,
+                Filename = m.Filename,
+                MediaPostId = postDto.PostId
+            });
+        }
+        
+        postDto.Media = mediaDto;
+
+        var hashtags = await _context.Hashtags
+            .Where(h =>
+                h.Posts.Any(p =>
+                    p.PostId == postDto.PostId))
+            .ToListAsync();
+        
+        var hashtagsDto = new List<FeedPostHashtagDto>();
+        
+        foreach (var h in hashtags)
+        {
+            hashtagsDto.Add(new FeedPostHashtagDto()
+            {
+                HashtagId = h.HashtagId,
+                Name = h.Name,
+                NumPosts = h.NumPosts
+            });
+        }
+
+        postDto.Hashtags = hashtagsDto;
+        
+        return postDto;
     }
 
     public async Task<FeedPostDto> CreatePost(CreateFeedPostDto createFeedPostDto)
