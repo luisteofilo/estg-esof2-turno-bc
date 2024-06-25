@@ -1,0 +1,81 @@
+@page "/Taste"
+@using Frontend.DtoClasses
+@using Frontend.Helpers
+@using Frontend.Services
+@attribute [StreamRendering]
+@inject Frontend.Services.TasteQuestionService TasteQuestionService
+@inject ApiHelper ApiHelper
+@rendermode InteractiveServer
+
+<PageTitle>Wine Tasting</PageTitle>
+
+<nav aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a>Wine Tasting</a>
+        </li>
+    </ol>
+</nav>
+
+<h3>Taste</h3>
+<p>Here you can control everything related to the wine tasting evaluations.</p>
+
+<hr class="hr" />
+
+<div class="alert alert-danger d-flex justify-content-between" role="alert">
+    <p class="mb-0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+        <span>ERROR_MESSAGE_HERE</span>
+    </p>
+</div>
+
+<h5>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-question"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+    <span>Questions</span>
+</h5>
+<p>Choose which questions will be appearing in the forms (by event)</p>
+
+<div class="table-responsive">
+    <table id="tasteTable" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Column 1</th>
+                <th>Column 2</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                @foreach (var question in _tasteQuestions)
+                {
+                    <tr>
+                        <td>@question.Question</td>
+                    </tr>
+                }
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(function() {
+        $(document).ready(function() {
+            table = $('#tasteTable').DataTable({
+                paging: true
+            });
+        });
+    });
+</script>
+
+@code {
+    // TODO: Check if user is an administrator or a regular user
+    
+    private List<TasteQuestionDto> _tasteQuestions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _tasteQuestions = await TasteQuestionService.Get();
+    }
+}
