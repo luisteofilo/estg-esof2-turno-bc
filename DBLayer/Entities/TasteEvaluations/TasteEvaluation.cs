@@ -13,9 +13,8 @@ public class TasteEvaluation
     public Guid WineId { get; set; }
     public Wine Wine { get; set; }
     
-    // TODO: Add the event
-    // public Guid EventId { get; set; }
-    // public Event Event { get; set; }
+    public Guid EventId { get; set; }
+    public Event Event { get; set; }
     
     public int WineScore { get; set; }
 }
