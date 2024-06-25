@@ -1,6 +1,9 @@
 ﻿@page "/Post"
-
+@using Frontend.Helpers
 @using global::Helpers.ViewModels
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
 
 <div class="post">
     <div class="post-header">
@@ -26,5 +29,23 @@
 @code{
   
     [Parameter] public FeedPost PostLine { get; set; } = new FeedPost();
+    private FeedPostList _feedPosts = new FeedPostList();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
+            PostLine = _feedPosts.Posts[0];
+        }
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to fetch posts: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
+    }
 
 }
