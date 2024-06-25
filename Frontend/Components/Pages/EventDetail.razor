@@ -1,0 +1,112 @@
+﻿@page "/events/{Slug}"
+@inject Services.EventService EventService
+@inject IJSRuntime JSRuntime
+@using Frontend.DtoClasses
+@using System.Drawing 
+@using System.Drawing.Imaging
+@using Frontend.Helpers
+@using ZXing
+@using ZXing.Common
+
+<PageTitle>Event Detail</PageTitle>
+
+<h3>Event Detail</h3>
+
+@if (eventDto == null)
+{
+    <p><em>Event not found or error fetching event details.</em></p>
+}
+else
+{
+    <h4>@eventDto.Name</h4>
+    <p>ID: @eventDto.EventId</p>
+    
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qrCodeModal">
+        Show QR Code
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="qrModalLabel">QR Code Invite for @eventDto.Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="@qrCodeImage" alt="Event QR Code" />
+                    <p>Debug URL: @qrCodeUrl</p>  <!-- PARA DEBUG, SENDO QUE NAO DA PRA LER CODIGOS QR EM LOCALHOST -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; }
+    private EventDto eventDto;
+    private string qrCodeUrl;
+    private string qrCodeImage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        eventDto = await EventService.GetEventBySlug(Slug);
+        if (eventDto != null)
+        {
+            qrCodeUrl = GenerateQRCodeUrl(eventDto.EventId.ToString());
+            qrCodeImage = GenerateQRCodeImage(qrCodeUrl);
+        }
+    }
+
+    private string GenerateQRCodeUrl(string eventId)
+    {
+        if (UserState.LoggedInUserId.HasValue)
+        {
+            return $"http://localhost:5295/api/events/register/{eventId}/{UserState.LoggedInUserId.Value}";
+        }
+        else
+        {
+            return "http://localhost:5295/login";
+        }
+    }
+
+    private string GenerateQRCodeImage(string url)
+    {
+        var writer = new BarcodeWriterPixelData
+        {
+            Format = BarcodeFormat.QR_CODE,
+            Options = new EncodingOptions
+            {
+                Height = 250,
+                Width = 250,
+                Margin = 1,
+                PureBarcode = true
+            }
+        };
+
+        var pixelData = writer.Write(url);
+        using (var bitmap = new Bitmap(pixelData.Width, pixelData.Height, PixelFormat.Format32bppRgb))
+        {
+            var bitmapData = bitmap.LockBits(new Rectangle(0, 0, pixelData.Width, pixelData.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
+            try
+            {
+                System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, bitmapData.Scan0, pixelData.Pixels.Length);
+            }
+            finally
+            {
+                bitmap.UnlockBits(bitmapData);
+            }
+
+            using (var memoryStream = new MemoryStream())
+            {
+                bitmap.Save(memoryStream, ImageFormat.Png);
+                return $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}";
+            }
+        }
+    }
+}

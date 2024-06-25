@@ -3,6 +3,7 @@ using System;
 using ESOF.WebApp.DBLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ESOF.WebApp.DBLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240621201011_TablesEvent_EventParticipant")]
+    partial class TablesEvent_EventParticipant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -149,30 +152,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasKey("GrapeTypeId");
 
                     b.ToTable("GrapeTypes");
-                });
-            
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Interaction", b =>
-                {
-                    b.Property<Guid>("InteractionLinkId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("InteractionType")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("WineId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("InteractionLinkId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("WineId");
-
-                    b.ToTable("Interaction");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Permission", b =>
@@ -387,21 +366,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.Navigation("User");
                 });
-            
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Interaction", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "User")
-                        .WithMany("Interactions")
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Wine", "Wine")
-                        .WithMany("WineInteractions")
-                        .HasForeignKey("WineId");
-
-                    b.Navigation("User");
-
-                    b.Navigation("Wine");
-                });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.RolePermission", b =>
                 {
@@ -505,8 +469,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.User", b =>
                 {
-                    b.Navigation("Interactions");
-
                     b.Navigation("EventParticipants");
 
                     b.Navigation("UserRoles");
@@ -515,8 +477,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Wine", b =>
                 {
                     b.Navigation("WineGrapeTypeLinks");
-
-                    b.Navigation("WineInteractions");
                 });
 #pragma warning restore 612, 618
         }
