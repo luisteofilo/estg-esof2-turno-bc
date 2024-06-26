@@ -56,7 +56,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.ToTable("Roles");
                 });
-
+            
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.RolePermission", b =>
                 {
                     b.Property<Guid>("RoleId")
