@@ -12,8 +12,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileHelper.GetString("API_URL")) });
 builder.Services.AddScoped<ApiHelper>();
 builder.Services.AddScoped<EventService>();
-//builder.Services.AddScoped<EventParticipantService>(); to be implemented
 builder.Services.AddScoped<TasteQuestionService>();
+builder.Services.AddScoped<TasteEvaluationQuestionService>();
 builder.Services.AddScoped<TasteQuestionTypeService>();
 builder.Services.AddScoped<TasteEvaluationService>();
 builder.Services.AddScoped<WineService>();
