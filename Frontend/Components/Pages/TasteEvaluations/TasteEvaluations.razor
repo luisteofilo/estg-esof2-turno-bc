@@ -1,0 +1,409 @@
+@page "/taste/evaluations"
+@using Frontend.DtoClasses
+@using Frontend.Helpers
+@using Frontend.Services
+@using global::Helpers
+@attribute [StreamRendering]
+@inject Frontend.Services.TasteEvaluationService TasteEvaluationService
+@inject Frontend.Services.EventService EventService
+@inject Frontend.Services.WineService WineService
+@inject Frontend.Services.UserService UserService
+@inject ApiHelper ApiHelper
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Tasting Evaluations</PageTitle>
+
+<nav aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/taste">Wine Tasting</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a>Taste Evaluations</a>
+        </li>
+    </ol>
+</nav>
+
+<h3>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll"><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>
+    <span>Evaluations</span>
+</h3>
+<p>Create a form for a user or view all the forms of the users.</p>
+
+<hr class="hr" />
+
+<!-- Alert -->
+<div class="alert visually-hidden" role="alert" id="tasteEvaluation_alert">
+    MESSAGE_HERE
+</div>
+
+<div class="table-responsive">
+    <table id="evaluationsTable" class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>User</th>
+            <th>Event</th>
+            <th>Wine</th>
+            <th>Wine Score</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+            @if (_tasteEvaluations == null)
+            {
+                <p>
+                    <em>Loading...</em>
+                </p>
+            }
+            else
+            {
+                @foreach (var tasteEvaluation in _tasteEvaluations)
+                {
+                    <tr>
+                        @* ----------------------------------- *@
+                        @* TODO: Make it appear the user name *@
+                        @* ----------------------------------- *@
+                        <td><NavLink href="/users">@tasteEvaluation.UserId</NavLink></td>
+                        
+                        @* ----------------------------------- *@
+                        @* TODO: Make it appear the event name *@
+                        @* ----------------------------------- *@
+                        <td><NavLink href="/events">@tasteEvaluation.EventId</NavLink></td>
+                        
+                        @* ----------------------------------- *@
+                        @* TODO: Make it appear the wine name  *@
+                        @* ----------------------------------- *@
+                        <td><NavLink href="/wines">@tasteEvaluation.WineId</NavLink></td>
+                        
+                        <td>@tasteEvaluation.WineScore</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" data-bs-target="#tasteEvaluation_edit" data-bs-toggle="modal" @onclick="() => { SetEvaluationEditParameters(tasteEvaluation.TasteEvaluationId, tasteEvaluation.UserId, tasteEvaluation.EventId, tasteEvaluation.WineId, tasteEvaluation.WineScore); }">Edit</button>
+                            <button class="btn btn-sm btn-danger" data-bs-target="#tasteEvaluation_delete" data-bs-toggle="modal" @onclick="() => { SetEvaluationDeleteParameters(tasteEvaluation.TasteEvaluationId); }">Delete</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div class="mt-3">
+    <a class="w-100 btn btn-primary rounded-0 btn-block" data-bs-target="#tasteEvaluation_createModal" data-bs-toggle="modal">Create new question</a>
+</div>
+
+<!-- Modals -->
+<div class="modal fade" id="tasteEvaluation_createModal" tabindex="-1" aria-labelledby="tasteEvaluations_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="tasteEvaluations_label">Create a taste evaluation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tasteEvaluation_create_user" class="form-label">User</label>
+                        <select class="form-select" id="tasteEvaluation_create_user" @bind="_tasteEvaluationUserId">
+                            <option value="@Guid.Empty" selected>-- Choose an user --</option>
+                            @if (_users == null)
+                            {
+                                <option value="">Loading...</option>
+                            }
+                            else
+                            {
+                                @foreach (var user in _users)
+                                {
+                                    <option value="@user.UserId">@user.Email</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tasteEvaluation_create_event" class="form-label">Event</label>
+                        <select class="form-select" id="tasteEvaluation_create_event" @bind="_tasteEvaluationEventId">
+                            <option value="@Guid.Empty" selected>-- Choose an event --</option>
+                            @if (_events == null)
+                            {
+                                <option value="">Loading...</option>
+                            }
+                            else
+                            {
+                                @foreach (var events in _events)
+                                {
+                                    <option value="@events.EventId">@events.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tasteEvaluation_create_wine" class="form-label">Wine</label>
+                        <select class="form-select" id="tasteEvaluation_create_wine" @bind="_tasteEvaluationWineId">
+                            <option value="@Guid.Empty" selected>-- Choose a wine --</option>
+                            @if (_events == null)
+                            {
+                                <option value="">Loading...</option>
+                            }
+                            else
+                            {
+                                @foreach (var wine in _wines)
+                                {
+                                    <option value="@wine.WineId">@wine.label</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tasteEvaluation_create_score" class="form-label">Wine Score</label>
+                        <input type="number" class="form-control" id="tasteEvaluation_create_score" @bind="_tasteEvaluationWineScore" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="() => { CreateEvaluation(); }">Confirm</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="tasteEvaluation_delete" tabindex="-1" aria-labelledby="tasteEvaluations_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="tasteEvaluations_label">Deletion confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Do you really wish to delete the taste evaluation:<br/>
+                <code>"<span>@_tasteEvaluationId</span>"</code>
+            </div>
+            <div class="modal-footer">
+                <form>
+                    <input type="hidden" id="tasteEvaluation_id" value="@_tasteEvaluationId" />
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="() => { DeleteEvaluation(_tasteEvaluationId); }">Confirm</button>
+                </form>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="tasteEvaluation_edit" tabindex="-1" aria-labelledby="tasteEvaluations_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="tasteEvaluations_label">Edit evaluation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tasteEvaluation_edit_type" class="form-label">User</label>
+                        <select class="form-select" id="tasteEvaluation_edit_type" @bind="_tasteEvaluationUserId">
+                            @if (_users == null)
+                            {
+                                <option value="">Loading...</option>
+                            }
+                            else
+                            {
+                                @foreach (var user in _users)
+                                {
+                                    <option value="@user.UserId">@user.Email</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tasteEvaluation_edit_event" class="form-label">Event</label>
+                        <select class="form-select" id="tasteEvaluation_edit_event" @bind="_tasteEvaluationEventId">
+                            @if (_events == null)
+                            {
+                                <option value="">Loading...</option>
+                            }
+                            else
+                            {
+                                @foreach (var events in _events)
+                                {
+                                    <option value="@events.EventId">@events.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tasteEvaluation_edit_wine" class="form-label">Wine</label>
+                        <select class="form-select" id="tasteEvaluation_edit_wine" @bind="_tasteEvaluationWineId">
+                            @if (_wines == null)
+                            {
+                                <option value="">Loading...</option>
+                            }
+                            else
+                            {
+                                @foreach (var wine in _wines)
+                                {
+                                    <option value="@wine.WineId">@wine.label</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tasteEvaluation_edit_score" class="form-label">Wine Score</label>
+                        <input type="number" class="form-control" id="tasteEvaluation_edit_score" @bind="_tasteEvaluationWineScore" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                        <input type="hidden" id="tasteEvaluation_id" value="@_tasteEvaluationId" />
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="() => { EditEvaluation(); }">Confirm</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    setTimeout(() => {
+        if (!$('#evaluationsTable').hasClass('dataTable')) {
+            evaluationsTable = $('#evaluationsTable').DataTable({
+                paging: true
+            });
+        }
+    }, 10);
+
+    function SendAlert(alertID, message, type) {
+        const alert = document.getElementById(alertID);
+        alert.classList.remove('visually-hidden');
+        alert.classList.add(`alert-${type}`);
+
+        if (type === 'success') {
+            message = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-check me-3"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg>' + message;
+        } else if (type === 'danger') {
+            message = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x me-3"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>' + message;
+        } else {
+            message = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert me-3"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>' + message;
+        }
+
+        alert.innerHTML = message;
+    }
+
+    function CloseAlert(alertID) {
+        const alert = document.getElementById(alertID);
+        alert.classList.add('visually-hidden');
+    }
+
+    function setEvents(events) {
+        window._events = events;
+    }
+    
+    function setUsers(users) {
+        window._users = users;
+    }
+</script>
+
+@code {
+    // TODO: Check if user is an administrator or a regular user
+
+    private List<TasteEvaluationDto>? _tasteEvaluations;
+    
+    private Guid _tasteEvaluationId = Guid.Empty;
+    
+    private Guid _tasteEvaluationUserId = Guid.Empty;
+    private Guid _tasteEvaluationEventId = Guid.Empty;
+    private Guid _tasteEvaluationWineId = Guid.Empty;
+    
+    private int _tasteEvaluationWineScore = 0;
+    
+    private void SetEvaluationDeleteParameters(Guid id)
+    {
+        _tasteEvaluationId = id;
+    }
+    
+    private void SetEvaluationEditParameters(Guid id, Guid userId, Guid eventId, Guid wineId, int score)
+    {
+        _tasteEvaluationId = id;
+        _tasteEvaluationUserId = userId;
+        _tasteEvaluationEventId = eventId;
+        _tasteEvaluationWineId = wineId;
+        _tasteEvaluationWineScore = score;
+    }
+    
+    private async Task CreateEvaluation()
+    {
+        if(_tasteEvaluationId == Guid.Empty || _tasteEvaluationUserId == Guid.Empty || _tasteEvaluationEventId == Guid.Empty || _tasteEvaluationWineId == Guid.Empty || _tasteEvaluationWineScore == 0)
+        {
+            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "Please fill all the fields.", "warning");
+            return;
+        }
+        
+        if (TasteEvaluationService.Create(new TasteEvaluationDto() { UserId = _tasteEvaluationUserId, EventId = _tasteEvaluationEventId, WineId = _tasteEvaluationWineId, WineScore = _tasteEvaluationWineScore }))
+        {
+            JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "The question was created successfully!", "success");
+            await LoadTasteEvaluations();
+            StateHasChanged();
+        }
+        else
+            JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "There was an error creating the question.", "danger");
+    }
+    
+    private async Task EditEvaluation()
+    {
+        if(_tasteEvaluationId == Guid.Empty || _tasteEvaluationUserId == Guid.Empty || _tasteEvaluationEventId == Guid.Empty || _tasteEvaluationWineId == Guid.Empty || _tasteEvaluationWineScore == 0)
+        {
+            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "Please fill all the fields.", "warning");
+            return;
+        }
+        
+        if (TasteEvaluationService.Update(_tasteEvaluationId, new TasteEvaluationDto() { UserId = _tasteEvaluationUserId, EventId = _tasteEvaluationEventId, WineId = _tasteEvaluationWineId, WineScore = _tasteEvaluationWineScore }))
+        {
+            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "The question was edited successfully!", "success");
+            await LoadTasteEvaluations();
+            StateHasChanged();
+        }
+        else
+            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "There was an error editing the question.", "danger");
+    }
+
+    private async Task DeleteEvaluation(Guid id)
+    {
+        if (TasteEvaluationService.Delete(id))
+        {
+            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "The question was deleted successfully!", "success");
+            await LoadTasteEvaluations();
+            StateHasChanged();
+        }
+        else
+            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "There was an error deleting the question.", "danger");
+    }
+    
+    private async Task LoadTasteEvaluations()
+    {
+        _tasteEvaluations = await TasteEvaluationService.Get();
+        StateHasChanged();
+    }
+    
+    private List<EventDto>? _events;
+    private List<UserDto>? _users;
+    private List<WineDto>? _wines;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await LoadTasteEvaluations();
+            
+            _events = await EventService.GetEvents();
+            _users = await UserService.Get();
+            _wines = await WineService.Get();
+            
+            await JS.InvokeAsync<string>("setEvents", _events);
+            await JS.InvokeAsync<string>("setUsers", _users);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error has occurred: {ex.Message} | {ex.InnerException}");
+            _tasteEvaluations = null;
+        }
+    }
+}
