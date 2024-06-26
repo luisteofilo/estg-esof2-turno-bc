@@ -3,6 +3,7 @@ using System;
 using ESOF.WebApp.DBLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ESOF.WebApp.DBLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240625134818_InitialDataSeed")]
+    partial class InitialDataSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,31 +77,31 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasData(
                         new
                         {
-                            EventId = new Guid("63b6f71d-aa27-45da-a4c5-d0582c946797"),
+                            EventId = new Guid("641bfa3a-601f-4914-9f74-f1acdf0df6ad"),
                             Name = "Event1",
                             Slug = "event1"
                         },
                         new
                         {
-                            EventId = new Guid("302f44a4-056b-46de-b3a8-cd29ce7dd1a4"),
+                            EventId = new Guid("8de65f3c-0c19-4edb-b096-ea8a0290445d"),
                             Name = "Event2",
                             Slug = "event2"
                         },
                         new
                         {
-                            EventId = new Guid("96092a74-85bc-41bd-b2b1-11bfcf280176"),
+                            EventId = new Guid("f1f1de1e-2017-4ee5-a030-fb565c33e3fb"),
                             Name = "Event3",
                             Slug = "event3"
                         },
                         new
                         {
-                            EventId = new Guid("50e37048-225a-4c3c-add2-3853db9fa481"),
+                            EventId = new Guid("ea3d1924-64a8-4fa8-9776-c9669f560191"),
                             Name = "Event4",
                             Slug = "event4"
                         },
                         new
                         {
-                            EventId = new Guid("3330a2e1-2d36-42af-91d4-28c9f8e90510"),
+                            EventId = new Guid("3d3c51e6-a947-4277-b15b-db9df775f1be"),
                             Name = "Event5",
                             Slug = "event5"
                         });
@@ -149,30 +152,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasKey("GrapeTypeId");
 
                     b.ToTable("GrapeTypes");
-                });
-            
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Interaction", b =>
-                {
-                    b.Property<Guid>("InteractionLinkId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("InteractionType")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("WineId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("InteractionLinkId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("WineId");
-
-                    b.ToTable("Interaction");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Permission", b =>
@@ -254,9 +233,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -267,8 +243,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("TasteEvaluationId");
-
-                    b.HasIndex("EventId");
 
                     b.HasIndex("UserId");
 
@@ -310,9 +284,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Question")
                         .IsRequired()
                         .HasColumnType("text");
@@ -321,8 +292,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("TasteQuestionId");
-
-                    b.HasIndex("EventId");
 
                     b.HasIndex("TasteQuestionTypeId");
 
@@ -481,21 +450,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.Navigation("User");
                 });
-            
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Interaction", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "User")
-                        .WithMany("Interactions")
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Wine", "Wine")
-                        .WithMany("WineInteractions")
-                        .HasForeignKey("WineId");
-
-                    b.Navigation("User");
-
-                    b.Navigation("Wine");
-                });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.RolePermission", b =>
                 {
@@ -518,12 +472,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteEvaluation", b =>
                 {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -535,8 +483,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasForeignKey("WineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Event");
 
                     b.Navigation("User");
 
@@ -564,19 +510,11 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteQuestion", b =>
                 {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.TasteQuestionType", "TasteQuestionType")
                         .WithMany()
                         .HasForeignKey("TasteQuestionTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Event");
 
                     b.Navigation("TasteQuestionType");
                 });
@@ -664,8 +602,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.User", b =>
                 {
-                    b.Navigation("Interactions");
-
                     b.Navigation("EventParticipants");
 
                     b.Navigation("UserRoles");
@@ -674,8 +610,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Wine", b =>
                 {
                     b.Navigation("WineGrapeTypeLinks");
-
-                    b.Navigation("WineInteractions");
                 });
 #pragma warning restore 612, 618
         }
