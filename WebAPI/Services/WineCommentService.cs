@@ -67,7 +67,8 @@
                     Evaluation = wineComment.Evaluation,
                     CreatedAt = wineComment.CreatedAt,
                     UpdatedAt = wineComment.UpdatedAt,
-                    WineId = wineComment.UserId
+                    WineId = wineComment.WineId,
+                    UserId = wineComment.UserId
                 };
                 
             }
@@ -76,4 +77,65 @@
                 throw new Exception("Error when creating a comment!", ex);
             }
         }
+        
+        public ResponseWineCommentDto UpdateWineComment(Guid id, UpdateWineCommentDto updateWineCommentDto)
+        {
+                try
+                {
+                    var wineComment = _context.WineComments
+                        .FirstOrDefault(w => w.WineCommentId == id);
+
+                    if (wineComment == null)
+                    {
+                        throw new ArgumentException("Wine Comment not found.");
+                    }
+
+                    wineComment.Comment = updateWineCommentDto.Comment ?? wineComment.Comment;
+                    wineComment.Evaluation = updateWineCommentDto.Evaluation ?? wineComment.Evaluation;
+                    wineComment.UpdatedAt = DateTimeOffset.UtcNow;
+
+                    _context.SaveChanges();
+
+                    return new ResponseWineCommentDto
+                    {
+                        WineCommentId = wineComment.WineCommentId,
+                        Comment = wineComment.Comment,
+                        Evaluation = wineComment.Evaluation,
+                        CreatedAt = wineComment.CreatedAt,
+                        UpdatedAt = wineComment.UpdatedAt,
+                        WineId = wineComment.WineId,
+                        UserId = wineComment.UserId
+                    };
+                }
+                catch (DbUpdateException ex)
+                {
+                    throw new Exception("Error when updating comment.", ex);
+                }
+        }
+        
+        public void DeleteWineComment(Guid id)
+        {
+            try
+            {
+                var wineComment = _context.WineComments
+                    .FirstOrDefault(w => w.WineCommentId == id);
+
+                if (wineComment == null)
+                {
+                    throw new ArgumentException("Wine Comment not found.");
+                }
+                
+                _context.WineComments.Remove(wineComment);
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new Exception("Concurrency conflict occurred while deleting the comment", ex); 
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("An error occurred while deleting the comment.", ex); 
+            }
+        }
+        
     }

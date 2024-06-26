@@ -51,4 +51,32 @@ public class WineCommentController : Controller
         }
     }
     
+    [HttpPut("update")]
+    public ActionResult<ResponseWineCommentDto> UpdateWineComment(Guid id,UpdateWineCommentDto updateWineCommentDto)
+    {
+        try
+        {
+            var updatedWineComment = _wineCommentService.UpdateWineComment(id, updateWineCommentDto);
+            return Ok(updatedWineComment); 
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+    
+    [HttpDelete("delete/{id}")]
+    public ActionResult DeleteWineComment(Guid id)
+    {
+        try
+        {
+            _wineCommentService.DeleteWineComment(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+    
 }

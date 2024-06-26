@@ -28,6 +28,7 @@ public partial class ApplicationDbContext : DbContext
         return optionsBuilder.Options;
     })();
     
+  
     public ApplicationDbContext()
         : base(DefaultOptions)
     {
