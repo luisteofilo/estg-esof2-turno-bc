@@ -13,12 +13,19 @@ builder.Services.AddScoped<WineService>();
 builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
+
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<FriendshipService>();
 builder.Services.AddScoped<FriendRequestService>();
 builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<LikeService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
+
+
+builder.Services.AddScoped<TasteEvaluationService>();
+builder.Services.AddScoped<TasteEvaluationQuestionService>();
+builder.Services.AddScoped<TasteQuestionService>();
+builder.Services.AddScoped<TasteQuestionTypeService>();
 
 builder.Services.AddScoped<InteractionService>();
 builder.Services.AddScoped<UserService>();
@@ -82,3 +89,4 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 }
 */
 
+=======

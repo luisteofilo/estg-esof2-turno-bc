@@ -52,5 +52,8 @@ public partial class ApplicationDbContext
         modelBuilder.Entity<User>()
             .Property(p => p.UserId)
             .HasDefaultValueSql("gen_random_uuid()");
+=======
+        modelBuilder.Entity<UserRole>()
+            .HasKey(e => new { e.RoleId, e.UserId });
     }
 }
