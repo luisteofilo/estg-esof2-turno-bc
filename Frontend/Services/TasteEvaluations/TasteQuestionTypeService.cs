@@ -8,20 +8,20 @@ using System.Threading;
 
 namespace Frontend.Services
 {
-    public class TasteQuestionService
+    public class TasteQuestionTypeService
     {
         private readonly HttpClient _http;
 
-        public TasteQuestionService(HttpClient http)
+        public TasteQuestionTypeService(HttpClient http)
         {
             _http = http;
         }
-
-        public async Task<List<TasteQuestionDto>?> Get(CancellationToken cancellationToken = default)
+        
+        public async Task<List<TasteQuestionTypeDto>?> Get(CancellationToken cancellationToken = default)
         {
             try
             {
-                return await _http.GetFromJsonAsync<List<TasteQuestionDto>>("api/TasteQuestions", cancellationToken);
+                return await _http.GetFromJsonAsync<List<TasteQuestionTypeDto>>("api/TasteQuestionsType", cancellationToken);
             }
             catch (HttpRequestException ex) when (ex.InnerException is IOException)
             {
@@ -37,6 +37,29 @@ namespace Frontend.Services
             }
 
             return null;
+        }
+        
+        public string GetType(Guid id, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var result = _http.GetFromJsonAsync<TasteQuestionTypeDto>($"api/TasteQuestionsType/{id}", cancellationToken).Result;
+                return result.Type;
+            }
+            catch (HttpRequestException ex) when (ex.InnerException is IOException)
+            {
+                Console.WriteLine($"An IO error has occurred: {ex.Message} | {ex.InnerException?.Message}");
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine($"The operation was canceled: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error has occurred: {ex.Message}");
+            }
+
+            return "";
         }
         
         public Boolean Create(TasteQuestionDto data, CancellationToken cancellationToken = default)
