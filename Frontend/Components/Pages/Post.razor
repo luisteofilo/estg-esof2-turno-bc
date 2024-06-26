@@ -1,65 +1,43 @@
-﻿@page "/post"
+﻿@using ESOF.WebApp.WebAPI.DtoClasses
 @using Frontend.Helpers
 @using global::Helpers.ViewModels
-@using ESOF.WebApp.WebAPI.DtoClasses
-@rendermode InteractiveServer
-@attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 
-<div class="feed">
-    <div class="post">
-        <div class="post-header">
-            <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
-            <div class="post-info">
-                <div class="post-author">@PostLine.Creator.email</div>
-                <div class="post-meta">@PostLine.DateTimePost · @PostLine.VisibilityType</div>
-            </div>
-            <div class="post-menu">
-                <button class="menu-button">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </button>
-            </div>
+<div class="post">
+    <div class="post-header">
+        <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
+        <div class="post-info">
+            <div class="post-author">@PostLine.Creator.email</div>
+            <div class="post-meta">@PostLine.DateTimePost · @PostLine.VisibilityType</div>
         </div>
-        <div class="post-content">
-            @PostLine.Text
-        </div>
-        <div class="post-actions">
-            <button @onclick="ToggleLike">
-                @(IsLiked ? "Unlike" : "Like")
+        <div class="post-menu">
+            <button class="menu-button">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
             </button>
-            <span>@LikeCount</span>
         </div>
+    </div>
+    <div class="post-content">
+        @PostLine.Text
+    </div>
+    <div class="post-actions">
+        <button @onclick="ToggleLike">
+            @(IsLiked ? "Unlike" : "Like")
+        </button>
+        <span>@LikeCount</span>
     </div>
 </div>
 
 @code {
-    [Parameter] public FeedPost PostLine { get; set; } = new FeedPost();
-    private FeedPostList _feedPosts = new FeedPostList();
+    [Parameter] public FeedPost PostLine { get; set; }
+
     private bool IsLiked { get; set; }
     private int LikeCount { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            var posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
-            if (posts != null && posts.Any())
-            {
-                _feedPosts.Posts = posts;
-                PostLine = _feedPosts.Posts[0];
-                await LoadLikeData();
-            }
-        }
-        catch (ApplicationException ex)
-        {
-            Console.Error.WriteLine($"Failed to fetch posts: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error: {ex.Message}");
-        }
+        await LoadLikeData();
     }
 
     private async Task LoadLikeData()
