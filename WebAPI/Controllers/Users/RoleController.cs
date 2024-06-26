@@ -43,7 +43,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPost("create")]
-    public ActionResult<ResponseRolesDto> CreateRole(CreateRolesDto createRolesDto)
+    public ActionResult<ResponseRolesDto> CreateRole([FromBody]CreateRolesDto createRolesDto)
     {
         try
         {
