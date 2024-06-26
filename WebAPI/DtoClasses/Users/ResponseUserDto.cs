@@ -4,15 +4,17 @@ public class ResponseUserDto
 {
     public Guid UserId;
 
-    public string FirstName;
+    public string FirstName { get; set; }
     
-    public string LastName;
+    public string LastName { get; set; }
     
-    public string Address;
+    public string Address { get; set; }
     
-    public string Email;
+    public string Email { get; set; }
 
-    public DateTime BirthdayDate;
-    
-    //public string Password;
+    public DateTime BirthdayDate { get; set; }
+
+    public byte[] PasswordHash { get; set; }
+
+    public byte[] PasswordSalt { get; set; }
 }
