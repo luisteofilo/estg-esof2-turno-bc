@@ -58,51 +58,43 @@ namespace WebAPI.Controllers
             return Ok(eventDto);
         }
 
-        // CREATE: api/events/create
+        // POST: api/events/create
         [HttpPost("create")]
-        public async Task<ActionResult<ResponseEventDto>> CreateEvent(CreateEventDto newEvent)
+        public async Task<ActionResult<ResponseEventDto>> CreateEvent(CreateEventDto createEventDto)
         {
             var _context = new ApplicationDbContext();
-            var eventEntity = new Event
+            var newEvent = new Event
             {
-                Name = newEvent.Name,
-                Slug = newEvent.Slug,
-                Description = newEvent.Description,
-                BlindTasting = newEvent.BlindTasting,
-                WineType = newEvent.WineType
+                Name = createEventDto.Name,
+                Slug = createEventDto.Slug,
+                Description = createEventDto.Description,
+                BlindTasting = createEventDto.BlindTasting,
+                WineType = createEventDto.WineType
             };
 
-            _context.Events.Add(eventEntity);
+            _context.Events.Add(newEvent);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEvent), new { slug = eventEntity.Slug }, new ResponseEventDto
-            {
-                EventId = eventEntity.EventId,
-                Name = eventEntity.Name,
-                Slug = eventEntity.Slug,
-                Description = eventEntity.Description,
-                BlindTasting = eventEntity.BlindTasting,
-                WineType = eventEntity.WineType
-            });
+            return CreatedAtAction(nameof(GetEvent), new { slug = newEvent.Slug }, newEvent);
         }
 
-// PUT: api/events/{slug}
+        // PUT: api/events/{slug}
         [HttpPut("{slug}")]
-        public async Task<IActionResult> UpdateEvent(string slug, [FromBody] UpdateEventDto updatedEvent)
+        public async Task<IActionResult> UpdateEvent(string slug, UpdateEventDto updateEventDto)
         {
             var _context = new ApplicationDbContext();
             var eventEntity = await _context.Events.FirstOrDefaultAsync(e => e.Slug == slug);
+
             if (eventEntity == null)
             {
                 return NotFound();
             }
 
-            eventEntity.Name = updatedEvent.Name;
-            eventEntity.Description = updatedEvent.Description;
-            eventEntity.BlindTasting = updatedEvent.BlindTasting;
-            eventEntity.WineType = updatedEvent.WineType;
+            eventEntity.Name = updateEventDto.Name;
+            eventEntity.Description = updateEventDto.Description;
+            eventEntity.BlindTasting = updateEventDto.BlindTasting;
+            eventEntity.WineType = updateEventDto.WineType;
 
-            _context.Events.Update(eventEntity);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -114,6 +106,7 @@ namespace WebAPI.Controllers
         {
             var _context = new ApplicationDbContext();
             var eventEntity = await _context.Events.FirstOrDefaultAsync(e => e.Slug == slug);
+
             if (eventEntity == null)
             {
                 return NotFound();
