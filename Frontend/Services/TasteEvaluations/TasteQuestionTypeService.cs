@@ -62,11 +62,11 @@ namespace Frontend.Services
             return "";
         }
         
-        public Boolean Create(TasteQuestionDto data, CancellationToken cancellationToken = default)
+        public Boolean Create(TasteQuestionTypeDto data, CancellationToken cancellationToken = default)
         {
             try
             {
-                _http.PostAsJsonAsync("api/TasteQuestions/create", data, cancellationToken).Wait(cancellationToken);
+                _http.PostAsJsonAsync("api/TasteQuestionsType/create", data, cancellationToken).Wait(cancellationToken);
                 return true;
             }
             catch (HttpRequestException ex) when (ex.InnerException is IOException)
@@ -85,11 +85,11 @@ namespace Frontend.Services
             return false;
         }
         
-        public Boolean Update(Guid id, TasteQuestionDto data, CancellationToken cancellationToken = default)
+        public Boolean Update(Guid id, TasteQuestionTypeDto data, CancellationToken cancellationToken = default)
         {
             try
             {
-                _http.PutAsJsonAsync($"api/TasteQuestions/update/{id}", data, cancellationToken).Wait(cancellationToken);
+                _http.PutAsJsonAsync($"api/TasteQuestionsType/update/{id}", data, cancellationToken).Wait(cancellationToken);
                 return true;
             }
             catch (HttpRequestException ex) when (ex.InnerException is IOException)
@@ -112,7 +112,7 @@ namespace Frontend.Services
         {
             try
             {
-                _http.DeleteAsync($"api/TasteQuestions/delete/{id}", cancellationToken).Wait(cancellationToken);
+                _http.DeleteAsync($"api/TasteQuestionsType/delete/{id}", cancellationToken).Wait(cancellationToken);
                 return true;
             }
             catch (HttpRequestException ex) when (ex.InnerException is IOException)
