@@ -6,4 +6,6 @@ public class WineLeaderboardDto
     public string Label { get; set; }
     public double AverageScore { get; set; }
     public int TotalEvaluations { get; set; }
+    public int EventsParticipated { get; set; }
+    public string RegionName { get; set; }
 }

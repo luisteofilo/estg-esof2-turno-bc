@@ -12,6 +12,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileHelper.GetString("API_URL")) });
 builder.Services.AddScoped<ApiHelper>();
 builder.Services.AddScoped<WineLeaderboardService>();
+builder.Services.AddScoped<RegionService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

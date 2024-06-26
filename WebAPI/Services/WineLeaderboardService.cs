@@ -19,13 +19,39 @@ public class WineLeaderboardService
     public List<WineLeaderboardDto> GetWineLeaderboard()
     {
         var leaderboard = _context.TasteEvaluations
-            .GroupBy(te => te.Wine)
+            .Include(te => te.Wine)
+            .ThenInclude(w => w.Region)
+            .GroupBy(te => new { te.Wine.WineId, te.Wine.label, te.Wine.Region.Name })
             .Select(g => new WineLeaderboardDto
             {
                 WineId = g.Key.WineId,
                 Label = g.Key.label,
                 AverageScore = g.Average(te => te.WineScore),
-                TotalEvaluations = g.Count()
+                TotalEvaluations = g.Count(),
+                EventsParticipated = g.Select(te => te.EventId).Distinct().Count(),
+                RegionName = g.Key.Name
+            })
+            .OrderByDescending(dto => dto.AverageScore)
+            .ToList();
+
+        return leaderboard;
+    }
+    
+    public List<WineLeaderboardDto> GetWineLeaderboardByRegion(Guid regionId)
+    {
+        var leaderboard = _context.TasteEvaluations
+            .Include(te => te.Wine)
+            .ThenInclude(w => w.Region)
+            .Where(te => te.Wine.RegionId == regionId)
+            .GroupBy(te => new { te.Wine.WineId, te.Wine.label, te.Wine.Region.Name })
+            .Select(g => new WineLeaderboardDto
+            {
+                WineId = g.Key.WineId,
+                Label = g.Key.label,
+                AverageScore = g.Average(te => te.WineScore),
+                TotalEvaluations = g.Count(),
+                EventsParticipated = g.Select(te => te.EventId).Distinct().Count(),
+                RegionName = g.Key.Name
             })
             .OrderByDescending(dto => dto.AverageScore)
             .ToList();

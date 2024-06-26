@@ -1,23 +1,34 @@
-﻿namespace Frontend.Services;
-
-using Frontend.DtoClasses;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
+﻿using Frontend.DtoClasses;
+using Frontend.Helpers;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
-public class WineLeaderboardService
+namespace Frontend.Services
 {
-    private readonly HttpClient _httpClient;
-
-    public WineLeaderboardService(HttpClient httpClient)
+    public class WineLeaderboardService
     {
-        _httpClient = httpClient;
-    }
+        private readonly ApiHelper _apiHelper;
 
-    public async Task<List<WineLeaderboardDto>> GetLeaderboardAsync()
-    {
-        var result = await _httpClient.GetFromJsonAsync<List<WineLeaderboardDto>>("api/wineleaderboard/leaderboard");
-        return result ?? new List<WineLeaderboardDto>();
+        public WineLeaderboardService(ApiHelper apiHelper)
+        {
+            _apiHelper = apiHelper;
+        }
+
+        public async Task<List<WineLeaderboardDto>> GetLeaderboardAsync()
+        {
+            var result = await _apiHelper.GetFromApiAsync<List<WineLeaderboardDto>>("api/wineleaderboard/leaderboard");
+            return result ?? new List<WineLeaderboardDto>();
+        }
+
+        public async Task<List<WineLeaderboardDto>> GetLeaderboardByRegionAsync(Guid? regionId)
+        {
+            if (regionId == null)
+            {
+                return await GetLeaderboardAsync();
+            }
+            var result = await _apiHelper.GetFromApiAsync<List<WineLeaderboardDto>>($"api/wineleaderboard/leaderboard/byregion/{regionId}");
+            return result ?? new List<WineLeaderboardDto>();
+        }
     }
 }

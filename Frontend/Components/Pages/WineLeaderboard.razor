@@ -1,11 +1,9 @@
 ﻿@page "/wineleaderboard"
 @using Frontend.DtoClasses
-@using Frontend.Helpers
 @using Frontend.Services
 @attribute [StreamRendering]
 @inject WineLeaderboardService WineLeaderboardService
-@inject ApiHelper ApiHelper
-@inject IJSRuntime JS
+@inject RegionService RegionService
 @rendermode InteractiveServer
 
 <PageTitle>Wine Leaderboard</PageTitle>
@@ -24,6 +22,18 @@
 <h3>Wine Leaderboard</h3>
 <p>Here you can see the leaderboard of wines based on user evaluations.</p>
 
+<div>
+    <label for="regionSelect">Select Region:</label>
+    <InputSelect id="regionSelect" @bind-Value="_selectedRegionId">
+        <option value="">All Regions</option>
+        @foreach (var region in _regions)
+        {
+            <option value="@region.RegionId">@region.Name</option>
+        }
+    </InputSelect>
+    <button @onclick="FilterByRegion">Filter</button>
+</div>
+
 <hr class="hr" />
 
 @if (_wineLeaderboard == null || !_wineLeaderboard.Any())
@@ -40,8 +50,10 @@ else
             <tr>
                 <th>Rank</th>
                 <th>Label</th>
-                <th>Average Score</th>
+                <th>Region</th>
+                <th>Events Participated</th>
                 <th>Total Evaluations</th>
+                <th>Average Score</th>
             </tr>
             </thead>
             <tbody>
@@ -50,8 +62,10 @@ else
                 <tr>
                     <td>@(i + 1)</td>
                     <td>@_wineLeaderboard[i].Label</td>
-                    <td>@_wineLeaderboard[i].AverageScore.ToString("F2")</td>
+                    <td>@_wineLeaderboard[i].RegionName</td>
+                    <td>@_wineLeaderboard[i].EventsParticipated</td>
                     <td>@_wineLeaderboard[i].TotalEvaluations</td>
+                    <td>@_wineLeaderboard[i].AverageScore.ToString("F2")</td>
                 </tr>
             }
             </tbody>
@@ -60,17 +74,33 @@ else
 }
 
 @code {
-    private List<WineLeaderboardDto>? _wineLeaderboard;
+    private List<WineLeaderboardDto> _wineLeaderboard = new List<WineLeaderboardDto>();
+    private List<RegionDto> _regions = new List<RegionDto>();
+    private Guid? _selectedRegionId;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            _wineLeaderboard = await WineLeaderboardService.GetLeaderboardAsync();
+            _regions = await RegionService.GetRegionsAsync();
+            _wineLeaderboard = await WineLeaderboardService.GetLeaderboardByRegionAsync(null);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error has occurred: {ex.Message} | {ex.InnerException}");
+            // Handle initialization error
+        }
+    }
+
+    private async Task FilterByRegion()
+    {
+        try
+        {
+            _wineLeaderboard = await WineLeaderboardService.GetLeaderboardByRegionAsync(_selectedRegionId);
+            StateHasChanged(); // Trigger re-render
+        }
+        catch (Exception ex)
+        {
+            // Handle filtering error
         }
     }
 }

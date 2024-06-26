@@ -21,4 +21,10 @@ public class WineLeaderboardController : ControllerBase
     {
         return _wineLeaderboardService.GetWineLeaderboard();
     }
+    
+    [HttpGet("leaderboard/byregion/{regionId}")]
+    public ActionResult<List<WineLeaderboardDto>> GetWineLeaderboardByRegion(Guid regionId)
+    {
+        return _wineLeaderboardService.GetWineLeaderboardByRegion(regionId);
+    }
 }
