@@ -1,0 +1,76 @@
+﻿@page "/wine/{wineId}"
+@inject ESOF.WebApp.WebAPI.Services.WineCommentService CommentService
+@inject NavigationManager NavigationManager
+
+@using ESOF.WebApp.DBLayer.DtoClasses
+@using ESOF.WebApp.DBLayer.Entities
+@using ESOF.WebApp.WebAPI.Services
+
+@code {
+    [Parameter] public Guid WineId { get; set; }
+
+    private List<WineComment> comments = new List<WineComment>();
+    private CreateWineCommentDto newComment = new CreateWineCommentDto();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadComments();
+        newComment.WineId = WineId;
+        isLoading = false;
+    }
+
+    private async Task LoadComments()
+    {
+        comments = await CommentService.GetWineComments(WineId);
+    }
+
+    private async Task SubmitComment()
+    {
+        await CommentService.CreateWineComment(newComment);
+        await LoadComments();
+        newComment = new CreateWineCommentDto { WineId = WineId }; // Reset form
+    }
+}
+
+<h3>Comentários</h3>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    @if (comments.Any())
+    {
+        @foreach (var comment in comments)
+        {
+            <div class="comment">
+                <p>@comment.Comment</p>
+                <p>Evaluation: @comment.Evaluation</p>
+                -<p>Por: @comment.UserId</p>
+                <p>Em: @comment.CreatedAt</p>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No comments yet.</p>
+    }
+}
+
+<h3>Adicionar Comentário</h3>
+
+<EditForm Model="newComment" OnValidSubmit="SubmitComment">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+        <label for="comment">Comentário:</label>
+        <InputTextArea id="comment" @bind-Value="newComment.Comment" />
+    </div>
+    <div>
+        <label for="evaluation">Avaliação (0-5):</label>
+        <InputNumber id="evaluation" @bind-Value="newComment.Evaluation" />
+    </div>
+    <button type="submit">Enviar</button>
+</EditForm>
