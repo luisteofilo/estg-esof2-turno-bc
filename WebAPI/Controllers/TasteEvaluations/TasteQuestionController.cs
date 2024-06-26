@@ -55,6 +55,28 @@ public class TasteQuestionsController : ControllerBase
             return NotFound(ex.Message);
         }
     }
+    
+    /**
+     *
+     * Get all taste questions by the given event id.
+     *
+     * @param eventId The id of the event to get the taste questions from.
+     *
+     * @return The taste questions.
+     * 
+     */
+    [HttpGet("event/{eventId}")]
+    public ActionResult<List<ResponseTasteQuestionDto>> GetQuestionsByEvent(Guid eventId)
+    {
+        try
+        {
+            return Ok(_tasteQuestionService.GetQuestionsByEvent(eventId));
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 
     /**
      *

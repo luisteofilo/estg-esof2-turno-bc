@@ -39,6 +39,28 @@ namespace Frontend.Services
             return null;
         }
         
+        public Task<List<TasteQuestionDto>?> GetQuestionsByEvent(Guid EventId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return _http.GetFromJsonAsync<List<TasteQuestionDto>>($"api/TasteQuestions/event/{EventId}", cancellationToken);
+            }
+            catch (HttpRequestException ex) when (ex.InnerException is IOException)
+            {
+                Console.WriteLine($"An IO error has occurred: {ex.Message} | {ex.InnerException?.Message}");
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine($"The operation was canceled: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error has occurred: {ex.Message}");
+            }
+
+            return null;
+        }
+        
         public Boolean Create(TasteQuestionDto data, CancellationToken cancellationToken = default)
         {
             try
