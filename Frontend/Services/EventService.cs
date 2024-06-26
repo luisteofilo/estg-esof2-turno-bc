@@ -63,12 +63,15 @@ namespace Frontend.Services
         {
             try
             {
+                Console.WriteLine($"Making PUT request for event: {updatedEvent.Slug}"); // Log para depuração
                 var response = await _httpClient.PutAsJsonAsync($"api/events/{updatedEvent.Slug}", updatedEvent);
                 response.EnsureSuccessStatusCode();
+                Console.WriteLine($"PUT request successful for event: {updatedEvent.Slug}"); // Log para depuração
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError($"Request error: {ex.Message}");
+                throw;
             }
         }
 
