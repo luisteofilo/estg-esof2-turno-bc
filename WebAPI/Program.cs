@@ -20,7 +20,14 @@ builder.Services.AddScoped<InteractionService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("http://localhost:5297")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -32,5 +39,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowSpecificOrigin");
+app.UseAuthorization();
 app.MapControllers();
 app.Run();

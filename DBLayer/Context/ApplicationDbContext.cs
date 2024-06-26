@@ -49,6 +49,8 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Region> Regions { get; set; }
     public DbSet<GrapeType> GrapeTypes { get; set; }
     public DbSet<WineGrapeTypeLink> WineGrapeTypeLinks { get; set; }
+
+    public DbSet<Interaction> Interaction { get; set; }
     
     public DbSet<TasteQuestionType> TasteQuestionTypes { get; set; }
     public DbSet<TasteQuestion> TasteQuestions { get; set; }
@@ -79,14 +81,27 @@ public partial class ApplicationDbContext : DbContext
         BuildRegions(modelBuilder);
         BuildGrapeTypes(modelBuilder);
         BuildWineGrapeTypeLinks(modelBuilder);
-        
         BuildTasteQuestionTypes(modelBuilder);
         BuildTasteQuestions(modelBuilder);
         BuildTasteEvaluations(modelBuilder);
         BuildTasteEvaluationQuestions(modelBuilder);
-        
+        BuildInteraction(modelBuilder);
         base.OnModelCreating(modelBuilder);
-        //QRCODE
+        
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            var deletedAtProperty = entityType.FindProperty("DeletedAt");
+            if (deletedAtProperty != null && deletedAtProperty.ClrType == typeof(DateTimeOffset?))
+            {
+                var parameter = Expression.Parameter(entityType.ClrType, "p");
+                var body = Expression.Equal(
+                    Expression.Call(typeof(EF), nameof(EF.Property), new[] { typeof(DateTimeOffset?) }, parameter, Expression.Constant("DeletedAt")),
+                    Expression.Constant(null));
+                var lambda = Expression.Lambda(body, parameter);
+                modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+            }
+        }
+        
         BuildEvent(modelBuilder);
         BuildEventParticipants(modelBuilder);
         //QRCODE

@@ -3,6 +3,7 @@ using System;
 using ESOF.WebApp.DBLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ESOF.WebApp.DBLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240624214217_Wine.Tinder")]
+    partial class WineTinder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,82 +53,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("Brands");
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Event", b =>
-                {
-                    b.Property<Guid>("EventId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("EventId");
-
-                    b.ToTable("Events");
-
-                    b.HasData(
-                        new
-                        {
-                            EventId = new Guid("63b6f71d-aa27-45da-a4c5-d0582c946797"),
-                            Name = "Event1",
-                            Slug = "event1"
-                        },
-                        new
-                        {
-                            EventId = new Guid("302f44a4-056b-46de-b3a8-cd29ce7dd1a4"),
-                            Name = "Event2",
-                            Slug = "event2"
-                        },
-                        new
-                        {
-                            EventId = new Guid("96092a74-85bc-41bd-b2b1-11bfcf280176"),
-                            Name = "Event3",
-                            Slug = "event3"
-                        },
-                        new
-                        {
-                            EventId = new Guid("50e37048-225a-4c3c-add2-3853db9fa481"),
-                            Name = "Event4",
-                            Slug = "event4"
-                        },
-                        new
-                        {
-                            EventId = new Guid("3330a2e1-2d36-42af-91d4-28c9f8e90510"),
-                            Name = "Event5",
-                            Slug = "event5"
-                        });
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.EventParticipant", b =>
-                {
-                    b.Property<Guid>("EventParticipantId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("EventParticipantId");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("EventParticipants");
-                });
-
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.GrapeType", b =>
                 {
                     b.Property<Guid>("GrapeTypeId")
@@ -150,7 +77,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.ToTable("GrapeTypes");
                 });
-            
+
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Interaction", b =>
                 {
                     b.Property<Guid>("InteractionLinkId")
@@ -247,109 +174,12 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("RolePermissions");
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteEvaluation", b =>
-                {
-                    b.Property<Guid>("TasteEvaluationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("WineId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("WineScore")
-                        .HasColumnType("integer");
-
-                    b.HasKey("TasteEvaluationId");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("WineId");
-
-                    b.ToTable("TasteEvaluations");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteEvaluationQuestion", b =>
-                {
-                    b.Property<Guid>("TasteEvaluationQuestionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<Guid>("TasteEvaluationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TasteQuestionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("TasteEvaluationQuestionId");
-
-                    b.HasIndex("TasteEvaluationId");
-
-                    b.HasIndex("TasteQuestionId");
-
-                    b.ToTable("TasteEvaluationQuestions");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteQuestion", b =>
-                {
-                    b.Property<Guid>("TasteQuestionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("TasteQuestionTypeId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("TasteQuestionId");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("TasteQuestionTypeId");
-
-                    b.ToTable("TasteQuestions");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteQuestionType", b =>
-                {
-                    b.Property<Guid>("TasteQuestionTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("TasteQuestionTypeId");
-
-                    b.ToTable("TasteQuestionTypes");
-                });
-
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.User", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -364,6 +194,9 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("bytea");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -463,25 +296,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("WineGrapeTypeLinks");
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.EventParticipant", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Event", "Event")
-                        .WithMany("EventParticipants")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "User")
-                        .WithMany("EventParticipants")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("User");
-                });
-            
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Interaction", b =>
                 {
                     b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "User")
@@ -514,71 +328,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteEvaluation", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Wine", "Wine")
-                        .WithMany()
-                        .HasForeignKey("WineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("User");
-
-                    b.Navigation("Wine");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteEvaluationQuestion", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.TasteEvaluation", "TasteEvaluation")
-                        .WithMany()
-                        .HasForeignKey("TasteEvaluationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.TasteQuestion", "TasteQuestion")
-                        .WithMany()
-                        .HasForeignKey("TasteQuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TasteEvaluation");
-
-                    b.Navigation("TasteQuestion");
-                });
-
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.TasteQuestion", b =>
-                {
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ESOF.WebApp.DBLayer.Entities.TasteQuestionType", "TasteQuestionType")
-                        .WithMany()
-                        .HasForeignKey("TasteQuestionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("TasteQuestionType");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.UserRole", b =>
@@ -635,11 +384,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Navigation("Wines");
                 });
 
-            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Event", b =>
-                {
-                    b.Navigation("EventParticipants");
-                });
-
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.GrapeType", b =>
                 {
                     b.Navigation("WineGrapeTypes");
@@ -665,8 +409,6 @@ namespace ESOF.WebApp.DBLayer.Migrations
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.User", b =>
                 {
                     b.Navigation("Interactions");
-
-                    b.Navigation("EventParticipants");
 
                     b.Navigation("UserRoles");
                 });
