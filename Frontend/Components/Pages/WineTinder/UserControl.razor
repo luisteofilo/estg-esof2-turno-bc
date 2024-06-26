@@ -9,9 +9,11 @@
 
 <h3>User Control</h3>
 
-@if (_users == null)
+@if (_users.Users.Count == 0)
 {
-    <p>Loading...</p>
+    <p>
+        <em>No Users Available!</em>
+    </p>
 }
 else
 {

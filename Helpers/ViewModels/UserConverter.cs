@@ -17,7 +17,7 @@ public class UserConverter : TypeConverter
 
         if (!string.IsNullOrEmpty(stringValue))
         {
-            return JsonSerializer.Deserialize<ResponseWineDto>(stringValue);
+            return JsonSerializer.Deserialize<ResponseUserDto>(stringValue);
         }
 
         return base.ConvertFrom(context, culture, value);
@@ -30,7 +30,7 @@ public class UserConverter : TypeConverter
 
     public override object ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
     {
-        if (destinationType == typeof(string) && value is ResponseWineDto wineDto)
+        if (destinationType == typeof(string) && value is ResponseUserDto wineDto)
         {
             return JsonSerializer.Serialize(wineDto);
         }

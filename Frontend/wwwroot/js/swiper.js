@@ -91,13 +91,13 @@ function updateCardPositions() {
 }
 
 async function checkInteractionExists(interaction) {
-    const response = await fetch(`https://localhost:7103/api/Interaction/show?userId=${interaction.UserId}&wineId=${interaction.WineId}`);
+    const response = await fetch(`http://localhost:5295/api/Interaction/show?userId=${interaction.UserId}&wineId=${interaction.WineId}`);
     
     return await response.json();
 }
 
 async function createInteraction(interaction) {
-    const response = await fetch(`https://localhost:7103/api/Interaction/store`, {
+    const response = await fetch(`http://localhost:5295/api/Interaction/store`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -110,7 +110,7 @@ async function createInteraction(interaction) {
 }
 
 async function updateInteraction(interaction) {
-    const response = await fetch(`https://localhost:7103/api/Interaction/update?userId=${interaction.UserId}&wineId=${interaction.WineId}`, {
+    const response = await fetch(`http://localhost:5295/api/Interaction/update?userId=${interaction.UserId}&wineId=${interaction.WineId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
