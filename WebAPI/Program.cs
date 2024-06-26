@@ -14,6 +14,7 @@ builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
 builder.Services.AddScoped<WineLeaderboardService>();
+builder.Services.AddScoped<UserLeaderboardService>();
 
 // Configurar o DbContext com a conexão ao banco de dados
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

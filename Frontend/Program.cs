@@ -13,6 +13,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileH
 builder.Services.AddScoped<ApiHelper>();
 builder.Services.AddScoped<WineLeaderboardService>();
 builder.Services.AddScoped<RegionService>();
+builder.Services.AddScoped<UserLeaderboardService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

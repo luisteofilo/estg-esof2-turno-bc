@@ -1,0 +1,246 @@
+﻿@page "/leaderboards"
+@using Frontend.DtoClasses
+@using Frontend.Services
+@attribute [StreamRendering]
+@inject WineLeaderboardService WineLeaderboardService
+@inject RegionService RegionService
+@inject UserLeaderboardService UserLeaderboardService
+@rendermode InteractiveServer
+
+<PageTitle>Leaderboards</PageTitle>
+
+<div class="container">
+    <h1 class="text-center mb-5">Leaderboards</h1>
+
+    <h3 class="text-center">Wine Leaderboard</h3>
+
+    <div class="d-flex justify-content-center align-items-end mb-3">
+        <label for="regionSelect" class="form-label me-2">Select Region:</label>
+        <div class="me-2">
+            <InputSelect id="regionSelect" class="form-select" @bind-Value="_selectedRegionId" style="width: auto;">
+                <option value="">All Regions</option>
+                @foreach (var region in _regions)
+                {
+                    <option value="@region.RegionId">@region.Name</option>
+                }
+            </InputSelect>
+        </div>
+        <button class="btn btn-primary" @onclick="FilterByRegion">Filter</button>
+    </div>
+
+    @if (_wineLeaderboard == null || !_wineLeaderboard.Any())
+    {
+        <p class="text-center"><em>No data available.</em></p>
+    }
+    else
+    {
+        <div class="table-responsive mb-2">
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Rank</th>
+                        <th>Label</th>
+                        <th>Region</th>
+                        <th>Events Participated</th>
+                        <th>Total Evaluations</th>
+                        <th>Average Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var wine in PagedLeaderboard)
+                    {
+                        <tr>
+                            <td>@(GetGlobalRank(wine))</td>
+                            <td>@wine.Label</td>
+                            <td>@wine.RegionName</td>
+                            <td>@wine.EventsParticipated</td>
+                            <td>@wine.TotalEvaluations</td>
+                            <td>@wine.AverageScore.ToString("F2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-center mb-5">
+            <button class="btn btn-secondary me-2" @onclick="PreviousPage" disabled="@(_currentPage == 1)">Previous</button>
+            <span class="align-self-center"> Page @(_currentPage) of @(TotalPages) </span>
+            <button class="btn btn-secondary ms-2" @onclick="NextPage" disabled="@(_currentPage == TotalPages)">Next</button>
+        </div>
+    }
+
+    <h3 class="text-center">User Leaderboard</h3>
+
+    @if (_userLeaderboard == null || !_userLeaderboard.Any())
+    {
+        <p class="text-center"><em>No data available.</em></p>
+    }
+    else
+    {
+        <div class="table-responsive mb-2">
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Events Participated</th>
+                        <th>Average Evaluation Score</th>
+                        <th>Lowest Evaluation Score</th>
+                        <th>Highest Evaluation Score</th>
+                        <th>Total Evaluations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in PagedUserLeaderboard)
+                    {
+                        <tr>
+                            <td>@(GetUserGlobalRank(user))</td>
+                            <td>@user.Email</td>
+                            <td>@user.EventsParticipated</td>
+                            <td>@user.AverageEvaluationScore.ToString("F2")</td>
+                            <td>@user.LowestEvaluationScore.ToString("F2")</td>
+                            <td>@user.HighestEvaluationScore.ToString("F2")</td>
+                            <td>@user.TotalEvaluations</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-secondary me-2" @onclick="PreviousUserPage" disabled="@(_userCurrentPage == 1)">Previous</button>
+            <span class="align-self-center"> Page @(_userCurrentPage) of @(UserTotalPages) </span>
+            <button class="btn btn-secondary ms-2" @onclick="NextUserPage" disabled="@(_userCurrentPage == UserTotalPages)">Next</button>
+        </div>
+    }
+</div>
+
+@code {
+    private List<WineLeaderboardDto> _wineLeaderboard = new List<WineLeaderboardDto>();
+    private List<RegionDto> _regions = new List<RegionDto>();
+    private Guid? _selectedRegionId;
+    private int _currentPage = 1;
+    private const int PageSize = 10;
+
+    private List<UserLeaderboardDto> _userLeaderboard = new List<UserLeaderboardDto>();
+    private int _userCurrentPage = 1;
+    private const int UserPageSize = 10;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _regions = await RegionService.GetRegionsAsync();
+            await LoadLeaderboard();
+            await LoadUserLeaderboard();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Initialization error: {ex.Message} | {ex.StackTrace}");
+        }
+    }
+
+    private async Task FilterByRegion()
+    {
+        try
+        {
+            await LoadLeaderboard();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Filtering error: {ex.Message} | {ex.StackTrace}");
+        }
+    }
+
+    private async Task LoadLeaderboard()
+    {
+        _wineLeaderboard = await WineLeaderboardService.GetLeaderboardByRegionAsync(_selectedRegionId);
+        _currentPage = 1;
+        StateHasChanged();
+    }
+
+    private async Task LoadUserLeaderboard()
+    {
+        _userLeaderboard = await UserLeaderboardService.GetUserLeaderboardAsync();
+        _userCurrentPage = 1;
+        StateHasChanged();
+    }
+
+    private IEnumerable<WineLeaderboardDto> PagedLeaderboard =>
+        _wineLeaderboard.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+
+    private int TotalPages => (int)Math.Ceiling((double)_wineLeaderboard.Count / PageSize);
+
+    private int CurrentPage
+    {
+        get => _currentPage;
+        set
+        {
+            if (value >= 1 && value <= TotalPages)
+            {
+                _currentPage = value;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void NextPage()
+    {
+        if (_currentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (_currentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+    private int GetGlobalRank(WineLeaderboardDto wine)
+    {
+        return _wineLeaderboard.IndexOf(wine) + 1;
+    }
+
+    private IEnumerable<UserLeaderboardDto> PagedUserLeaderboard =>
+        _userLeaderboard.Skip((UserCurrentPage - 1) * UserPageSize).Take(UserPageSize);
+
+    private int UserTotalPages => (int)Math.Ceiling((double)_userLeaderboard.Count / UserPageSize);
+
+    private int UserCurrentPage
+    {
+        get => _userCurrentPage;
+        set
+        {
+            if (value >= 1 && value <= UserTotalPages)
+            {
+                _userCurrentPage = value;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void NextUserPage()
+    {
+        if (_userCurrentPage < UserTotalPages)
+        {
+            UserCurrentPage++;
+        }
+    }
+
+    private void PreviousUserPage()
+    {
+        if (_userCurrentPage > 1)
+        {
+            UserCurrentPage--;
+        }
+    }
+
+    private int GetUserGlobalRank(UserLeaderboardDto user)
+    {
+        return _userLeaderboard.IndexOf(user) + 1;
+    }
+}
