@@ -5,6 +5,7 @@
 @using global::Helpers
 @attribute [StreamRendering]
 @inject Frontend.Services.TasteQuestionService TasteQuestionService
+@inject Frontend.Services.TasteQuestionTypeService TasteQuestionTypeService
 @inject Frontend.Services.EventService EventService
 @inject ApiHelper ApiHelper
 @inject IJSRuntime JS
@@ -62,7 +63,7 @@
                 {
                     <tr>
                         <td>@question.Question</td>
-                        <td>@TasteQuestionService.GetType(question.TasteQuestionTypeId)</td>
+                        <td>@TasteQuestionTypeService.GetType(question.TasteQuestionTypeId)</td>
                         
                         @* ----------------------------------- *@
                         @* TODO: Make it appear the event name *@
@@ -348,7 +349,7 @@
         try
         {
             await LoadTasteQuestions();
-            _tasteQuestionTypes = await TasteQuestionService.GetTypes();
+            _tasteQuestionTypes = await TasteQuestionTypeService.Get();
             _events = await EventService.GetEvents();
             await JS.InvokeAsync<string>("setTypesAndEvents", _tasteQuestionTypes, _events);
         }
