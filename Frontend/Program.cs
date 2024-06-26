@@ -1,5 +1,6 @@
 using Frontend.Components;
 using Frontend.Helpers;
+using Frontend.Services; 
 using Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileHelper.GetString("API_URL")) });
 builder.Services.AddScoped<ApiHelper>();
-
+builder.Services.AddScoped<WineLeaderboardService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,21 +1,39 @@
 using ESOF.WebApp.DBLayer.Context;
 using ESOF.WebApp.WebAPI.Services;
+using Helpers;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
 builder.Services.AddScoped<WineService>();
 builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
 builder.Services.AddScoped<WineLeaderboardService>();
-builder.Services.AddDbContext<ApplicationDbContext>();
 
+// Configurar o DbContext com a conexão ao banco de dados
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    var db = EnvFileHelper.GetString("POSTGRES_DB");
+    var user = EnvFileHelper.GetString("POSTGRES_USER");
+    var password = EnvFileHelper.GetString("POSTGRES_PASSWORD");
+    var port = EnvFileHelper.GetString("POSTGRES_PORT");
+    var host = EnvFileHelper.GetString("POSTGRES_HOST");
 
+    if (string.IsNullOrEmpty(db) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(password) ||
+        string.IsNullOrEmpty(port) || string.IsNullOrEmpty(host))
+    {
+        throw new InvalidOperationException(
+            "Database connection information not fully specified in environment variables.");
+    }
+
+    var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={password}";
+    options.UseNpgsql(connectionString);
+});
 
 var app = builder.Build();
 
@@ -27,8 +45,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthorization();
+
 app.MapControllers();
 app.Run();
+
 
 /*var summaries = new[]
 {

@@ -1,4 +1,6 @@
-﻿namespace ESOF.WebApp.WebAPI.DtoClasses;
+﻿namespace Frontend.DtoClasses;
+
+using System;
 
 public class WineLeaderboardDto
 {
