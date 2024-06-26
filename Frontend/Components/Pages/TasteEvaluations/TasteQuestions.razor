@@ -289,7 +289,10 @@
             return;
         }
 
-        if (_tasteQuestions.Any(_question => _question.Question == _tasteQuestionName))
+        if (_tasteQuestions.Any(_question =>
+            {
+                return _question.Question == _tasteQuestionName && _question.EventId == _tasteQuestionEventId && _question.TasteQuestionTypeId == _tasteQuestionTypeId && _question.TasteQuestionId != _tasteQuestionId;
+            }))
         {
             await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "That question already exists!", "danger");
             return;
@@ -313,7 +316,10 @@
             return;
         }
         
-        if (_tasteQuestions.Any(_question => _question.Question == _tasteQuestionName))
+        if (_tasteQuestions.Any(_question =>
+            {
+                 return _question.Question == _tasteQuestionName && _question.EventId == _tasteQuestionEventId && _question.TasteQuestionTypeId == _tasteQuestionTypeId && _question.TasteQuestionId != _tasteQuestionId;
+            }))
         {
             await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "That question already exists!", "danger");
             return;
