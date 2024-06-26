@@ -32,7 +32,7 @@ public class WineCommentController : Controller
     }
 
     [HttpPost("store")]
-    public ActionResult<WineComment> CreateWineComment([FromBody] CreateWineCommentDto createWineCommentDto)
+    public ActionResult<ResponseWineCommentDto> CreateWineComment([FromBody] CreateWineCommentDto createWineCommentDto)
     {
         try
         {

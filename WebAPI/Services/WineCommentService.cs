@@ -25,10 +25,10 @@
                     .Where(w => w.WineId == id)
                     .ToListAsync();
 
-                if (wineComments.Count == 0)
+                /*if (wineComments.Count == 0)
                 {
-                    throw new ArgumentException("Wine has no comments!");
-                }
+                    throw new ArgumentException("This wine has no comments.");
+                }*/
                 return wineComments.Select(wineComment => new ResponseWineCommentDto
                 {
                     WineCommentId = wineComment.WineCommentId,
@@ -74,7 +74,7 @@
             }
             catch (DbUpdateException ex)
             {
-                throw new Exception("Error when creating a comment!", ex);
+                throw new Exception("Error when creating a comment.", ex);
             }
         }
         
@@ -87,7 +87,7 @@
 
                     if (wineComment == null)
                     {
-                        throw new ArgumentException("Wine Comment not found.");
+                        throw new ArgumentException("Wine comment not found.");
                     }
 
                     wineComment.Comment = updateWineCommentDto.Comment ?? wineComment.Comment;

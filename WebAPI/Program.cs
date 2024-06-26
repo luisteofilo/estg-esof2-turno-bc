@@ -24,7 +24,7 @@ app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
 
-/*var summaries = new[]
+var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
@@ -57,4 +57,4 @@ app.MapGet("/users/emails", () =>
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}*/
+}
