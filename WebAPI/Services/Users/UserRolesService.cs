@@ -23,9 +23,9 @@ public class UserRolesService (ApplicationDbContext context)
         }
     }
 
-    public ResponseUserRolesDto getUserRolesById(Guid id)
+    public ResponseUserRolesDto getUserRolesById(Guid userId, Guid rolesId)
     {
-        var userRoles = context.UserRoles.Find(id);
+        var userRoles = context.UserRoles.Find(userId, rolesId);
         if (userRoles == null)
         {
             throw new ArgumentException("Error: User Role not found!");
@@ -63,9 +63,9 @@ public class UserRolesService (ApplicationDbContext context)
         }
     }
 
-    public ResponseUserRolesDto UpdateUserRoles(Guid id, UpdateUserRolesDto updateUserRoleDto)
+    public ResponseUserRolesDto UpdateUserRoles(Guid userId, Guid rolesId, UpdateUserRolesDto updateUserRoleDto)
     {
-        var userRoles = context.UserRoles.Find(id);
+        var userRoles = context.UserRoles.Find(userId, rolesId);
 
         if (userRoles == null)
         {
@@ -84,13 +84,13 @@ public class UserRolesService (ApplicationDbContext context)
         };
     }
 
-    public void DeleteUserRoles(Guid id)
+    public void DeleteUserRoles(Guid userId, Guid rolesId)
     {
         using (var transaction = context.Database.BeginTransaction())
         {
             try
             {
-                var userRoles = context.UserRoles.Find(id);
+                var userRoles = context.UserRoles.Find(userId, rolesId);
     
                 if (userRoles == null)
                 {

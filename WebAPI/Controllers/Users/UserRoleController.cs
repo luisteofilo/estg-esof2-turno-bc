@@ -32,12 +32,12 @@ public class UserRoleController : ControllerBase
             }
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<ResponseUserRolesDto> GetUserRoleById(Guid id)
+        [HttpGet("{userId}/{roleId}")]
+        public ActionResult<ResponseUserRolesDto> GetUserRoleById(Guid userId, Guid roleId)
         {
             try
             {
-                return Ok(_userRolesService.getUserRolesById(id));
+                return Ok(_userRolesService.getUserRolesById(userId, roleId));
             }
             catch (ArgumentException ex)
             {
@@ -64,12 +64,12 @@ public class UserRoleController : ControllerBase
         }
 
 
-        [HttpPut("update/{id}")]
-        public ActionResult<ResponseUserRolesDto> UpdateUserRole(Guid id,UpdateUserRolesDto updateUserRolesDto)
+        [HttpPut("update/{userId}/{roleId}")]
+        public ActionResult<ResponseUserRolesDto> UpdateUserRole(Guid userId, Guid roleId,UpdateUserRolesDto updateUserRolesDto)
         {
             try
             {
-                var updatedUserRole = _userRolesService.UpdateUserRoles(id, updateUserRolesDto);
+                var updatedUserRole = _userRolesService.UpdateUserRoles(userId, roleId, updateUserRolesDto);
                 return Ok(updatedUserRole); 
             }
             catch (Exception ex)
@@ -78,12 +78,12 @@ public class UserRoleController : ControllerBase
             }
         }
 
-        [HttpDelete("delete/{id}")]
-        public ActionResult DeleteUserRole(Guid id)
+        [HttpDelete("delete/{userId}/{roleId}")]
+        public ActionResult DeleteUserRole(Guid userId, Guid roleId)
         {
             try
             {
-                _userRolesService.DeleteUserRoles(id);
+                _userRolesService.DeleteUserRoles(userId, roleId);
                 return NoContent();
             }
             catch (Exception ex)

@@ -49,16 +49,14 @@ else
 }
 
 <h2>Create New Role</h2>
-<EditForm Model="newRole" OnValidSubmit="CreateRole" FormName="CreateRoleForm">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
 
+<form>
     <div class="form-group">
         <label for="Name">Name:</label>
-        <InputText id="Name" class="form-control" @bind-Value="newRole.Name" />
+        <input type="text" id="Name" class="form-control" @bind="newRole.Name" />
     </div>
     <button type="submit" class="btn btn-success">Create Role</button>
-</EditForm>
+</form>
 
 @code {
     private List<RolesDto>? _rolesDtos;
@@ -105,10 +103,8 @@ else
 
     private async Task ConfirmDelete(Guid roleId)
     {
-        if (await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this role?"))
-        {
             await DeleteRole(roleId);
-        }
+            Console.WriteLine("ROLE ID: ", roleId);
     }
 
     private void EditRole(Guid roleId)

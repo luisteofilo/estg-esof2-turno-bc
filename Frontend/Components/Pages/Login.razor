@@ -1,23 +1,35 @@
 ﻿@page "/login"
 
-<body>
-    <div class="mb-3">
-        <h2>Login</h2>
-        <form action="/submit_login" method="POST">
-            <div class="mb-2">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" id="email" name="email" required class="form-control">
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
-                <input type="password" id="password" name="password" required class="form-control">
-            </div>
-            <button type="button" class="position-relative py-2 px-4 text-bg-secondary border border-secondary rounded-pill">
-              Login 
-            </button>
-            <div class="mb-3">
-                <a href="register">Não tens conta? Cria agora!</a>
-            </div>
-        </form>
+<h2>Login</h2>
+<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-2">
+        <label for="email" class="form-label">Email:</label>
+        <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
     </div>
-</body>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+    <div class="mb-3">
+        <a href="register">Não tens conta? Cria agora!</a>
+    </div>
+</EditForm>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+
+    private async Task HandleLogin()
+    {
+        // Lógica de login
+    }
+
+    public class LoginModel
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+}

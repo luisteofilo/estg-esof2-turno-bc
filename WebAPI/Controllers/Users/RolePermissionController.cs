@@ -32,12 +32,12 @@ public class RolePermissionController : ControllerBase
             }
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<ResponseRolePermissionsDto> GetRolePermissionsById(Guid id)
+        [HttpGet("{roleId}/{permissionId}")]
+        public ActionResult<ResponseRolePermissionsDto> GetRolePermissionsById(Guid roleId, Guid permissionId)
         {
             try
             {
-                return Ok(_rolePermissionsService.getRolePermissionById(id));
+                return Ok(_rolePermissionsService.getRolePermissionById(roleId, permissionId));
             }
             catch (ArgumentException ex)
             {
@@ -64,12 +64,12 @@ public class RolePermissionController : ControllerBase
         }
 
 
-        [HttpPut("update/{id}")]
-        public ActionResult<ResponseRolePermissionsDto> UpdateRolePermission(Guid id,UpdateRolePermissionsDto updateRolePermissionDto)
+        [HttpPut("update/{roleId}/{permissionId}")]
+        public ActionResult<ResponseRolePermissionsDto> UpdateRolePermission(Guid roleId, Guid permissionId,UpdateRolePermissionsDto updateRolePermissionDto)
         {
             try
             {
-                var updatedRolePermission = _rolePermissionsService.UpdateRolePermission(id, updateRolePermissionDto);
+                var updatedRolePermission = _rolePermissionsService.UpdateRolePermission(roleId, permissionId, updateRolePermissionDto);
                 return Ok(updatedRolePermission); 
             }
             catch (Exception ex)
@@ -78,12 +78,12 @@ public class RolePermissionController : ControllerBase
             }
         }
 
-        [HttpDelete("delete/{id}")]
-        public ActionResult DeleteRolePermission(Guid id)
+        [HttpDelete("delete/{roleId}/{permissionId}")]
+        public ActionResult DeleteRolePermission(Guid roleId, Guid permissionId)
         {
             try
             {
-                _rolePermissionsService.DeleteRolePermission(id);
+                _rolePermissionsService.DeleteRolePermission(roleId, permissionId);
                 return NoContent();
             }
             catch (Exception ex)

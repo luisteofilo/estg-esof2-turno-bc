@@ -23,9 +23,9 @@ public class RolePermissionsService (ApplicationDbContext context)
         }
     }
 
-    public ResponseRolePermissionsDto getRolePermissionById(Guid id)
+    public ResponseRolePermissionsDto getRolePermissionById(Guid roleId, Guid permissionId)
     {
-        var rolePermission = context.RolePermissions.Find(id);
+        var rolePermission = context.RolePermissions.Find(roleId, permissionId);
         if (rolePermission == null)
         {
             throw new ArgumentException("Error: RolePermission not found!");
@@ -63,9 +63,9 @@ public class RolePermissionsService (ApplicationDbContext context)
         }
     }
 
-    public ResponseRolePermissionsDto UpdateRolePermission(Guid id, UpdateRolePermissionsDto updateRolePermissionDto)
+    public ResponseRolePermissionsDto UpdateRolePermission(Guid roleId, Guid permissionId, UpdateRolePermissionsDto updateRolePermissionDto)
     {
-        var rolePermission = context.RolePermissions.Find(id);
+        var rolePermission = context.RolePermissions.Find(roleId, permissionId);
 
         if (rolePermission == null)
         {
@@ -84,13 +84,13 @@ public class RolePermissionsService (ApplicationDbContext context)
         };
     }
 
-    public void DeleteRolePermission(Guid id)
+    public void DeleteRolePermission(Guid roleId, Guid permissionId)
     {
         using (var transaction = context.Database.BeginTransaction())
         {
             try
             {
-                var rolePermission = context.RolePermissions.Find(id);
+                var rolePermission = context.RolePermissions.Find(roleId, permissionId);
     
                 if (rolePermission == null)
                 {
