@@ -1,0 +1,36 @@
+﻿@page "/events"
+@inject Frontend.Services.EventService EventService
+@using Frontend.DtoClasses  
+
+<PageTitle>Events</PageTitle>
+
+<h3>Events</h3>
+
+@if (events == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (events.Count == 0)
+{
+    <p><em>No events found or error fetching events.</em></p>
+}
+else
+{
+    <ul>
+        @foreach (var eventDto in events)
+        {
+            <li>
+                <a href="events/@eventDto.Slug">@eventDto.Name</a> (ID: @eventDto.EventId)
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<EventDto> events;
+
+    protected override async Task OnInitializedAsync()
+    {
+        events = await EventService.GetEvents();
+    }
+}
