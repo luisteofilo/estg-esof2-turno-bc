@@ -18,26 +18,18 @@ public class WineLeaderboardService
 
     public List<WineLeaderboardDto> GetWineLeaderboard()
     {
-        try
-        {
-            var leaderboard = _context.TasteEvaluations
-                .Include(te => te.Wine)
-                .GroupBy(te => te.Wine)
-                .Select(g => new WineLeaderboardDto
-                {
-                    WineId = g.Key.WineId,
-                    Label = g.Key.label,
-                    AverageScore = g.Average(te => te.WineScore),
-                    TotalEvaluations = g.Count()
-                })
-                .OrderByDescending(l => l.AverageScore)
-                .ToList();
+        var leaderboard = _context.TasteEvaluations
+            .GroupBy(te => te.Wine)
+            .Select(g => new WineLeaderboardDto
+            {
+                WineId = g.Key.WineId,
+                Label = g.Key.label,
+                AverageScore = g.Average(te => te.WineScore),
+                TotalEvaluations = g.Count()
+            })
+            .OrderByDescending(dto => dto.AverageScore)
+            .ToList();
 
-            return leaderboard;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while retrieving the wine leaderboard.", ex);
-        }
+        return leaderboard;
     }
 }
