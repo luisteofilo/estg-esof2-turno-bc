@@ -43,7 +43,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
-    public DbSet<Wine> Wines { get; set; }  // Remove when pushing
+    public DbSet<Wine> Wines { get; set; }
     public DbSet<WineComment> WineComments { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

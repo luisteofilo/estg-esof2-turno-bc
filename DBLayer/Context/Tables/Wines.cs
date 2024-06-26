@@ -12,5 +12,10 @@ public partial class ApplicationDbContext
         modelBuilder.Entity<Wine>()
             .Property(p => p.WineId)
             .HasDefaultValueSql("gen_random_uuid()");
+        
+        modelBuilder.Entity<Wine>()
+            .HasMany(w => w.WineComments)
+            .WithOne(wc => wc.Wine)
+            .HasForeignKey(wc => wc.WineId);
     }
 }

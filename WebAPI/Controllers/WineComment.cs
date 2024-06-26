@@ -8,9 +8,28 @@ namespace ESOF.WebApp.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class WineCommentController : ControllerBase
+public class WineCommentController : Controller
 {
-    private readonly WineCommentService _wineCommentService = new(new ApplicationDbContext());
+    private readonly WineCommentService _wineCommentService;
+    
+    public WineCommentController(WineCommentService wineCommentService)
+    {
+        _wineCommentService = wineCommentService;
+    }
+    
+    [HttpGet("show/{id}")]
+    public ActionResult<IEnumerable<ResponseWineCommentDto>> GetWineCommentsByWine(Guid id)
+    {
+        try
+        {
+            var comments = _wineCommentService.GetWineCommentsByWine(id);
+            return Ok(comments);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 
     [HttpPost("store")]
     public ActionResult<WineComment> CreateWineComment([FromBody] CreateWineCommentDto createWineCommentDto)
