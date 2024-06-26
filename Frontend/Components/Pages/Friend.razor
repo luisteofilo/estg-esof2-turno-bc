@@ -16,7 +16,6 @@
     //////////////////////////////////////////////////////////////////////////////
     private Guid userId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd");    // Set the logged-in user's ID
     ///////////////////////////////////////////////////////////////////////////////
-
     protected override async Task OnInitializedAsync()
     {
         friends = await Http.GetFromJsonAsync<FriendDto[]>($"api/Friendship/{userId}");
@@ -36,7 +35,7 @@
         await ApiHelper.PostToApiAsync2<Guid>("api/FriendRequests/accept", requestId);
         await OnInitializedAsync();
     }
-    
+
     //reject friend request
     private async Task RejectFriendRequest(Guid requestId)
     {
@@ -92,7 +91,7 @@
 
     private void ShowNotificationMessage(string friendRemovedSuccessfully, string success)
     {
-       
+
     }
 
 }
@@ -181,7 +180,6 @@
         margin-bottom: 20px;
         border-bottom: 1px solid #ddd;
     }
-
     .tab-button {
         padding: 10px 20px;
         margin: 0 5px;
@@ -192,13 +190,11 @@
         color: #555;
         font-weight: bold;
     }
-
     .tab-button.active {
         background-color: #ffffff;
         border-bottom: 3px solid #007bff;
         color: #007bff;
     }
-
     .tab-button:not(.active):hover {
         background-color: #ddd;
     }
@@ -210,7 +206,6 @@
         max-width: 1200px;
         margin: auto;
     }
-
     .friend-card, .request-card {
         border: 1px solid #ddd;
         border-radius: 8px;
@@ -221,19 +216,16 @@
         box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
         background-color: #f9f9f9;
     }
-
     .friend-image, .request-image {
         border-radius: 8px;
         width: 150px;
         height: 150px;
     }
-
     .friend-name, .request-name {
         margin-top: 15px;
         font-size: 18px;
         font-weight: bold;
     }
-
     .remove-button, .accept-button, .reject-button, .cancel-button {
         margin-top: 10px;
         padding: 10px 15px;
@@ -241,30 +233,24 @@
         border-radius: 4px;
         cursor: pointer;
     }
-
     .remove-button {
         background-color: #ff6666;
         color: white;
     }
-
     .remove-button:hover {
         background-color: #ff4d4d;
     }
-
     .accept-button {
         background-color: #66b266;
         color: white;
     }
-
     .accept-button:hover {
         background-color: #4d994d;
     }
-
     .reject-button, .cancel-button {
         background-color: #ffcc00;
         color: white;
     }
-
     .reject-button:hover, .cancel-button:hover {
         background-color: #e6b800;
     }

@@ -70,9 +70,6 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Interaction> Interaction { get; set; }
     
     
-    public DbSet<Event> Events { get; set; }
-    public DbSet<EventParticipant> EventParticipants { get; set; }
-    
     
     public DbSet<TasteQuestionType> TasteQuestionTypes { get; set; }
     public DbSet<TasteQuestion> TasteQuestions { get; set; }
