@@ -1,15 +1,27 @@
 using ESOF.WebApp.DBLayer.Context;
+using ESOF.WebApp.WebAPI.Helpers;
+using ESOF.WebApp.WebAPI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Configurar DbContext com a string de conexão do appsettings.json
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+// Adicionar serviços ao contêiner
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Registrar UserService como serviço scoped
+builder.Services.AddScoped<UserService>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configurar o pipeline de requisição HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -18,37 +30,28 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+// Endpoint de exemplo para obter e-mails dos usuários
+app.MapGet("/users/emails", async ([FromServices] ApplicationDbContext db) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var users = await db.Users.Select(u => new { u.Email }).ToListAsync();
+    return users;
+})
+.WithName("GetUsersEmails")
+.WithOpenApi();
 
-app.MapGet("/weatherforecast", () =>
+// Endpoint para obter o perfil do usuário logado
+app.MapGet("/user/profile", async ([FromServices] ApplicationDbContext db, [FromServices] UserService userService) =>
+{
+    var userId = UserState.LoggedInUserId ?? Guid.Empty;
+    if (userId == Guid.Empty)
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+        return Results.Unauthorized();
+    }
 
-app.MapGet("/users/emails", () =>
-    {
-        var db = new ApplicationDbContext();
-        return db.Users.Select(u => u.Email);
-    })
-    .WithName("GetUsersNames")
-    .WithOpenApi();
+    var userProfile = await userService.GetUserProfileAsync(userId);
+    return Results.Ok(userProfile);
+})
+.WithName("GetUserProfile")
+.WithOpenApi();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -1,4 +1,6 @@
 @page "/profilepage"
+@using Frontend.Services
+@inject Frontend.Services.UserService UserService
 
 @* Importar Bootstrap *@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
@@ -7,13 +9,15 @@
 
 <div class="main-container mt-5">
     <div class="container">
+        @if (userProfile != null)
+        {
         <div class="card p-4 mb-4">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <img src="profile-placeholder.png" alt="Profile Image" class="rounded-circle mr-4" style="width: 100px; height: 100px;">
                     <div class="ml-4">
-                        <h2 class="h4">João Ralha</h2>
-                        <p class="lead">joaocarlosralha@gmail.pt</p>
+                        <h2 class="h4">@userProfile.Username</h2>
+                        <p class="lead">@userProfile.Email</p>
                         <a href="/editprofilepage" class="btn btn-primary btn-sm">Edit Profile</a>
                     </div>
                 </div>
@@ -26,21 +30,48 @@
                 <hr />
                 <div class="form-group">
                     <label for="wineName">Vinho</label>
-                    <input type="text" class="form-control form-control-sm" id="wineName" value="Cabernet Sauvignon" readonly />
+                    <input type="text" class="form-control form-control-sm" id="wineName" value="@userProfile.FavoriteWine?.Name" readonly />
                 </div>
                 <div class="form-group">
                     <label for="region">Região</label>
-                    <input type="text" class="form-control form-control-sm" id="region" value="Bordeaux" readonly />
+                    <input type="text" class="form-control form-control-sm" id="region" value="@userProfile.FavoriteWine?.Region?.Name" readonly />
                 </div>
                 <div class="form-group">
                     <label for="brand">Marca</label>
-                    <input type="text" class="form-control form-control-sm" id="brand" value="Château Margaux" readonly />
-                </div>
-                <div class="form-group">
-                    <label for="grapeType">Tipo de Uva</label>
-                    <input type="text" class="form-control form-control-sm" id="grapeType" value="Cabernet Sauvignon" readonly />
+                    <input type="text" class="form-control form-control-sm" id="brand" value="@userProfile.FavoriteWine?.Brand?.Name" readonly />
                 </div>
             </div>
         </div>
+        }
+        else
+        {
+        <p>@errorMessage</p>
+        }
     </div>
 </div>
+
+@code {
+private UserProfileDto userProfile;
+private string errorMessage = "Loading user profile...";
+
+protected override async Task OnInitializedAsync()
+{
+try
+{
+userProfile = await UserService.GetUserProfileAsync();
+
+if (userProfile == null)
+{
+errorMessage = "User profile could not be loaded.";
+}
+else
+{
+errorMessage = string.Empty;
+}
+}
+catch (Exception ex)
+{
+errorMessage = $"Error loading user profile: {ex.Message}";
+}
+}
+}

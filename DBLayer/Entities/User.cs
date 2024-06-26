@@ -18,5 +18,8 @@ public class User
     
     [Required]
     public byte[] PasswordSalt { get; set; }
+    
+    public Guid? FavoriteWineId { get; set; }
+    public Wine FavoriteWine { get; set; }
     public ICollection<UserRole> UserRoles { get; set; }
 }
