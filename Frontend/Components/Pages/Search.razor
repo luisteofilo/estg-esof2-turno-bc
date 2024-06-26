@@ -1,0 +1,166 @@
+﻿@page "/search"
+@using ESOF.WebApp.DBLayer.Context
+@using ESOF.WebApp.DBLayer.Entities
+@using Frontend.DtoClasses
+@using Frontend.Services
+@inject EventService EventService
+@inject GrapeTypeService GrapeTypeService
+
+@if (errorLoadingData)
+{
+<p>Error loading data. Please try again later.</p>
+}
+else
+{
+    <h3>Pesquisa de Eventos de Vinhos</h3>
+
+    <div class="filtros">
+        <label for="nome">Nome do Evento:</label>
+        <input type="text" id="nome" @bind="filtroNome" placeholder="Nome do Evento"/>
+        
+        <label for="nome">Utilizador:</label>
+        <input type="text" id="nome" @bind="filtroNomeUser" placeholder="Nome de um Utilizador"/>
+        
+        <label for="nome">Vinhos:</label>
+        <input type="text" id="nome" @bind="filtroNomeVinho" placeholder="Nome de um Vinho"/>
+
+        <label for="data">Data:</label>
+        <input type="date" id="data" @bind="filtroData"/>
+
+        <label for="tipoUva">Tipo de Uva:</label>
+        <select id="tipoUva" @bind="filtroTipoUva">
+            <option value="">Todos os Tipos</option>
+                @foreach (var uva in tiposUva)
+                {
+                    <option value="@uva.GrapeTypeId">@uva.Name</option>
+                }
+        </select>
+        <label for="tipoBrand">Marcas:</label>
+        <select id="tipoBrand" @bind="filtroBrand">
+            <option value="">Todos os Tipos</option>
+            @foreach (var brand in brands)
+            {
+            <option value="@brand.BrandId">@brand.Name</option>
+            }
+        </select>
+        /select>
+        <label for="tipoRegion">Região:</label>
+        <select id="tipoRegion" @bind="filtroRegion">
+            <option value="">Todos as Regiões</option>
+            @foreach (var regiao in regioes)
+            {
+            <option value="@regiao.RegionId">@regiao.Name</option>
+            }
+        </select>
+
+        <button @onclick="PesquisarEventos">Pesquisar</button>
+    </div>
+
+    <div class="resultados">
+        @if (eventos != null && eventos.Any())
+        {
+            <ul>
+                @foreach (var evento in eventos)
+                {
+                    <li>@evento.Name - merdas e cenas </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Nenhum evento encontrado.</p>
+        }
+    </div>
+}
+
+@code {
+    private string filtroNome;
+    private string filtroNomeUser;
+    private string filtroNomeVinho;
+    private string filtroRegion;
+    private string filtroBrand;
+    private DateTime? filtroData;
+    private Guid? filtroTipoUva;
+    private bool errorLoadingData;
+    private List<EventDto> eventos;
+
+    private List<BrandDto> brands = new List<BrandDto>
+    {
+        new BrandDto
+        {
+            BrandId = Guid.NewGuid(),
+            Name = "Cabernet Sauvignon",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        },
+        new BrandDto
+        {
+            BrandId = Guid.NewGuid(),
+            Name = "Merlot",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        },
+        new BrandDto
+        {
+            BrandId = Guid.NewGuid(),
+            Name = "Chardonnay",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        }
+    };
+    
+private List<RegionDto> regioes = new List<RegionDto>
+{
+new RegionDto
+{
+RegionId = Guid.NewGuid(),
+Name = "Cabernet Sauvignon",
+CreatedAt = DateTime.UtcNow,
+UpdatedAt = DateTime.UtcNow
+},
+new RegionDto
+{
+RegionId = Guid.NewGuid(),
+Name = "Merlot",
+CreatedAt = DateTime.UtcNow,
+UpdatedAt = DateTime.UtcNow
+},
+new RegionDto
+{
+RegionId = Guid.NewGuid(),
+Name = "Chardonnay",
+CreatedAt = DateTime.UtcNow,
+UpdatedAt = DateTime.UtcNow
+}
+};
+
+    private List<GrapeTypeDto> tiposUva = new List<GrapeTypeDto>
+    {
+        new GrapeTypeDto
+        {
+            GrapeTypeId = Guid.NewGuid(),
+            Name = "Cabernet Sauvignon",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        },
+        new GrapeTypeDto
+        {
+            GrapeTypeId = Guid.NewGuid(),
+            Name = "Merlot",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        },
+        new GrapeTypeDto
+        {
+            GrapeTypeId = Guid.NewGuid(),
+            Name = "Chardonnay",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        }
+    };
+
+    private async Task PesquisarEventos()
+    {
+        eventos = await EventService.GetEvents();
+    }
+}
