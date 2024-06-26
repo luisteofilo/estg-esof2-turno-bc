@@ -14,6 +14,9 @@ builder.Services.AddScoped<ApiHelper>();
 builder.Services.AddScoped<EventService>();
 //builder.Services.AddScoped<EventParticipantService>(); to be implemented
 builder.Services.AddScoped<TasteQuestionService>();
+builder.Services.AddScoped<TasteEvaluationService>();
+builder.Services.AddScoped<WineService>();
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
