@@ -37,7 +37,7 @@ public class WineCommentController : Controller
         try
         {
             var createdWineComment = _wineCommentService.CreateWineComment(createWineCommentDto);
-            return Created("api/WineComments/" + createdWineComment.WineCommentId, createdWineComment);
+            return Created("api/WineComments/" + createdWineComment.Id, createdWineComment);
             //return CreatedAtAction(nameof(GetWineCommentById), new { id = createdWineComment.WineId }, createdWineComment);
             // uncomment when method GetWineCommentById is done
         }

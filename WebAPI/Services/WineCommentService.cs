@@ -2,6 +2,7 @@
     using ESOF.WebApp.DBLayer.DtoClasses;
     using ESOF.WebApp.DBLayer.Entities;
     using Microsoft.EntityFrameworkCore;
+    using System.Linq;
 
     namespace ESOF.WebApp.WebAPI.Services;
     
@@ -16,19 +17,18 @@
 
 
         
-        public IEnumerable<ResponseWineCommentDto> GetWineCommentsByWine(Guid id)
+        public async Task<IEnumerable<ResponseWineCommentDto>> GetWineCommentsByWine(Guid id)
         {
             try
             {
-                var wineComments = _context.WineComments
+                var wineComments = await _context.WineComments
                     .Where(w => w.WineId == id)
-                    .ToList();
+                    .ToListAsync();
 
                 if (wineComments.Count == 0)
                 {
                     throw new ArgumentException("Wine has no comments!");
                 }
-
                 return wineComments.Select(wineComment => new ResponseWineCommentDto
                 {
                     WineCommentId = wineComment.WineCommentId,
@@ -45,7 +45,7 @@
                 throw new Exception($"An error occurred while retrieving wine with ID {id}.", ex);
             }
         }
-        public ResponseWineCommentDto CreateWineComment(CreateWineCommentDto createWineCommentDto)
+        public async Task<ResponseWineCommentDto> CreateWineComment(CreateWineCommentDto createWineCommentDto)
         {
             try
             {

@@ -9,7 +9,7 @@
 @code {
     [Parameter] public Guid WineId { get; set; }
 
-    private List<WineComment> comments = new List<WineComment>();
+    private IEnumerable<ResponseWineCommentDto> comments = new List<ResponseWineCommentDto>();
     private CreateWineCommentDto newComment = new CreateWineCommentDto();
     private bool isLoading = true;
 
@@ -22,7 +22,7 @@
 
     private async Task LoadComments()
     {
-        comments = await CommentService.GetWineComments(WineId);
+        comments = await CommentService.GetWineCommentsByWine(WineId);
     }
 
     private async Task SubmitComment()
