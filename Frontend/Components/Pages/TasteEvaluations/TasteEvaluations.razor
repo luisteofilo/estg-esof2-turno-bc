@@ -337,6 +337,12 @@
             return;
         }
         
+        if (_tasteEvaluations.Any(x => x.UserId == _tasteEvaluationUserId && x.EventId == _tasteEvaluationEventId && x.WineId == _tasteEvaluationWineId))
+        {
+            await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "That evaluation already exists!", "danger");
+            return;
+        }
+        
         if (TasteEvaluationService.Create(new TasteEvaluationDto() { UserId = _tasteEvaluationUserId, EventId = _tasteEvaluationEventId, WineId = _tasteEvaluationWineId, WineScore = _tasteEvaluationWineScore }))
         {
             JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "The evaluation was created successfully!", "success");
@@ -349,9 +355,15 @@
     
     private async Task EditEvaluation()
     {
-        if(_tasteEvaluationId == Guid.Empty || _tasteEvaluationUserId == Guid.Empty || _tasteEvaluationEventId == Guid.Empty || _tasteEvaluationWineId == Guid.Empty || _tasteEvaluationWineScore == 0)
+        if (_tasteEvaluationId == Guid.Empty || _tasteEvaluationUserId == Guid.Empty || _tasteEvaluationEventId == Guid.Empty || _tasteEvaluationWineId == Guid.Empty || _tasteEvaluationWineScore == 0)
         {
             await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "Please fill all the fields.", "warning");
+            return;
+        }
+
+        if (_tasteEvaluations.Any(x => x.UserId == _tasteEvaluationUserId && x.EventId == _tasteEvaluationEventId && x.WineId == _tasteEvaluationWineId))
+        {
+            await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "That evaluation already exists!", "danger");
             return;
         }
         

@@ -288,6 +288,12 @@
             await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "Please fill all the fields.", "warning");
             return;
         }
+
+        if (_tasteQuestions.Any(_question => _question.Question == _tasteQuestionName))
+        {
+            await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "That question already exists!", "danger");
+            return;
+        }
         
         if (TasteQuestionService.Create(new TasteQuestionDto() { EventId = _tasteQuestionEventId, TasteQuestionId = _tasteQuestionId, Question = _tasteQuestionName, TasteQuestionTypeId = _tasteQuestionTypeId }))
         {
@@ -304,6 +310,12 @@
         if(_tasteQuestionName == "" || _tasteQuestionTypeId == Guid.Empty || _tasteQuestionEventId == Guid.Empty)
         {
             await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "Please fill all the fields.", "warning");
+            return;
+        }
+        
+        if (_tasteQuestions.Any(_question => _question.Question == _tasteQuestionName))
+        {
+            await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "That question already exists!", "danger");
             return;
         }
         
