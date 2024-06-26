@@ -2,6 +2,7 @@ using Frontend.Components;
 using Frontend.Helpers;
 using Frontend.Services;
 using Helpers;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,10 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileH
 builder.Services.AddScoped<ApiHelper>();
 builder.Services.AddScoped<EventService>();
 //builder.Services.AddScoped<EventParticipantService>(); to be implemented
+
+// Adicionar suporte para ProtectedSessionStorage
+builder.Services.AddScoped<ProtectedSessionStorage>();
+builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
 
