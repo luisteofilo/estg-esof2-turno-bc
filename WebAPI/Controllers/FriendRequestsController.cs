@@ -23,11 +23,11 @@ public class FriendRequestsController : ControllerBase
             try
             {
                 await _friendRequestService.SendFriendRequestAsync(dto.RequesterId, dto.ReceiverId);
-                return Ok();
+                return Ok(new { message = "Friend request sent successfully!" });
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
         }
 
