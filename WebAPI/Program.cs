@@ -1,7 +1,5 @@
 using ESOF.WebApp.DBLayer.Context;
-using ESOF.WebApp.DBLayer.Entities;
 using ESOF.WebApp.WebAPI.Services;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +12,6 @@ builder.Services.AddScoped<WineService>();
 builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<Permission>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 
