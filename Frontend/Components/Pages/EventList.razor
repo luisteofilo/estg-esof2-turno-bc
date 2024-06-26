@@ -33,7 +33,7 @@
                             </div>
                             <div>
                                 <NavLink class="btn btn-secondary btn-sm" href="@($"/events/edit/{eventDto.Slug}")">Edit</NavLink>
-                                <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDeleteEvent(eventDto.Slug)">Delete</button>
+                                <button class="btn btn-danger btn-sm" @onclick="@(async () => await DeleteEvent(eventDto.Slug))">Delete</button>
                             </div>
                         </div>
                     }
@@ -68,7 +68,7 @@
     private async Task DeleteEvent(string slug)
     {
         await EventService.DeleteEvent(slug);
-        events = await EventService.GetEvents(); // Atualizar a lista de eventos
+        events = await EventService.GetEvents(); // Atualize a lista de eventos após a exclusão
         StateHasChanged(); // Atualiza a interface
     }
 }

@@ -45,7 +45,7 @@
             </div>
 
             <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary me-3" @onclick="() => { UpdateEvent(); }"> Save</button>
+                <button type="button" class="btn btn-primary me-3" @onclick="() => { UpdateEvent(); }">Save</button>
             </div>
         </div>
     }
@@ -53,54 +53,36 @@
 
 @code {
     [Parameter]
-    public string? Slug { get; set; }
+    public string Slug { get; set; }
 
-    private EventDto? _event;
-    private string? _error;
+    private EventDto _event;
+    private string _error;
 
     protected override async Task OnInitializedAsync()
     {
-        if (Slug != null)
+        _event = await EventService.GetEventBySlug(Slug);
+        if (_event == null)
         {
-            Console.WriteLine($"Fetching event with slug: {Slug}"); // Log para depuração
-            try
-            {
-                _event = await EventService.GetEventBySlug(Slug);
-                if (_event != null)
-                {
-                    Console.WriteLine($"Event fetched: {_event.Name}"); // Log para depuração
-                }
-                else
-                {
-                    Console.WriteLine("Event not found."); // Log para depuração
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error fetching event: {ex.Message}"); // Log para depuração
-                _error = "Error loading event.";
-            }
+            _error = "Event not found.";
         }
     }
 
     private async Task UpdateEvent()
     {
-        if (_event != null)
+        if (string.IsNullOrWhiteSpace(_event.Name) || string.IsNullOrWhiteSpace(_event.Slug))
         {
-            _error = string.Empty;
+            _error = "Name and slug cannot be empty.";
+            return;
+        }
 
-            try
-            {
-                Console.WriteLine($"Updating event with slug: {_event.Slug}"); // Log para depuração
-                await EventService.UpdateEvent(_event);
-                Console.WriteLine($"Event updated successfully: {_event.Slug}"); // Log para depuração
-                NavigationManager.NavigateTo("/events");
-            }
-            catch (Exception e)
-            {
-                _error = e.Message;
-                Console.WriteLine($"Error updating event: {_error}"); // Log para depuração
-            }
+        try
+        {
+            await EventService.UpdateEvent(new EventDto());
+            NavigationManager.NavigateTo("/events");
+        }
+        catch (Exception e)
+        {
+            _error = $"Error updating event: {e.Message}";
         }
     }
 }
