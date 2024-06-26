@@ -1,0 +1,79 @@
+﻿@page "/Feed"
+@using Frontend.Helpers
+@using global::Helpers.ViewModels
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+<h3>Feed</h3>
+<div>
+    <div class="feed-create-post">
+        <span>Create new post: </span>
+        <input @bind="_newPost.Text" placeholder="What's on your mind?"/>
+        <button @onclick="CreatePost">Create Post</button>
+    </div>
+    <hr/>
+</div>
+<div>
+    @if (_feedPosts.Posts == null || _feedPosts.Posts.Count == 0)
+    {
+        <h4>No posts available</h4>
+    }
+    else
+    {
+        @foreach (FeedPost p in _feedPosts.Posts)
+        {
+            <Post PostLine="p"/>
+        }
+    }
+</div>
+
+@code {
+    private FeedPost _newPost = new FeedPost();
+    private FeedPostList _feedPosts = new FeedPostList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
+        try
+        {
+            var posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
+            if (posts != null)
+            {
+                _feedPosts.Posts = posts;
+            }
+        }
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to fetch posts: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task CreatePost()
+    {
+        try
+        {
+            var createdPost = await ApiHelper.PostToApiAsync<FeedPost, FeedPost>("api/Post/create", _newPost);
+            if (createdPost != null)
+            {
+                _feedPosts.Posts.Insert(0, createdPost); 
+                _newPost = new FeedPost(); 
+            }
+        }
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to create post: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}

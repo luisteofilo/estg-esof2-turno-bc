@@ -1,4 +1,5 @@
 using ESOF.WebApp.DBLayer.Context;
+using ESOF.WebApp.DBLayer.Entities;
 using ESOF.WebApp.WebAPI.Services;
 using Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -15,25 +16,30 @@ builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
 builder.Services.AddScoped<WineLeaderboardService>();
 builder.Services.AddScoped<UserLeaderboardService>();
+builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<FriendshipService>();
+builder.Services.AddScoped<FriendRequestService>();
+builder.Services.AddScoped<CommentService>();
+builder.Services.AddScoped<LikeService>();
+builder.Services.AddDbContext<ApplicationDbContext>();
 
-// Configurar o DbContext com a conexão ao banco de dados
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+
+builder.Services.AddScoped<TasteEvaluationService>();
+builder.Services.AddScoped<TasteEvaluationQuestionService>();
+builder.Services.AddScoped<TasteQuestionService>();
+builder.Services.AddScoped<TasteQuestionTypeService>();
+
+builder.Services.AddScoped<InteractionService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddDbContext<ApplicationDbContext>();
+
+builder.Services.AddCors(options =>
 {
-    var db = EnvFileHelper.GetString("POSTGRES_DB");
-    var user = EnvFileHelper.GetString("POSTGRES_USER");
-    var password = EnvFileHelper.GetString("POSTGRES_PASSWORD");
-    var port = EnvFileHelper.GetString("POSTGRES_PORT");
-    var host = EnvFileHelper.GetString("POSTGRES_HOST");
-
-    if (string.IsNullOrEmpty(db) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(password) ||
-        string.IsNullOrEmpty(port) || string.IsNullOrEmpty(host))
-    {
-        throw new InvalidOperationException(
-            "Database connection information not fully specified in environment variables.");
-    }
-
-    var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={password}";
-    options.UseNpgsql(connectionString);
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("http://localhost:5297")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
 });
 
 var app = builder.Build();
@@ -46,14 +52,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
+app.UseCors("AllowSpecificOrigin");
 app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
-
-
+  
+  
+  
+  
 /*var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -87,3 +94,5 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
 */
+
+
