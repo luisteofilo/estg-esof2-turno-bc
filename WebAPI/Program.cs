@@ -16,6 +16,8 @@ builder.Services.AddScoped<TasteEvaluationService>();
 builder.Services.AddScoped<TasteEvaluationQuestionService>();
 builder.Services.AddScoped<TasteQuestionService>();
 builder.Services.AddScoped<TasteQuestionTypeService>();
+builder.Services.AddScoped<InteractionService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 
