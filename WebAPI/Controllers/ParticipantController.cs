@@ -69,12 +69,12 @@ public class ParticipantController : ControllerBase
         }
     }
     
-    [HttpGet("available-users")]
-    public ActionResult<List<ResponseUserDto>> GetAvailableUsers()
+    [HttpGet("available-users/{eventId}")]
+    public ActionResult<List<ResponseUserDto>> GetAvailableUsers(Guid eventId)
     {
         try
         {
-            var users = _participantService.GetAvailableUsers();
+            var users = _participantService.GetAvailableUsers(eventId);
             return Ok(users);
         }
         catch (Exception ex)

@@ -1,13 +1,13 @@
-﻿@page "/AddEvaluations/{eventId:guid}"
+﻿@page "/AddEvaluations/{EventId:guid}"
 @using Frontend.Helpers
 @using ESOF.WebApp.WebAPI.DtoClasses
 @rendermode InteractiveServer
 @inject ApiHelper ApiHelper
 @inject NavigationManager Navigation
 
-<PageTitle>Adicionar Avaliação</PageTitle>
+<PageTitle>Add Evaluations</PageTitle>
 
-<h1>Adicionar Avaliação</h1>
+<h1>Add Evaluations</h1>
 
 @if (_wines == null)
 {
@@ -20,18 +20,20 @@ else if (_wines.Count == 0)
 else
 {
     <div class="form-container">
-        <label for="wineId" class="form-label">Wine</label>
-        <select class="form-control" id="wineId" @bind="wineId">
-            @foreach (var wine in _wines)
-            {
-                <option value="@wine.WineId">Wine @(_wines.IndexOf(wine) + 1)</option> <!-- Use an anonymized identifier -->
-            }
-        </select>
-        
-        <label for="grade" class="form-label">Grade</label>
-        <input type="number" class="form-control" id="grade" @bind="grade" min="1" max="100" />
-        
-        <button class="btn btn-primary" @onclick="AddEvaluation">Add Evaluation</button>
+        <EditForm Model="AddMultiEvaluations">
+            <div class="form-group">
+                @foreach (var wine in _wines)
+                {
+                    <div>
+                        <label>Wine @(_wines.IndexOf(wine) + 1)</label>
+                        <input type="hidden" @bind="wine.WineId" />
+                        <label for="grade" class="form-label">Grade</label>
+                        <input type="number" class="form-control" @bind="wine.Grade" min="1" max="100" />
+                    </div>
+                }
+            </div>
+            <button type="submit" class="btn btn-primary" @onclick="AddMultiEvaluations">Submit Evaluations</button>
+        </EditForm>
     </div>
 }
 
@@ -39,14 +41,12 @@ else
     [Parameter]
     public Guid EventId { get; set; }
 
-    private List<ResponseWineDto> _wines = new List<ResponseWineDto>();
-    private Guid wineId;
-    private int grade;
+    private List<WineEvaluation> _wines = new List<WineEvaluation>();
     private Guid participantId;
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch wines and the current participant
+        // Fetch the current participant
         var participant = await ApiHelper.GetFromApiAsync<ResponseParticipantDto>($"api/Participant/get-by-user-and-event/{UserState.LoggedInUserId}/{EventId}");
         if (participant != null)
         {
@@ -55,41 +55,47 @@ else
 
         // Fetch wines that are part of the event but not yet evaluated by this participant
         var participantWines = await ApiHelper.GetFromApiAsync<List<ResponseParticipantWineDto>>($"api/ParticipantWine/index");
-        var winesInEvent = participantWines.Where(pw => pw.BlindEventId == EventId).Select(pw => pw.Wine).ToList();
-        
+        var winesInEvent = participantWines.Where(pw => pw.BlindEventId == EventId).Select(pw => new WineEvaluation
+        {
+            WineId = pw.Wine.WineId,
+            Label = pw.Wine.Label,
+            Year = pw.Wine.Year,
+            Grade = 0 // Default grade
+        }).ToList();
+
         var evaluations = await ApiHelper.GetFromApiAsync<List<ResponseEvaluationDto>>($"api/Evaluation/index");
         var evaluatedWineIds = evaluations.Where(e => e.BlindEventId == EventId && e.ParticipantId == participantId).Select(e => e.WineId).ToHashSet();
         
         _wines = winesInEvent.Where(w => !evaluatedWineIds.Contains(w.WineId)).ToList();
     }
 
-    private async Task AddEvaluation()
+    private async Task AddMultiEvaluations()
     {
         try
         {
-            var evaluation = new CreateEvaluationDto
+            var evaluationsToAdd = _wines.Select(w => new CreateEvaluationDto
             {
                 ParticipantId = participantId,
-                WineId = wineId,
+                WineId = w.WineId,
                 BlindEventId = EventId,
-                Grade = grade
-            };
+                Grade = w.Grade
+            }).ToList();
 
-            var jsonContent = System.Text.Json.JsonSerializer.Serialize(evaluation);
+            var jsonContent = System.Text.Json.JsonSerializer.Serialize(evaluationsToAdd);
             Console.WriteLine($"Generated JSON: {jsonContent}");
             
             var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
             Console.WriteLine($"Content-Type being sent: {content.Headers.ContentType}");
 
-            var response = await ApiHelper.PostToApiAsync("api/Evaluation/store", content);
+            var response = await ApiHelper.PostToApiAsync("api/Evaluation/bulk-store", content);
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine("Evaluation added successfully!");
-                Navigation.NavigateTo($"/BlindEvent");
+                Console.WriteLine("Evaluations added successfully!");
+                Navigation.NavigateTo($"/BlindEventDetails/{EventId}");
             }
             else
             {
-                Console.WriteLine($"Failed to add evaluation. Status code: {response.StatusCode}");
+                Console.WriteLine($"Failed to add evaluations. Status code: {response.StatusCode}");
                 var responseContent = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"Response content: {responseContent}");
             }
@@ -98,5 +104,13 @@ else
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
+    }
+
+    private class WineEvaluation
+    {
+        public Guid WineId { get; set; }
+        public string Label { get; set; }
+        public int Year { get; set; }
+        public int Grade { get; set; }
     }
 }

@@ -187,12 +187,12 @@ namespace ESOF.WebApp.WebAPI.Services
             }
         }
         
-        public List<ResponseUserDto> GetAvailableUsers()
+        public List<ResponseUserDto> GetAvailableUsers(Guid eventId)
         {
             try
             {
                 var users = _context.Users
-                    .Where(u => !_context.Participants.Any(p => p.UserId == u.UserId))
+                    .Where(u => !_context.Participants.Any(p => p.UserId == u.UserId && p.BlindEventId == eventId))
                     .Select(u => new ResponseUserDto
                     {
                         UserId = u.UserId,

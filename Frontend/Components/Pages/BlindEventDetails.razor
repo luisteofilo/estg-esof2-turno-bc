@@ -27,39 +27,42 @@ else
             }
         </ul>
 
-        <h3>Wines</h3>
-        @if (blindEvent.ParticipantWines != null && blindEvent.ParticipantWines.Any())
+        @if (UserState.LoggedInUserId == blindEvent.OrganizerId)
         {
-            <ul>
-                @foreach (var participantWine in blindEvent.ParticipantWines)
-                {
-                    <li>@participantWine.Wine.Label (@participantWine.Wine.Year) - added by @participantWine.Participant.User.Email</li>
-                }
-            </ul>
-        }
-        else
-        {
-            <p>No wines have been added to this event yet.</p>
+            <h3>Wines</h3>
+            @if (blindEvent.ParticipantWines != null && blindEvent.ParticipantWines.Any())
+            {
+                <ul>
+                    @foreach (var participantWine in blindEvent.ParticipantWines)
+                    {
+                        <li>@participantWine.Wine.Label (@participantWine.Wine.Year) - added by @participantWine.Participant.User.Email</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No wines have been added to this event yet.</p>
+            }
+
+            <h3>Evaluations</h3>
+            @if (blindEvent.Evaluations == null || !blindEvent.Evaluations.Any())
+            {
+                <p>No evaluations available.</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var evaluation in blindEvent.Evaluations)
+                    {
+                        <li>
+                            Participant: @evaluation.Participant.User.Email, Wine: @evaluation.Wine.Label, Grade: @evaluation.Grade
+                        </li>
+                    }
+                </ul>
+            }
         }
 
-        <h3>Evaluations</h3>
-        @if (blindEvent.Evaluations == null || !blindEvent.Evaluations.Any())
-        {
-            <p>No evaluations available.</p>
-        }
-        else
-        {
-            <ul>
-                @foreach (var evaluation in blindEvent.Evaluations)
-                {
-                    <li>
-                        Participant: @evaluation.Participant.User.Email, Wine: @evaluation.Wine.Label, Grade: @evaluation.Grade
-                    </li>
-                }
-            </ul>
-        }
-
-        @if (UserState.LoggedInUserId.HasValue && UserState.LoggedInUserId != Guid.Empty)
+        @if (UserState.LoggedInUserId.HasValue && UserState.LoggedInUserId != Guid.Empty && UserState.LoggedInUserId == blindEvent.OrganizerId)
         {
             <a href="@($"/AddParticipant/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Participant</a>
         }

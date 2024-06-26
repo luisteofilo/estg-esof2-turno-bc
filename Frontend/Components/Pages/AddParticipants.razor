@@ -1,4 +1,4 @@
-﻿@page "/AddParticipant/{eventId:guid}"
+﻿@page "/AddParticipant/{EventId:guid}"
 @using Frontend.Helpers
 @using ESOF.WebApp.WebAPI.DtoClasses
 @rendermode InteractiveServer
@@ -41,7 +41,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _users = await ApiHelper.GetFromApiAsync<List<ResponseUserDto>>("api/Participant/available-users");
+        _users = await ApiHelper.GetFromApiAsync<List<ResponseUserDto>>($"api/Participant/available-users/{EventId}");
     }
 
     private async Task CreateParticipant()

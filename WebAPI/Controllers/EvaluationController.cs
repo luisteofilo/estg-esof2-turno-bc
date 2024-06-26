@@ -68,4 +68,25 @@ public class EvaluationController : ControllerBase
             return NotFound(ex.Message);
         }
     }
+    
+    [HttpPost("bulk-store")]
+    public ActionResult CreateEvaluations([FromBody] List<CreateEvaluationDto> createEvaluationDtos)
+    {
+        try
+        {
+            foreach (var dto in createEvaluationDtos)
+            {
+                _evaluationService.CreateEvaluation(dto);
+            }
+            return Ok();
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }

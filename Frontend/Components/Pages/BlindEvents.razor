@@ -45,12 +45,14 @@ else
                         Console.WriteLine($"OrganizerId: {blindEvent.OrganizerId}");
                         Console.WriteLine($"Participant UserIds: {string.Join(", ", blindEvent.Participants.Select(p => p.UserId))}");
 
+                        <a href="@($"/BlindEventDetails/{blindEvent.BlindEventId}")" class="btn btn-primary">Details</a>
+
                         if (isOrganizer)
                         {
-                            <a href="@($"/BlindEventDetails/{blindEvent.BlindEventId}")" class="btn btn-primary">Details</a>
                             <a href="@($"/AddParticipant/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Participant</a>
                         }
-                        else if (isParticipant)
+
+                        if (isParticipant)
                         {
                             <a href="@($"/AddWine/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Wine</a>
                             <a href="@($"/AddEvaluations/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Evaluation</a>
