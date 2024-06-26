@@ -80,9 +80,10 @@
                 {
                     @foreach (var question in _tasteQuestions)
                     {
+                        
                         <div class="mb-3">
                             <label for="@question.Question" class="form-label">@question.Question</label>
-                            <input type="@TasteQuestionTypeService.GetType(@question.TasteQuestionTypeId)" class="form-control" id="@question.TasteQuestionId" placeholder="Enter your answer here" />
+                            <input type="@TasteQuestionTypeService.GetType(@question.TasteQuestionTypeId)" class="form-@(TasteQuestionTypeService.GetType(@question.TasteQuestionTypeId) == "checkbox" ? "checkbox" : "control")" id="@question.TasteQuestionId" placeholder="Enter your answer here" />
                         </div>
                     }
                     
