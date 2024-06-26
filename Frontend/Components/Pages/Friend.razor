@@ -1,0 +1,257 @@
+﻿@page "/friend"
+@using System.Net
+@using ESOF.WebApp.WebAPI.DtoClasses
+@using Frontend.Helpers
+@rendermode InteractiveServer
+@inject HttpClient Http
+@inject ApiHelper ApiHelper
+
+<PageTitle>Friends</PageTitle>
+
+@code {
+    private int selectedTab = 0;
+    private FriendDto[] friends;
+    private FriendRequestDto[] receivedRequests;
+    private FriendRequestDto[] sentRequests;
+    //////////////////////////////////////////////////////////////////////////////
+    private Guid userId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd");    // Set the logged-in user's ID
+    ///////////////////////////////////////////////////////////////////////////////
+    protected override async Task OnInitializedAsync()
+    {
+        friends = await Http.GetFromJsonAsync<FriendDto[]>($"api/Friendship/{userId}");
+        receivedRequests = await Http.GetFromJsonAsync<FriendRequestDto[]>($"api/Friendship/ReceivedRequests/{userId}");
+        sentRequests = await Http.GetFromJsonAsync<FriendRequestDto[]>($"api/Friendship/SentRequests/{userId}");
+    }
+
+    private void SelectTab(int index)
+    {
+        Console.WriteLine("Selected tab: " + index);
+        selectedTab = index;
+    }
+
+    //accept friend request
+    private async Task AcceptFriendRequest(Guid requestId)
+    {
+        await ApiHelper.PostToApiAsync2<Guid>("api/FriendRequests/accept", requestId);
+        await OnInitializedAsync();
+    }
+
+    //reject friend request
+    private async Task RejectFriendRequest(Guid requestId)
+    {
+        Console.WriteLine("Rejecting friend request: " + requestId);
+        try
+        {
+            await ApiHelper.PostToApiAsync2<Guid>("api/FriendRequests/reject", requestId);
+            Console.WriteLine($"Successfully rejected friend request with ID: {requestId}");
+        }
+        catch (ApplicationException e)
+        {
+            Console.WriteLine($"Failed to reject friend request with ID: {requestId}. Error: {e.Message}");
+        }
+        await OnInitializedAsync();
+    }
+
+    //cancel friend sent request
+    private async Task CancelFriendRequest(Guid requestId)
+    {
+        Console.WriteLine("Cancelling friend request: " + requestId);
+        try
+        {
+            await ApiHelper.DeleteFromApiAsync2("api/FriendRequests/remove", requestId);
+            Console.WriteLine($"Successfully cancelled friend request with ID: {requestId}");
+        }
+        catch (ApplicationException e)
+        {
+            Console.WriteLine($"Failed to cancel friend request with ID: {requestId}. Error: {e.Message}");
+        }
+        await OnInitializedAsync();
+    }
+
+    //remove friend
+    private async Task RemoveFriend(Guid friendId)
+    {
+        Console.WriteLine("Removing friend: " + friendId);
+        var removeFriendDto = new RemoveFriendDto
+        {
+            UserId = userId, // Assuming you have userId available in this context
+            FriendId = friendId
+        };
+        try
+        {
+            await ApiHelper.DeleteFromApiAsync3($"api/Friendship/remove-friend?userId1={userId}&userId2={friendId}", removeFriendDto);
+            Console.WriteLine($"Successfully removed friend with ID: {friendId}");
+        }
+        catch (ApplicationException e)
+        {
+            Console.WriteLine($"Failed to remove friend with ID: {friendId}. Error: {e.Message}");
+        }
+        await OnInitializedAsync();
+    }
+
+    private void ShowNotificationMessage(string friendRemovedSuccessfully, string success)
+    {
+
+    }
+
+}
+
+<div class="tabs">
+    <button @onclick="@(e => SelectTab(0))" class="@(selectedTab == 0 ? "tab-button active" : "tab-button")">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+        </svg>
+        Friends
+        List
+    </button>
+    <button @onclick="@(e => SelectTab(1))" class="@(selectedTab == 1 ? "tab-button active" : "tab-button")">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-down" viewBox="0 0 16 16">
+            <path d="M12.5 9a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7m.354 5.854 1.5-1.5a.5.5 0 0 0-.708-.708l-.646.647V10.5a.5.5 0 0 0-1 0v2.793l-.646-.647a.5.5 0 0 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+        </svg>
+        Received
+        Requests
+    </button>
+    <button @onclick="@(e => SelectTab(2))" class="@(selectedTab == 2 ? "tab-button active" : "tab-button")">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-up" viewBox="0 0 16 16">
+            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.354-5.854 1.5 1.5a.5.5 0 0 1-.708.708L13 11.707V14.5a.5.5 0 0 1-1 0v-2.793l-.646.647a.5.5 0 0 1-.708-.708l1.5-1.5a.5.5 0 0 1 .708 0M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+        </svg>
+        Sent
+        Requests
+    </button>
+</div>
+
+@switch (selectedTab)
+{
+    case 0:
+    {
+        if (friends != null)
+        {
+            <div id="0" class="friend-list">
+                @foreach (var friend in friends)
+                {
+                    <div class="friend-card">
+                        <img src="/avatar.jpg" alt="@friend.UserName" class="friend-image"/>
+                        <div class="friend-name">@friend.UserName</div>
+                        <button class="remove-button" @onclick="@(async () => await RemoveFriend(friend.UserId))">Remove</button>
+                    </div>
+                }
+            </div>
+        }
+
+        break;
+    }
+    case 1:
+        <div class="request-list">
+            @foreach (var request in receivedRequests)
+            {
+                <div class="request-card">
+                    <img src="/avatar.jpg" alt="@request.RequesterName" class="request-image"/>
+                    <div class="request-name">@request.RequesterName</div>
+                    <button class="accept-button" @onclick="@(async () => await AcceptFriendRequest(request.RequestId))">Accept</button>
+                    <button class="reject-button" @onclick="@(async () => await RejectFriendRequest(request.RequestId))">Reject</button>
+                </div>
+            }
+        </div>
+    {
+        break;
+    }
+    case 2:
+        <div class="request-list">
+            @foreach (var request in sentRequests)
+            {
+                <div class="request-card">
+                    <img src="/avatar.jpg" alt="@request.ReceiverName" class="request-image"/>
+                    <div class="request-name">@request.ReceiverName</div>
+                    <button class="cancel-button" @onclick="@(async () => await CancelFriendRequest(request.RequestId))">Cancel</button>
+                </div>
+            }
+        </div>
+    {
+        break;
+    }
+}
+
+<style>
+    .tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+    }
+    .tab-button {
+        padding: 10px 20px;
+        margin: 0 5px;
+        border: none;
+        border-radius: 4px 4px 0 0;
+        cursor: pointer;
+        background-color: #f1f1f1;
+        color: #555;
+        font-weight: bold;
+    }
+    .tab-button.active {
+        background-color: #ffffff;
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+    }
+    .tab-button:not(.active):hover {
+        background-color: #ddd;
+    }
+    .friend-list, .request-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        max-width: 1200px;
+        margin: auto;
+    }
+    .friend-card, .request-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 5px;
+        text-align: center;
+        width: 200px;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+    }
+    .friend-image, .request-image {
+        border-radius: 8px;
+        width: 150px;
+        height: 150px;
+    }
+    .friend-name, .request-name {
+        margin-top: 15px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .remove-button, .accept-button, .reject-button, .cancel-button {
+        margin-top: 10px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .remove-button {
+        background-color: #ff6666;
+        color: white;
+    }
+    .remove-button:hover {
+        background-color: #ff4d4d;
+    }
+    .accept-button {
+        background-color: #66b266;
+        color: white;
+    }
+    .accept-button:hover {
+        background-color: #4d994d;
+    }
+    .reject-button, .cancel-button {
+        background-color: #ffcc00;
+        color: white;
+    }
+    .reject-button:hover, .cancel-button:hover {
+        background-color: #e6b800;
+    }
+</style>

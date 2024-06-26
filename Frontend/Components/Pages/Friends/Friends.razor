@@ -1,0 +1,211 @@
+﻿@page "/friends"
+@using ESOF.WebApp.WebAPI.DtoClasses
+@inject HttpClient Http
+
+
+<div class="tabs">
+    <button @onclick="@(e => SelectTab(0))" class="@(selectedTab == 0 ? "tab-button active" : "tab-button")">Friends List</button>
+    <button @onclick="@(e => SelectTab(1))" class="@(selectedTab == 1 ? "tab-button active" : "tab-button")">Received Requests</button>
+    <button @onclick="@(e => SelectTab(2))" class="@(selectedTab == 2 ? "tab-button active" : "tab-button")">Sent Requests</button>
+</div>
+
+
+@if (friends == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+
+@switch (selectedTab)
+{
+    case 0:
+    {
+        if (friends != null)
+        {
+            <div id="0" class="friend-list">
+                @foreach (var friend in friends)
+                {
+                    <div class="friend-card">
+                        <img src="/avatar.jpg" alt="@friend.UserName" class="friend-image"/>
+                        <div class="friend-name">@friend.UserName</div>
+                        <button class="remove-button" @onclick="@(async () => await RemoveFriend(friend.UserId))">Remove</button>
+                    </div>
+                }
+            </div>
+        }
+
+        break;
+    }
+    case 1:
+    {
+        <div class="request-list">
+            @foreach (var request in receivedRequests)
+            {
+                <div class="request-card">
+                    <img src="/avatar.jpg" alt="@request.RequesterName" class="request-image"/>
+                    <div class="request-name">@request.RequesterName</div>
+                    <button class="accept-button" @onclick="@(async () => await AcceptFriendRequest(request.RequestId))">Accept</button>
+                    <button class="reject-button" @onclick="@(async () => await RejectFriendRequest(request.RequestId))">Reject</button>
+                </div>
+            }
+        </div>
+        break;
+    }
+    case 2:
+        <div class="request-list">
+            @foreach (var request in sentRequests)
+            {
+                <div class="request-card">
+                    <img src="/avatar.jpg" alt="@request.ReceiverName" class="request-image"/>
+                    <div class="request-name">@request.ReceiverName</div>
+                    <button class="cancel-button" @onclick="@(async () => await CancelFriendRequest(request.RequestId))">Cancel</button>
+                </div>
+            }
+        </div>
+    {
+        break;
+    }
+}
+
+@code {
+    private FriendDto[] friends;
+    private FriendRequestDto[] receivedRequests;
+    private FriendRequestDto[] sentRequests;
+    private int selectedTab = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        friends = await Http.GetFromJsonAsync<FriendDto[]>($"api/Friendship/{new Guid("2ada3e78-5130-4ec0-a7c6-32208439d929")}");
+        receivedRequests = await Http.GetFromJsonAsync<FriendRequestDto[]>($"api/Friendship/ReceivedRequests/{new Guid("2ada3e78-5130-4ec0-a7c6-32208439d929")}");
+        sentRequests = await Http.GetFromJsonAsync<FriendRequestDto[]>($"api/Friendship/SentRequests/{new Guid("2ada3e78-5130-4ec0-a7c6-32208439d929")}");
+    }
+
+    private void SelectTab(int index)
+    {
+        selectedTab = index;
+    }
+
+    //accept friend request
+    private async Task AcceptFriendRequest(Guid requestId)
+    {
+        await Http.PostAsJsonAsync($"api/Friendship/AcceptRequest/{requestId}", new { });
+    }
+
+    //reject friend request
+    private async Task RejectFriendRequest(Guid requestId)
+    {
+        await Http.PostAsJsonAsync($"api/Friendship/RejectRequest/{requestId}", new { });
+    }
+
+    //cancel friend sent request
+    private async Task CancelFriendRequest(Guid requestId)
+    {
+        await Http.PostAsJsonAsync($"api/Friendship/CancelRequest/{requestId}", new { });
+    }
+
+    //remove friend
+    private async Task RemoveFriend(Guid friendId)
+    {
+        await Http.PostAsJsonAsync($"api/Friendship/RemoveFriend/{friendId}", new { });
+    }
+
+}
+
+<style>
+    .tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .tab-button {
+        padding: 10px 20px;
+        margin: 0 5px;
+        border: none;
+        border-radius: 4px 4px 0 0;
+        cursor: pointer;
+        background-color: #f1f1f1;
+        color: #555;
+        font-weight: bold;
+    }
+
+    .tab-button.active {
+        background-color: #ffffff;
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+    }
+
+    .tab-button:not(.active):hover {
+        background-color: #ddd;
+    }
+
+    .friend-list, .request-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .friend-card, .request-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 5px;
+        text-align: center;
+        width: 200px;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+    }
+
+    .friend-image, .request-image {
+        border-radius: 8px;
+        width: 150px;
+        height: 150px;
+    }
+
+    .friend-name, .request-name {
+        margin-top: 15px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .remove-button, .accept-button, .reject-button, .cancel-button {
+        margin-top: 10px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .remove-button {
+        background-color: #ff6666;
+        color: white;
+    }
+
+    .remove-button:hover {
+        background-color: #ff4d4d;
+    }
+
+    .accept-button {
+        background-color: #66b266;
+        color: white;
+    }
+
+    .accept-button:hover {
+        background-color: #4d994d;
+    }
+
+    .reject-button, .cancel-button {
+        background-color: #ffcc00;
+        color: white;
+    }
+
+    .reject-button:hover, .cancel-button:hover {
+        background-color: #e6b800;
+    }
+</style>
