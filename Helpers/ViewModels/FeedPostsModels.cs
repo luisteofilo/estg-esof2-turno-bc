@@ -27,6 +27,10 @@ public class FeedPost
     public IEnumerable<FeedPostUser> ViewUsers { get; set; }
     
     public IEnumerable<Tuple<FeedPostUser, FeedPostUser>> ShareUsers { get; set; }
+    
+    public int LikeCount { get; set; }  
+    public bool IsLiked { get; set; } 
+    
 }
 
 public enum FeedPostVisibilityType

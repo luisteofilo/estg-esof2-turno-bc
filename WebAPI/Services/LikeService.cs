@@ -51,4 +51,11 @@ public class LikeService
         return await _context.Likes
             .CountAsync(l => l.PostId == postId && l.IsActive);
     }
+    
+    public async Task<bool> IsPostLikedByUserAsync(Guid postId, Guid userId)
+    {
+        return await _context.Likes
+            .AnyAsync(l => l.PostId == postId && l.UserId == userId && l.IsActive);
+    }
+
 }

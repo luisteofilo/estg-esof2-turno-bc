@@ -1,42 +1,56 @@
-﻿@page "/Post"
+﻿@page "/post"
 @using Frontend.Helpers
 @using global::Helpers.ViewModels
+@using ESOF.WebApp.WebAPI.DtoClasses
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 
-<div class="post">
-    <div class="post-header">
-        <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
-        <div class="post-info">
-            <div class="post-author">@PostLine.Creator.email</div>
-            <div class="post-meta">@PostLine.DateTimePost · @PostLine.VisibilityType</div>
+<div class="feed">
+    <div class="post">
+        <div class="post-header">
+            <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
+            <div class="post-info">
+                <div class="post-author">@PostLine.Creator.email</div>
+                <div class="post-meta">@PostLine.DateTimePost · @PostLine.VisibilityType</div>
+            </div>
+            <div class="post-menu">
+                <button class="menu-button">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </button>
+            </div>
         </div>
-        <div class="post-menu">
-            <button class="menu-button">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
+        <div class="post-content">
+            @PostLine.Text
+        </div>
+        <div class="post-actions">
+            <button @onclick="ToggleLike">
+                @(IsLiked ? "Unlike" : "Like")
             </button>
+            <span>@LikeCount</span>
         </div>
-    </div>
-    <div class="post-content">
-        @PostLine.Text
     </div>
 </div>
 
-
-@code{
-  
+@code {
     [Parameter] public FeedPost PostLine { get; set; } = new FeedPost();
     private FeedPostList _feedPosts = new FeedPostList();
-    
+    private bool IsLiked { get; set; }
+    private int LikeCount { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
-            PostLine = _feedPosts.Posts[0];
+            var posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
+            if (posts != null && posts.Any())
+            {
+                _feedPosts.Posts = posts;
+                PostLine = _feedPosts.Posts[0];
+                await LoadLikeData();
+            }
         }
         catch (ApplicationException ex)
         {
@@ -48,4 +62,18 @@
         }
     }
 
+    private async Task LoadLikeData()
+    {
+        var userId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd"); // Placeholder user ID
+        IsLiked = await ApiHelper.GetFromApiAsync<bool>($"api/Likes/isliked/{PostLine.PostId}/{userId}");
+        LikeCount = await ApiHelper.GetFromApiAsync<int>($"api/Likes/post/{PostLine.PostId}/count");
+    }
+
+    private async Task ToggleLike()
+    {
+        var userId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd"); // Placeholder user ID
+        var dto = new ToggleLikeDto { PostId = PostLine.PostId, UserId = userId };
+        await ApiHelper.PostToApiAsync<ToggleLikeDto, LikeDto>("api/Likes/toggle", dto);
+        await LoadLikeData();
+    }
 }
