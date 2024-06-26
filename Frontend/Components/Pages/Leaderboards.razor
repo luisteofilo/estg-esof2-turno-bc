@@ -84,9 +84,9 @@
                         <th>Rank</th>
                         <th>User</th>
                         <th>Events Participated</th>
-                        <th>Average Evaluation Score</th>
                         <th>Lowest Evaluation Score</th>
                         <th>Highest Evaluation Score</th>
+                        <th>Average Evaluation Score</th>
                         <th>Total Evaluations</th>
                     </tr>
                 </thead>
@@ -97,9 +97,9 @@
                             <td>@(GetUserGlobalRank(user))</td>
                             <td>@user.Email</td>
                             <td>@user.EventsParticipated</td>
-                            <td>@user.AverageEvaluationScore.ToString("F2")</td>
                             <td>@user.LowestEvaluationScore.ToString("F2")</td>
                             <td>@user.HighestEvaluationScore.ToString("F2")</td>
+                            <td>@user.AverageEvaluationScore.ToString("F2")</td>
                             <td>@user.TotalEvaluations</td>
                         </tr>
                     }
