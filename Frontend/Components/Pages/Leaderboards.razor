@@ -131,7 +131,7 @@
         try
         {
             _regions = await RegionService.GetRegionsAsync();
-            await LoadLeaderboard();
+            await LoadWineLeaderboard();
             await LoadUserLeaderboard();
         }
         catch (Exception ex)
@@ -144,7 +144,7 @@
     {
         try
         {
-            await LoadLeaderboard();
+            await LoadWineLeaderboard();
         }
         catch (Exception ex)
         {
@@ -152,9 +152,9 @@
         }
     }
 
-    private async Task LoadLeaderboard()
+    private async Task LoadWineLeaderboard()
     {
-        _wineLeaderboard = await WineLeaderboardService.GetLeaderboardByRegionAsync(_selectedRegionId);
+        _wineLeaderboard = await WineLeaderboardService.GetWineLeaderboardByRegionAsync(_selectedRegionId);
         _currentPage = 1;
         StateHasChanged();
     }
