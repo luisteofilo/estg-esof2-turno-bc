@@ -140,26 +140,6 @@ public class TasteEvaluationService(ApplicationDbContext context)
         {
             throw new ArgumentException("Error: That taste evaluation does not exist!");
         }
-        
-        if (!context.Users.Any(u => u.UserId == updateTasteEvaluationDto.UserId))
-        {
-            throw new ArgumentException("Error: That user does not exist!");
-        }
-        
-        if (!context.Wines.Any(w => w.WineId == updateTasteEvaluationDto.WineId))
-        {
-            throw new ArgumentException("Error: That wine does not exist!");
-        }
-        
-        if (!context.Events.Any(e => e.EventId == updateTasteEvaluationDto.EventId))
-        {
-            throw new ArgumentException("Error: That event does not exist!");
-        }
-        
-        if (context.TasteEvaluations.Any(te => te.UserId == updateTasteEvaluationDto.UserId && te.WineId == updateTasteEvaluationDto.WineId && te.EventId == updateTasteEvaluationDto.EventId))
-        {
-            throw new ArgumentException("Error: That taste evaluation already exists!");
-        }
 
         tasteEvaluation.UserId = updateTasteEvaluationDto.UserId;
         tasteEvaluation.WineId = updateTasteEvaluationDto.WineId;

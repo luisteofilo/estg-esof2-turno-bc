@@ -63,6 +63,28 @@ public class TasteQuestionService(ApplicationDbContext context)
 
     /**
      *
+     * Get all taste questions by the given event id.
+     *
+     * @param eventId The id of the event to get the taste questions from.
+     *
+     * @return The taste questions.
+     *
+     */
+    public List<ResponseTasteQuestionDto> GetQuestionsByEvent(Guid eventId)
+    {
+        var list = context.TasteQuestions.Where(tasteQuestion => tasteQuestion.EventId == eventId).ToList();
+
+        return list.Select(tasteQuestion => new ResponseTasteQuestionDto
+        {
+            TasteQuestionId = tasteQuestion.TasteQuestionId,
+            Question = tasteQuestion.Question,
+            TasteQuestionTypeId = tasteQuestion.TasteQuestionTypeId,
+            EventId = tasteQuestion.EventId
+        }).ToList();
+    }
+
+    /**
+     *
      * Create a taste question based on the given data.
      *
      * @param CreateTasteQuestionDto The data to create the taste question with.
@@ -80,21 +102,6 @@ public class TasteQuestionService(ApplicationDbContext context)
                 TasteQuestionTypeId = createTasteQuestionDto.TasteQuestionTypeId,
                 EventId = createTasteQuestionDto.EventId
             };
-
-            if (context.TasteQuestionTypes.Find(createTasteQuestionDto.TasteQuestionTypeId) == null)
-            {
-                throw new ArgumentException("Error: That taste question type does not exist!");
-            }
-            
-            if (context.Events.Find(createTasteQuestionDto.EventId) == null)
-            {
-                throw new ArgumentException("Error: That event does not exist!");
-            }
-            
-            if (context.TasteQuestions.Any(_tasteQuestionC => _tasteQuestionC.Question == _tasteQuestionC.Question))
-            {
-                throw new ArgumentException("Error: That taste question already exists!");
-            }
             
             context.TasteQuestions.Add(tasteQuestion);
             context.SaveChanges();
@@ -126,26 +133,6 @@ public class TasteQuestionService(ApplicationDbContext context)
     public ResponseTasteQuestionDto Update(Guid id, UpdateTasteQuestionDto updateTasteQuestionDto)
     {
         var tasteQuestion = context.TasteQuestions.Find(id);
-
-        if (tasteQuestion == null)
-        {
-            throw new ArgumentException("Error: That taste question does not exist!");
-        }
-        
-        if (context.TasteQuestionTypes.Find(updateTasteQuestionDto.TasteQuestionTypeId) == null)
-        {
-            throw new ArgumentException("Error: That taste question type does not exist!");
-        }
-        
-        if (context.Events.Find(updateTasteQuestionDto.EventId) == null)
-        {
-            throw new ArgumentException("Error: That event does not exist!");
-        }
-        
-        if (context.TasteQuestions.Any(_tasteQuestionC => _tasteQuestionC.Question == _tasteQuestionC.Question))
-        {
-            throw new ArgumentException("Error: That taste question already exists!");
-        }
         
         tasteQuestion.Question = updateTasteQuestionDto.Question;
         tasteQuestion.TasteQuestionTypeId = updateTasteQuestionDto.TasteQuestionTypeId;
