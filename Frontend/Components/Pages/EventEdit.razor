@@ -5,48 +5,51 @@
 
 <PageTitle>Edit Event</PageTitle>
 
-<h3>Edit Event</h3>
+<div class="container mt-4">
+    <h3 class="text-center" style="font-size: 3rem;">Edit Event</h3>
+    @if (_event == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div>
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <div class="alert alert-danger">@_error</div>
+            }
 
-@if (_event == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div>
-        @if (!string.IsNullOrEmpty(_error))
-        {
-            <div class="alert alert-danger">@_error</div>
-        }
+            <div class="mb-3">
+                <label for="name" class="form-label">Event Name</label>
+                <input id="name" class="form-control" @bind="_event.Name" />
+            </div>
 
-        <div class="mb-3">
-            <label for="name" class="form-label">Event Name</label>
-            <input id="name" class="form-control" @bind="_event.Name" />
+            <div class="mb-3">
+                <label for="slug" class="form-label">Event Slug</label>
+                <input id="slug" class="form-control" @bind="_event.Slug" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input id="description" class="form-control" @bind="_event.Description" />
+            </div>
+
+            <div class="mb-3">
+                <label for="blindTasting" class="form-label">Blind Tasting</label>
+                <input id="blindTasting" type="checkbox" @bind="_event.BlindTasting" />
+            </div>
+
+            <div class="mb-3">
+                <label for="wineType" class="form-label">Wine Type</label>
+                <input id="wineType" class="form-control" @bind="_event.WineType" />
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-primary me-3" @onclick="() => { UpdateEvent(); }"> Save</button>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="slug" class="form-label">Event Slug</label>
-            <input id="slug" class="form-control" @bind="_event.Slug" disabled />
-        </div>
-
-        <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <input id="description" class="form-control" @bind="_event.Description" />
-        </div>
-
-        <div class="mb-3">
-            <label for="blindTasting" class="form-label">Blind Tasting</label>
-            <input id="blindTasting" type="checkbox" @bind="_event.BlindTasting" />
-        </div>
-
-        <div class="mb-3">
-            <label for="wineType" class="form-label">Wine Type</label>
-            <input id="wineType" class="form-control" @bind="_event.WineType" />
-        </div>
-
-        <button type="button" class="btn btn-primary" @onclick="() => {UpdateEvent(); }"> Save</button>
-    </div>
-}
+    }
+</div>
 
 @code {
     [Parameter]
@@ -100,4 +103,4 @@ else
             }
         }
     }
-}}
+}

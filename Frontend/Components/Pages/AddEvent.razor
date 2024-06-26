@@ -8,43 +8,46 @@
 
 <PageTitle>Events</PageTitle>
 
-<h3>Create new event</h3>
+<div class="container mt-4">
+    <h3 class="text-center" style="font-size: 3rem;">Create new event</h3>
+    <form id="createEventForm" class="position-relative mb-5 pb-5">
+        @if (_error != String.Empty)
+        {
+            <div class="alert alert-danger" role="alert">
+                @_error    
+            </div>
+        }
 
-<form id="createEventForm">
-    @if (_error != String.Empty)
-    {
-        <div class="alert alert-danger" role="alert">
-            @_error    
+        <div class="mb-3">
+            <label for="name" class="form-label">Event name</label>
+            <input id="name" class="form-control" @bind="_eventName"/>
         </div>
-    }
 
-    <div class="mb-3">
-        <label for="name" class="form-label">Event name</label>
-        <input id="name" class="form-control" @bind="_eventName"/>
-    </div>
+        <div class="mb-3">
+            <label for="slug" class="form-label">Event slug</label>
+            <input id="slug" class="form-control" @bind="_eventSlug"/>
+        </div>
 
-    <div class="mb-3">
-        <label for="slug" class="form-label">Event slug</label>
-        <input id="slug" class="form-control" @bind="_eventSlug"/>
-    </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" class="form-control" @bind="_eventDescription"></textarea>
+        </div>
+        
+        <div class="mb-3 form-check">
+            <input type="checkbox" id="blindTasting" class="form-check-input" @bind="_blindTasting"/>
+            <label for="blindTasting" class="form-check-label">Blind Tasting</label>
+        </div>
 
-    <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <textarea id="description" class="form-control" @bind="_eventDescription"></textarea>
-    </div>
-    
-    <div class="mb-3 form-check">
-        <input type="checkbox" id="blindTasting" class="form-check-input" @bind="_blindTasting"/>
-        <label for="blindTasting" class="form-check-label">Blind Tasting</label>
-    </div>
+        <div class="mb-3">
+            <label for="wineType" class="form-label">Wine Type</label>
+            <input id="wineType" class="form-control" @bind="_wineType"/>
+        </div>
 
-    <div class="mb-3">
-        <label for="wineType" class="form-label">Wine Type</label>
-        <input id="wineType" class="form-control" @bind="_wineType"/>
-    </div>
-
-    <button type="button" class="btn btn-primary" @onclick="() => { CreateNewEvent(); }">Create</button>
-</form>
+        <div class="position-absolute" style="bottom: 0; right: 0;">
+            <button type="button" class="btn btn-primary" @onclick="() => { CreateNewEvent(); }">Create</button>
+        </div>
+    </form>
+</div>
 
 @code {
     private string _error = String.Empty;

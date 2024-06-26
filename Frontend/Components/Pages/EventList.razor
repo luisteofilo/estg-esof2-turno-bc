@@ -6,35 +6,47 @@
 
 <PageTitle>Eventos</PageTitle>
 
-<h3>Eventos</h3>
-
-<NavLink class="btn btn-primary mb-3" href="/events/create">Adicionar Evento</NavLink>
-
-@if (events == null)
-{
-    <p><em>Carregando...</em></p>
-}
-else if (events.Count == 0)
-{
-    <p><em>Nenhum evento encontrado.</em></p>
-}
-else
-{
-    <div class="list-group">
-        @foreach (var eventDto in events)
-        {
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <a href="events/@eventDto.Slug" class="text-decoration-none">@eventDto.Name</a>
-                </div>
-                <div>
-                    <NavLink class="btn btn-secondary btn-sm" href="@($"/events/edit/{eventDto.Slug}")">Editar</NavLink>
-                    <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDeleteEvent(eventDto.Slug)">Apagar</button>
-                </div>
-            </div>
-        }
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12 d-flex justify-content-center">
+            <h1 class="text-center" style="font-size: 3rem;">Events</h1>
+        </div>
     </div>
-}
+    <div class="row">
+        <div class="col-12">
+            @if (events == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else if (events.Count == 0)
+            {
+                <p><em>No events found</em></p>
+            }
+            else
+            {
+                <div class="list-group">
+                    @foreach (var eventDto in events)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="events/@eventDto.Slug" class="text-decoration-none">@eventDto.Name</a>
+                            </div>
+                            <div>
+                                <NavLink class="btn btn-secondary btn-sm" href="@($"/events/edit/{eventDto.Slug}")">Edit</NavLink>
+                                <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDeleteEvent(eventDto.Slug)">Delete</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 d-flex justify-content-end">
+            <NavLink class="btn btn-primary mb-3 mt-5" href="/events/create">Add Event</NavLink>
+        </div>
+    </div>
+</div>
 
 @code {
     private List<EventDto> events;
@@ -46,7 +58,7 @@ else
 
     private async Task ConfirmDeleteEvent(string slug)
     {
-        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Tem certeza que deseja apagar este evento?");
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this event?");
         if (confirmed)
         {
             await DeleteEvent(slug);
@@ -59,5 +71,4 @@ else
         events = await EventService.GetEvents(); // Atualizar a lista de eventos
         StateHasChanged(); // Atualiza a interface
     }
-
 }
