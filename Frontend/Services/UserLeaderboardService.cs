@@ -1,7 +1,7 @@
 ﻿namespace Frontend.Services;
 
-using Frontend.DtoClasses;
-using Frontend.Helpers;
+using DtoClasses;
+using Helpers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
