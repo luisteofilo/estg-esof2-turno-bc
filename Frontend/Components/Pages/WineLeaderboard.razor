@@ -8,19 +8,7 @@
 
 <PageTitle>Wine Leaderboard</PageTitle>
 
-<nav aria-label="Breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="/">Home</a>
-        </li>
-        <li class="breadcrumb-item">
-            <a>Wine Leaderboard</a>
-        </li>
-    </ol>
-</nav>
-
 <h3>Wine Leaderboard</h3>
-<p>Here you can see the leaderboard of wines based on user evaluations.</p>
 
 <div>
     <label for="regionSelect">Select Region:</label>
@@ -38,12 +26,16 @@
 
 @if (_wineLeaderboard == null || !_wineLeaderboard.Any())
 {
-    <p>
-        <em>No data available.</em>
-    </p>
+    <p><em>No data available.</em></p>
 }
 else
 {
+    <div>
+        <button @onclick="PreviousPage" disabled="@(_currentPage == 1)">Previous</button>
+        <button @onclick="NextPage" disabled="@(_currentPage == TotalPages)">Next</button>
+        <span> Page @(_currentPage) of @(TotalPages) </span>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
             <thead>
@@ -57,15 +49,15 @@ else
             </tr>
             </thead>
             <tbody>
-            @for (int i = 0; i < _wineLeaderboard.Count; i++)
+            @foreach (var wine in PagedLeaderboard)
             {
                 <tr>
-                    <td>@(i + 1)</td>
-                    <td>@_wineLeaderboard[i].Label</td>
-                    <td>@_wineLeaderboard[i].RegionName</td>
-                    <td>@_wineLeaderboard[i].EventsParticipated</td>
-                    <td>@_wineLeaderboard[i].TotalEvaluations</td>
-                    <td>@_wineLeaderboard[i].AverageScore.ToString("F2")</td>
+                    <td>@(GetGlobalRank(wine))</td>
+                    <td>@wine.Label</td>
+                    <td>@wine.RegionName</td>
+                    <td>@wine.EventsParticipated</td>
+                    <td>@wine.TotalEvaluations</td>
+                    <td>@wine.AverageScore.ToString("F2")</td>
                 </tr>
             }
             </tbody>
@@ -77,17 +69,19 @@ else
     private List<WineLeaderboardDto> _wineLeaderboard = new List<WineLeaderboardDto>();
     private List<RegionDto> _regions = new List<RegionDto>();
     private Guid? _selectedRegionId;
+    private int _currentPage = 1;
+    private const int PageSize = 10;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             _regions = await RegionService.GetRegionsAsync();
-            _wineLeaderboard = await WineLeaderboardService.GetLeaderboardByRegionAsync(null);
+            await LoadLeaderboard();
         }
         catch (Exception ex)
         {
-            // Handle initialization error
+            Console.WriteLine($"Initialization error: {ex.Message} | {ex.StackTrace}");
         }
     }
 
@@ -95,12 +89,57 @@ else
     {
         try
         {
-            _wineLeaderboard = await WineLeaderboardService.GetLeaderboardByRegionAsync(_selectedRegionId);
-            StateHasChanged(); // Trigger re-render
+            await LoadLeaderboard();
         }
         catch (Exception ex)
         {
-            // Handle filtering error
+            Console.WriteLine($"Filtering error: {ex.Message} | {ex.StackTrace}");
         }
+    }
+
+    private async Task LoadLeaderboard()
+    {
+        _wineLeaderboard = await WineLeaderboardService.GetLeaderboardByRegionAsync(_selectedRegionId);
+        _currentPage = 1;
+        StateHasChanged();
+    }
+
+    private IEnumerable<WineLeaderboardDto> PagedLeaderboard =>
+        _wineLeaderboard.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+
+    private int TotalPages => (int)Math.Ceiling((double)_wineLeaderboard.Count / PageSize);
+
+    private int CurrentPage
+    {
+        get => _currentPage;
+        set
+        {
+            if (value >= 1 && value <= TotalPages)
+            {
+                _currentPage = value;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void NextPage()
+    {
+        if (_currentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (_currentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+    private int GetGlobalRank(WineLeaderboardDto wine)
+    {
+        return _wineLeaderboard.IndexOf(wine) + 1;
     }
 }
