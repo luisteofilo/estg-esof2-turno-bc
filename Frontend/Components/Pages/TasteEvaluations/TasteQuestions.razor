@@ -64,12 +64,18 @@
                     <tr>
                         <td>@question.Question</td>
                         <td>@TasteQuestionTypeService.GetType(question.TasteQuestionTypeId)</td>
-                        
-                        @* ----------------------------------- *@
-                        @* TODO: Make it appear the event name *@
-                        @* ----------------------------------- *@
-                        
-                        <td><NavLink href="/events">@question.EventId</NavLink></td>
+                        <td><NavLink href="/events">@{
+                            if (_events != null)
+                            {
+                                foreach (var _event in _events)
+                                {
+                                    if (_event.EventId == question.EventId)
+                                    {
+                                        @_event.Name;
+                                    }
+                                }
+                            }
+                        }</NavLink></td>
                         <td>
                             <button class="btn btn-primary btn-sm" data-bs-target="#tasteQuestions_edit" data-bs-toggle="modal" @onclick="() => { SetQuestionEditParameters(question.Question, question.TasteQuestionId, question.TasteQuestionTypeId, question.EventId); }">Edit</button>
                             <button class="btn btn-sm btn-danger" data-bs-target="#tasteQuestions_delete" data-bs-toggle="modal" @onclick="() => { SetQuestionDeleteParameters(question.Question, question.TasteQuestionId); }">Delete</button>
