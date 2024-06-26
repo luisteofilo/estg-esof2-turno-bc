@@ -91,7 +91,7 @@
     </table>
 </div>
 <div class="mt-3">
-    <a class="w-100 btn btn-primary rounded-0 btn-block" data-bs-target="#tasteEvaluation_createModal" data-bs-toggle="modal">Create new question</a>
+    <a class="w-100 btn btn-primary rounded-0 btn-block" data-bs-target="#tasteEvaluation_createModal" data-bs-toggle="modal">Create new evaluation</a>
 </div>
 
 <!-- Modals -->
@@ -339,12 +339,12 @@
         
         if (TasteEvaluationService.Create(new TasteEvaluationDto() { UserId = _tasteEvaluationUserId, EventId = _tasteEvaluationEventId, WineId = _tasteEvaluationWineId, WineScore = _tasteEvaluationWineScore }))
         {
-            JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "The question was created successfully!", "success");
+            JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "The evaluation was created successfully!", "success");
             await LoadTasteEvaluations();
             StateHasChanged();
         }
         else
-            JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "There was an error creating the question.", "danger");
+            JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "There was an error creating the evaluation.", "danger");
     }
     
     private async Task EditEvaluation()
@@ -357,24 +357,24 @@
         
         if (TasteEvaluationService.Update(_tasteEvaluationId, new TasteEvaluationDto() { UserId = _tasteEvaluationUserId, EventId = _tasteEvaluationEventId, WineId = _tasteEvaluationWineId, WineScore = _tasteEvaluationWineScore }))
         {
-            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "The question was edited successfully!", "success");
+            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "The evaluation was edited successfully!", "success");
             await LoadTasteEvaluations();
             StateHasChanged();
         }
         else
-            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "There was an error editing the question.", "danger");
+            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "There was an error editing the evaluation.", "danger");
     }
 
     private async Task DeleteEvaluation(Guid id)
     {
         if (TasteEvaluationService.Delete(id))
         {
-            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "The question was deleted successfully!", "success");
+            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "The evaluation was deleted successfully!", "success");
             await LoadTasteEvaluations();
             StateHasChanged();
         }
         else
-            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "There was an error deleting the question.", "danger");
+            await JS.InvokeAsync<string>("SendAlert", "tasteEvaluation_alert", "There was an error deleting the evaluation.", "danger");
     }
     
     private async Task LoadTasteEvaluations()
