@@ -128,4 +128,34 @@ namespace Frontend.Helpers
             }
         }
     }
+    
+    public async Task<T?> PostToApiAsync<T>(string url, T data)
+    {
+        try
+        {
+            var response = await httpClient.PostAsJsonAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
+        catch (HttpRequestException e)
+        {
+            // Handle exception
+            throw new ApplicationException($"Error posting data to {url}: {e.Message}");
+        }
+    }
+
+    public async Task<T?> PutToApiAsync<T>(string url, T data)
+    {
+        try
+        {
+            var response = await httpClient.PutAsJsonAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
+        catch (HttpRequestException e)
+        {
+            // Handle exception
+            throw new ApplicationException($"Error putting data to {url}: {e.Message}");
+        }
+    }
 }

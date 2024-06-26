@@ -1,4 +1,6 @@
 using System.Linq.Expressions;
+using System.Linq.Expressions;
+
 using DotNetEnv;
 using ESOF.WebApp.DBLayer.Context;
 using ESOF.WebApp.DBLayer.Entities;
@@ -65,6 +67,15 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Friendship> Friendships { get; set; }
     public DbSet<FriendRequest> FriendRequests { get; set; }
     
+
+
+    public DbSet<Interaction> Interaction { get; set; }
+    
+    
+    public DbSet<Event> Events { get; set; }
+    public DbSet<EventParticipant> EventParticipants { get; set; }
+    
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -99,13 +110,34 @@ public partial class ApplicationDbContext : DbContext
         BuildRegions(modelBuilder);
         BuildGrapeTypes(modelBuilder);
         BuildWineGrapeTypeLinks(modelBuilder);
+
         BuildPosts(modelBuilder);
         BuildLikes(modelBuilder);
         BuildComments(modelBuilder);
         BuildFriendships(modelBuilder);
         BuildFriendRequests(modelBuilder);
+
+        BuildInteraction(modelBuilder);
+
         base.OnModelCreating(modelBuilder);
         
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            var deletedAtProperty = entityType.FindProperty("DeletedAt");
+            if (deletedAtProperty != null && deletedAtProperty.ClrType == typeof(DateTimeOffset?))
+            {
+                var parameter = Expression.Parameter(entityType.ClrType, "p");
+                var body = Expression.Equal(
+                    Expression.Call(typeof(EF), nameof(EF.Property), new[] { typeof(DateTimeOffset?) }, parameter, Expression.Constant("DeletedAt")),
+                    Expression.Constant(null));
+                var lambda = Expression.Lambda(body, parameter);
+                modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+            }
+        }
+        
+        BuildEvent(modelBuilder);
+        BuildEventParticipants(modelBuilder);
+        //QRCODE
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             var deletedAtProperty = entityType.FindProperty("DeletedAt");

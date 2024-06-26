@@ -22,6 +22,7 @@ public class User
     public int FriendsCount { get; set; }
 
     public ICollection<UserRole> UserRoles { get; set; }
+
     public ICollection<Like> Likes { get; set; }
     public ICollection<Comment> Comments { get; set; }
     public ICollection<FriendRequest> SentFriendshipRequests { get; set; }
@@ -34,4 +35,7 @@ public class User
     // Collection of friendships where this user is User2 (User that receives the friend request)
     public ICollection<Friendship> Friendships2 { get; set; }
 
+
+    public ICollection<EventParticipant> EventParticipants { get; set; }
+    public ICollection<Interaction> Interactions { get; set; }
 }
