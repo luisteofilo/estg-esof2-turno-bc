@@ -22,11 +22,40 @@
         @PostLine.Text
     </div>
     <div class="post-actions">
-        <button @onclick="ToggleLike">
-            @(IsLiked ? "Unlike" : "Like")
+        <button class="btn btn-primary" @onclick="ToggleLike">
+            <i class="bi @(IsLiked ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill")"></i> @(IsLiked ? "Unlike" : "Like")
         </button>
         <span>@LikeCount</span>
+
+        <button class="btn btn-secondary" @onclick="ToggleComments">
+            <i class="bi bi-chat"></i> Comments
+        </button>
+        <span>@CommentCount</span>
     </div>
+
+    @if (ShowComments)
+    {
+        <div class="post-comments">
+            <textarea @bind="NewCommentText" placeholder="Write a comment..." class="form-control"></textarea>
+            <button class="btn btn-success mt-2" @onclick="AddComment">Post Comment</button>
+
+            <div class="comments-list mt-3">
+                @if (Comments != null && Comments.Count > 0)
+                {
+                    @foreach (var comment in Comments)
+                    {
+                        <div class="comment mb-2">
+                            <strong>@comment.UserName:</strong> @comment.Content
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No comments yet.</p>
+                }
+            </div>
+        </div>
+    }
 </div>
 
 @code {
@@ -34,24 +63,52 @@
 
     private bool IsLiked { get; set; }
     private int LikeCount { get; set; }
+    private bool ShowComments { get; set; } = false;
+    private List<CommentDto> Comments { get; set; }
+    private string NewCommentText { get; set; } = string.Empty;
+    private int CommentCount { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await LoadLikeData();
+        await LoadCommentData();
     }
 
     private async Task LoadLikeData()
     {
-        var userId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd"); // Placeholder user ID
+        var userId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd"); // change to the logged userID
         IsLiked = await ApiHelper.GetFromApiAsync<bool>($"api/Likes/isliked/{PostLine.PostId}/{userId}");
         LikeCount = await ApiHelper.GetFromApiAsync<int>($"api/Likes/post/{PostLine.PostId}/count");
     }
 
+    private async Task LoadCommentData()
+    {
+        CommentCount = await ApiHelper.GetFromApiAsync<int>($"api/Comments/post/{PostLine.PostId}/count");
+        Comments = await ApiHelper.GetFromApiAsync<List<CommentDto>>($"api/Comments/post/{PostLine.PostId}");
+    }
+
     private async Task ToggleLike()
     {
-        var userId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd"); // Placeholder user ID
+        var userId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd"); // change to the logged userID
         var dto = new ToggleLikeDto { PostId = PostLine.PostId, UserId = userId };
         await ApiHelper.PostToApiAsync<ToggleLikeDto, LikeDto>("api/Likes/toggle", dto);
         await LoadLikeData();
+    }
+
+    private void ToggleComments()
+    {
+        ShowComments = !ShowComments;
+    }
+
+    private async Task AddComment()
+    {
+        if (!string.IsNullOrWhiteSpace(NewCommentText))
+        {
+            var userId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd"); // change to the logged userID
+            var dto = new CreateCommentDto { PostId = PostLine.PostId, UserId = userId, Content = NewCommentText };
+            await ApiHelper.PostToApiAsync<CreateCommentDto, CommentDto>("api/Comments/create", dto);
+            NewCommentText = string.Empty;
+            await LoadCommentData();
+        }
     }
 }

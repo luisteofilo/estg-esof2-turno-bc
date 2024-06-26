@@ -3,6 +3,8 @@
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .post-header {
@@ -48,23 +50,38 @@
 
 .post-actions {
     margin-top: 10px;
+    display: flex;
+    align-items: center;
 }
 
 .post-actions button {
-    background-color: #007bff;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 10px;
 }
 
-.post-actions button:hover {
-    background-color: #0056b3;
+.post-actions .btn-secondary {
+    margin-left: 10px;
+}
+
+.post-actions i {
+    margin-right: 5px;
+}
+
+.post-comments {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.comment {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.comment:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
 }

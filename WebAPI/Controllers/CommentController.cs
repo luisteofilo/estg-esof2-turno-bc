@@ -25,7 +25,7 @@ public class CommentsController : ControllerBase
             CommentId = comment.CommentId,
             PostId = comment.PostId,
             UserId = comment.UserId,
-            Content = comment.Content,
+            Content = comment.Content
             
         };
 
