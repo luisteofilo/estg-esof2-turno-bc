@@ -1,0 +1,353 @@
+@page "/taste/questions/types"
+@using Frontend.DtoClasses
+@using Frontend.Helpers
+@using Frontend.Services
+@using global::Helpers
+@attribute [StreamRendering]
+@inject Frontend.Services.TasteQuestionTypeService TasteQuestionTypeService
+@inject Frontend.Services.EventService EventService
+@inject ApiHelper ApiHelper
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Tasting Question Types</PageTitle>
+
+<nav aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/taste">Wine Tasting</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a>Question Types</a>
+        </li>
+    </ol>
+</nav>
+
+<h3>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-pen"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5.5"/><path d="M4 13.5V6a2 2 0 0 1 2-2h2"/><path d="M13.378 15.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg>
+    <span>Question Types</span>
+</h3>
+<p>Choose the type of questions that can be created.</p>
+
+<hr class="hr" />
+
+<!-- Alert -->
+<div class="alert visually-hidden" role="alert" id="tasteQuestions_alert">
+    MESSAGE_HERE
+</div>
+
+<div class="d-flex w-100 gap-4 align-items-center">
+    @if (_tasteQuestionTypes == null)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else if (_tasteQuestionTypes.Count == 0)
+    {
+        <p>
+            <em>No question types found.</em>
+        </p>
+    } 
+    else {
+        @foreach (var _type in _tasteQuestionTypes)
+        {
+            <div class="card">
+                <div class="card-header text-capitalize">
+                    @_type.Type
+                </div>
+                <div class="card-body">
+                    <div class="card-text">
+                        Example usage in the form:<br/>
+                        <div class="d-flex flex-column gap-2 mt-2">
+                            <label>
+                                <input type="@_type.Type" name="@_type.Type"/>
+                                <span text-capitalize>@_type.Type 1</span>
+                            </label>
+                            <label>
+                                <input type="@_type.Type" name="@_type.Type"/>
+                                <span text-capitalize>@_type.Type 2</span>
+                            </label>
+                            <label>
+                                <input type="@_type.Type" name="@_type.Type"/>
+                                <span text-capitalize>@_type.Type 3</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row gap-3 mt-3">
+                        <button class="btn btn-primary w-100">Edit</button>
+                        <button class="btn btn-danger w-100">Delete</button>
+                    </div>
+                </div>
+            </div>
+        }   
+    }
+</div>
+
+<div class="mt-3">
+    <a class="w-100 btn btn-primary rounded-0 btn-block" data-bs-target="#tasteQuestions_createModal" data-bs-toggle="modal">Create new question</a>
+</div>
+
+<!-- Modals -->
+@* <div class="modal fade" id="tasteQuestions_createModal" tabindex="-1" aria-labelledby="tasteQuestions_label" aria-hidden="true"> *@
+@*     <div class="modal-dialog"> *@
+@*         <div class="modal-content"> *@
+@*             <form> *@
+@*                 <div class="modal-header"> *@
+@*                     <h1 class="modal-title fs-5" id="tasteQuestions_label">Create a question</h1> *@
+@*                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+@*                 </div> *@
+@*                 <div class="modal-body"> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="tasteQuestions_create_name" class="form-label">Question</label> *@
+@*                         <input type="text" class="form-control" id="tasteQuestions_create_name" @bind="_tasteQuestionName" /> *@
+@*                     </div> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="tasteQuestions_create_type" class="form-label">Question Type</label> *@
+@*                         <select class="form-select" id="tasteQuestions_create_type" @bind="_tasteQuestionTypeId"> *@
+@*                             <option value="@Guid.Empty" selected>-- Choose a question type --</option> *@
+@*                              *@
+@*                             @if (_tasteQuestionTypes == null) *@
+@*                             { *@
+@*                                 <option value="">Loading...</option> *@
+@*                             } *@
+@*                             else *@
+@*                             { *@
+@*                                 @foreach (var type in _tasteQuestionTypes) *@
+@*                                 { *@
+@*                                     <option value="@type.TasteQuestionTypeId">@type.Type</option> *@
+@*                                 } *@
+@*                             } *@
+@*                         </select> *@
+@*                     </div> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="tasteQuestions_create_event" class="form-label">Event</label> *@
+@*                         <select class="form-select" id="tasteQuestions_create_event" @bind="_tasteQuestionEventId"> *@
+@*                             <option value="@Guid.Empty" selected>-- Choose an event --</option> *@
+@*                             @if (_events == null) *@
+@*                             { *@
+@*                                 <option value="">Loading...</option> *@
+@*                             } *@
+@*                             else *@
+@*                             { *@
+@*                                 @foreach (var type in _events) *@
+@*                                 { *@
+@*                                     <option value="@type.EventId">@type.Name</option> *@
+@*                                 } *@
+@*                             } *@
+@*                         </select> *@
+@*                     </div> *@
+@*                 </div> *@
+@*                 <div class="modal-footer"> *@
+@*                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="() => { CreateTasteQuestion(); }">Confirm</button> *@
+@*                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button> *@
+@*                 </div> *@
+@*             </form> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <div class="modal fade" id="tasteQuestions_delete" tabindex="-1" aria-labelledby="tasteQuestions_label" aria-hidden="true"> *@
+@*     <div class="modal-dialog"> *@
+@*         <div class="modal-content"> *@
+@*             <div class="modal-header"> *@
+@*                 <h1 class="modal-title fs-5" id="tasteQuestions_label">Deletion confirmation</h1> *@
+@*                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+@*             </div> *@
+@*             <div class="modal-body"> *@
+@*                 Do you really wish to delete the taste question:<br/> *@
+@*                 <code>"<span id="tasteQuestions_delete_name">@_tasteQuestionName</span>"</code> *@
+@*             </div> *@
+@*             <div class="modal-footer"> *@
+@*                 <form> *@
+@*                     <input type="hidden" id="tasteQuestions_id" value="@_tasteQuestionId" /> *@
+@*                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="() => { DeleteQuestion(_tasteQuestionId); }">Confirm</button> *@
+@*                 </form> *@
+@*                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <div class="modal fade" id="tasteQuestions_edit" tabindex="-1" aria-labelledby="tasteQuestions_label" aria-hidden="true"> *@
+@*     <div class="modal-dialog"> *@
+@*         <div class="modal-content"> *@
+@*             <form> *@
+@*                 <div class="modal-header"> *@
+@*                     <h1 class="modal-title fs-5" id="tasteQuestions_label">Edit question</h1> *@
+@*                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+@*                 </div> *@
+@*                 <div class="modal-body"> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="tasteQuestions_edit_name" class="form-label">Question</label> *@
+@*                         <input type="text" class="form-control" id="tasteQuestions_edit_name" @bind="_tasteQuestionName" /> *@
+@*                     </div> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="tasteQuestions_edit_type" class="form-label">Question Type</label> *@
+@*                         <select class="form-select" id="tasteQuestions_edit_type" @bind="_tasteQuestionTypeId"> *@
+@*                             @if (_tasteQuestionTypes == null) *@
+@*                             { *@
+@*                                 <option value="">Loading...</option> *@
+@*                             } *@
+@*                             else *@
+@*                             { *@
+@*                                 @foreach (var type in _tasteQuestionTypes) *@
+@*                                 { *@
+@*                                     <option value="@type.TasteQuestionTypeId">@type.Type</option> *@
+@*                                 } *@
+@*                             } *@
+@*                         </select> *@
+@*                     </div> *@
+@*                     <div class="mb-3"> *@
+@*                         <label for="tasteQuestions_edit_event" class="form-label">Event</label> *@
+@*                         <select class="form-select" id="tasteQuestions_edit_event" @bind="_tasteQuestionEventId"> *@
+@*                             @if (_events == null) *@
+@*                             { *@
+@*                                 <option value="">Loading...</option> *@
+@*                             } *@
+@*                             else *@
+@*                             { *@
+@*                                 @foreach (var type in _events) *@
+@*                                 { *@
+@*                                     <option value="@type.EventId">@type.Name</option> *@
+@*                                 } *@
+@*                             } *@
+@*                         </select> *@
+@*                     </div> *@
+@*                 </div> *@
+@*                 <div class="modal-footer"> *@
+@*                         <input type="hidden" id="tasteQuestions_id" value="@_tasteQuestionId" /> *@
+@*                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="() => { EditTasteQuestion(); }">Confirm</button> *@
+@*                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button> *@
+@*                 </div> *@
+@*             </form> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+
+<script>
+    setTimeout(() => {
+        if (!$('#tasteTable').hasClass('dataTable')) {
+            tasteTable = $('#tasteTable').DataTable({
+                paging: true
+            });
+        }
+    }, 10);
+
+    function SendAlert(alertID, message, type) {
+        const alert = document.getElementById(alertID);
+        alert.classList.remove('visually-hidden');
+        alert.classList.add(`alert-${type}`);
+
+        if (type === 'success') {
+            message = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-check me-3"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg>' + message;
+        } else if (type === 'danger') {
+            message = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x me-3"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>' + message;
+        } else {
+            message = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert me-3"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>' + message;
+        }
+
+        alert.innerHTML = message;
+    }
+
+    function CloseAlert(alertID) {
+        const alert = document.getElementById(alertID);
+        alert.classList.add('visually-hidden');
+    }
+
+    function setTypes(types, events) {
+        window._tasteQuestionTypes = types;
+    }
+</script>
+
+@code {
+    // TODO: Check if user is an administrator or a regular user
+
+    private List<TasteQuestionTypeDto>? _tasteQuestionTypes;
+    //
+    // private void SetQuestionDeleteParameters(string name, Guid id)
+    // {
+    //     _tasteQuestionName = name;
+    //     _tasteQuestionId = id;
+    // }
+    //
+    // private void SetQuestionEditParameters(string name, Guid id, Guid typeId, Guid eventId)
+    // {
+    //     _tasteQuestionName = name;
+    //     _tasteQuestionId = id;
+    //     _tasteQuestionTypeId = typeId;
+    //     _tasteQuestionEventId = eventId;
+    // }
+    //
+    // private async Task CreateTasteQuestion()
+    // {
+    //     if(_tasteQuestionName == "" || _tasteQuestionTypeId == Guid.Empty || _tasteQuestionEventId == Guid.Empty)
+    //     {
+    //         await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "Please fill all the fields.", "warning");
+    //         return;
+    //     }
+    //     
+    //     if (TasteQuestionService.Create(new TasteQuestionDto() { EventId = _tasteQuestionEventId, TasteQuestionId = _tasteQuestionId, Question = _tasteQuestionName, TasteQuestionTypeId = _tasteQuestionTypeId }))
+    //     {
+    //         JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "The question was created successfully!", "success");
+    //         await LoadTasteQuestionTypes();
+    //         StateHasChanged();
+    //     }
+    //     else
+    //         JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "There was an error creating the question.", "danger");
+    // }
+    //
+    // private async Task EditTasteQuestion()
+    // {
+    //     if(_tasteQuestionName == "" || _tasteQuestionTypeId == Guid.Empty || _tasteQuestionEventId == Guid.Empty)
+    //     {
+    //         await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "Please fill all the fields.", "warning");
+    //         return;
+    //     }
+    //     
+    //     if (TasteQuestionService.Update(_tasteQuestionId, new TasteQuestionDto() { EventId = _tasteQuestionEventId, TasteQuestionId = _tasteQuestionId, Question = _tasteQuestionName, TasteQuestionTypeId = _tasteQuestionTypeId }))
+    //     {
+    //         await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "The question was edited successfully!", "success");
+    //         await LoadTasteQuestionTypes();
+    //         StateHasChanged();
+    //     }
+    //     else
+    //         await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "There was an error editing the question.", "danger");
+    // }
+    //
+    // private async Task DeleteQuestion(Guid id)
+    // {
+    //     if (TasteQuestionService.Delete(id))
+    //     {
+    //         await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "The question was deleted successfully!", "success");
+    //         await LoadTasteQuestionTypes();
+    //         StateHasChanged();
+    //     }
+    //     else
+    //         await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "There was an error deleting the question.", "danger");
+    // }
+    
+    private async Task LoadTasteQuestionTypes()
+    {
+        _tasteQuestionTypes = await TasteQuestionTypeService.Get();
+        StateHasChanged();
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await LoadTasteQuestionTypes();
+            _tasteQuestionTypes = await TasteQuestionTypeService.Get();
+            await JS.InvokeAsync<string>("setTypes", _tasteQuestionTypes);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error has occurred: {ex.Message} | {ex.InnerException}");
+            _tasteQuestionTypes = null;
+        }
+    }
+}
