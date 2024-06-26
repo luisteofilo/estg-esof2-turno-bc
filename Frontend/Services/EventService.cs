@@ -35,9 +35,16 @@ namespace Frontend.Services
         {
             try
             {
+                _logger.LogInformation($"Fetching event with slug: {slug}");
                 var response = await _httpClient.GetAsync($"api/events/{slug}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<EventDto>();
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Error fetching event. Status Code: {response.StatusCode}");
+                    return null;
+                }
+                var eventDto = await response.Content.ReadFromJsonAsync<EventDto>();
+                _logger.LogInformation($"Successfully fetched event: {eventDto?.Name}");
+                return eventDto;
             }
             catch (HttpRequestException ex)
             {
@@ -69,6 +76,7 @@ namespace Frontend.Services
             catch (HttpRequestException ex)
             {
                 _logger.LogError($"Request error: {ex.Message}");
+                throw;
             }
         }
 
