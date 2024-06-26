@@ -35,8 +35,7 @@
         await ApiHelper.PostToApiAsync2<Guid>("api/FriendRequests/accept", requestId);
         await OnInitializedAsync();
     }
-
-
+    
     //reject friend request
     private async Task RejectFriendRequest(Guid requestId)
     {
@@ -80,7 +79,7 @@
         };
         try
         {
-            await ApiHelper.DeleteFromApiAsync($"api/Friendship/remove-friend?userId1={userId}&userId2={friendId}", removeFriendDto);
+            await ApiHelper.DeleteFromApiAsync3($"api/Friendship/remove-friend?userId1={userId}&userId2={friendId}", removeFriendDto);
             Console.WriteLine($"Successfully removed friend with ID: {friendId}");
         }
         catch (ApplicationException e)
