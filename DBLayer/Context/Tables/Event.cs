@@ -29,7 +29,7 @@ public partial class ApplicationDbContext
             .HasMany(e => e.EventParticipants)
             .WithOne(ep => ep.Event)
             .HasForeignKey(ep => ep.EventId);
-
+/*
         modelBuilder.Entity<Event>().HasData(
             new Event { EventId = Guid.NewGuid(), Name = "Event1", Slug = "event1" },
             new Event { EventId = Guid.NewGuid(), Name = "Event2", Slug = "event2" },
@@ -37,5 +37,6 @@ public partial class ApplicationDbContext
             new Event { EventId = Guid.NewGuid(), Name = "Event4", Slug = "event4" },
             new Event { EventId = Guid.NewGuid(), Name = "Event5", Slug = "event5" }
         );
+*/
     }
 }

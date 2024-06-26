@@ -4,17 +4,19 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Frontend.DtoClasses;
 using System;
-using WebAPI.DtoClasses;  // Adicione esta linha
+using Microsoft.Extensions.Logging;
 
 namespace Frontend.Services
 {
     public class EventService
     {
         private readonly HttpClient _httpClient;
+        private readonly ILogger<EventService> _logger;
 
-        public EventService(HttpClient httpClient)
+        public EventService(HttpClient httpClient, ILogger<EventService> logger)
         {
             _httpClient = httpClient;
+            _logger = logger;
         }
 
         public async Task<List<EventDto>> GetEvents()
@@ -25,7 +27,7 @@ namespace Frontend.Services
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Request error: {ex.Message}");
+                _logger.LogError($"Request error: {ex.Message}");
                 return new List<EventDto>();
             }
         }
@@ -40,12 +42,12 @@ namespace Frontend.Services
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Request error: {ex.Message}");
+                _logger.LogError($"Request error: {ex.Message}");
                 return null;
             }
         }
 
-        public async Task AddEvent(CreateEventDto newEvent)  // Modifique o tipo de EventDto para CreateEventDto
+        public async Task AddEvent(CreateEventDto newEvent)
         {
             try
             {
@@ -54,10 +56,23 @@ namespace Frontend.Services
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Request error: {ex.Message}");
+                _logger.LogError($"Request error: {ex.Message}");
             }
         }
 
+        public async Task DeleteEvent(string slug)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/events/slug/{slug}");
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError($"Request error: {ex.Message}");
+            }
+        }
+        
         public async Task<List<EventParticipantDto>> GetParticipants(Guid eventId)
         {
             try
@@ -66,7 +81,7 @@ namespace Frontend.Services
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Request error: {ex.Message}");
+                _logger.LogError($"Request error: {ex.Message}");
                 return new List<EventParticipantDto>();
             }
         }
@@ -80,7 +95,7 @@ namespace Frontend.Services
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Request error: {ex.Message}");
+                _logger.LogError($"Request error: {ex.Message}");
             }
         }
 
@@ -93,7 +108,7 @@ namespace Frontend.Services
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Request error: {ex.Message}");
+                _logger.LogError($"Request error: {ex.Message}");
             }
         }
     }

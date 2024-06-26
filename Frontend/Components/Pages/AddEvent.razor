@@ -1,36 +1,78 @@
-﻿@page "/add-event"
+﻿@page "/events/create"
 @inject Frontend.Services.EventService EventService
 @inject NavigationManager NavigationManager
-@using WebAPI.DtoClasses 
+@using System.Runtime.InteropServices.JavaScript
+@using Frontend.DtoClasses
+@attribute [StreamRendering]
+@rendermode InteractiveServer
 
-<PageTitle>Adicionar Evento</PageTitle>
+<PageTitle>Events</PageTitle>
 
-<h3>Adicionar Novo Evento</h3>
+<h3>Create new event</h3>
 
-<EditForm Model="newEvent" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
+<form id="createEventForm">
+    @if (_error != String.Empty)
+    {
+        <div class="alert alert-danger" role="alert">
+            @_error    
+        </div>
+    }    
+    
+    @if (_success != String.Empty)
+    {
+        <div class="alert alert-success" role="alert">
+            @_success    
+        </div>
+    }
+    
     <div class="mb-3">
-        <label for="name" class="form-label">Nome do Evento</label>
-        <InputText id="name" class="form-control" @bind-Value="newEvent.Name" />
+        <label for="name" class="form-label">Event name</label>
+        <input id="name" class="form-control" @bind="_eventSlug"/>
     </div>
 
     <div class="mb-3">
-        <label for="slug" class="form-label">Slug do Evento</label>
-        <InputText id="slug" class="form-control" @bind-Value="newEvent.Slug" />
+        <label for="slug" class="form-label">Event slug</label>
+        <input id="slug" class="form-control" @bind="_eventName"/>
     </div>
 
-    <button type="submit" class="btn btn-primary">Adicionar</button>
-</EditForm>
+    <button type="button" class="btn btn-primary" @onclick="() => { CreateNewEvent(); }">Create</button>
+</form>
 
 @code {
-    private CreateEventDto newEvent = new CreateEventDto();
-
-    private async Task HandleValidSubmit()
+    private string _error = String.Empty;
+    private string _success = String.Empty;
+    private string _eventName = String.Empty;
+    private string _eventSlug = String.Empty;
+    
+    private async Task CreateNewEvent()
     {
-        await EventService.AddEvent(newEvent);
+        if (_eventName == String.Empty || _eventSlug == String.Empty)
+        {
+            _error = "Please, fill all the fields.";
+            return;
+        }
+
+        _error = String.Empty;
+
+        try
+        {
+            await EventService.AddEvent(new CreateEventDto()
+            {
+                Name = _eventName,
+                Slug = _eventSlug
+            });
+        }
+        catch (Exception e)
+        {
+            _error = e.Message;
+            return;
+        }
+        finally
+        {
+            _success = "Event created successfully! Redirecting...";
+        }
+        
+        await Task.Delay(2000);
         NavigationManager.NavigateTo("/events");
     }
-
 }

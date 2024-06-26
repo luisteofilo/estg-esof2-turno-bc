@@ -1,4 +1,4 @@
-﻿namespace WebAPI.DtoClasses
+﻿namespace Frontend.DtoClasses
 {
     public class CreateEventDto
     {

@@ -1,33 +1,39 @@
 ﻿@page "/events"
 @inject Frontend.Services.EventService EventService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 @using Frontend.DtoClasses
 
-<PageTitle>Events</PageTitle>
+<PageTitle>Eventos</PageTitle>
 
-<h3>Events</h3>
+<div class="container mt-3">
+    <h3>Eventos</h3>
 
-<button class="btn btn-primary mb-3" @onclick="AddEvent">Adicionar Evento</button>
+    <button class="btn btn-primary mb-3" @onclick="AddEvent">Adicionar Evento</button>
 
-@if (events == null)
-{
-    <p><em>Loading...</em></p>
-}
-else if (events.Count == 0)
-{
-    <p><em>No events found or error fetching events.</em></p>
-}
-else
-{
-    <ul>
-        @foreach (var eventDto in events)
-        {
-            <li>
-                <a href="events/@eventDto.Slug">@eventDto.Name</a> (ID: @eventDto.EventId)
-            </li>
-        }
-    </ul>
-}
+    @if (events == null)
+    {
+        <p><em>Carregando...</em></p>
+    }
+    else if (events.Count == 0)
+    {
+        <p><em>Nenhum evento encontrado.</em></p>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var eventDto in events)
+            {
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="events/@eventDto.Slug" class="text-decoration-none">@eventDto.Name</a>
+                    </div>
+                    <button class="btn btn-danger btn-sm" @onclick="@(async () => await DeleteEvent(eventDto.Slug))">Apagar</button>
+                </div>
+            }
+        </div>
+    }
+</div>
 
 @code {
     private List<EventDto> events;
@@ -39,7 +45,16 @@ else
 
     private void AddEvent()
     {
-        NavigationManager.NavigateTo("/add-event");
+        NavigationManager.NavigateTo("/events/create");
     }
 
+    private async Task DeleteEvent(string slug)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Tem certeza que deseja apagar este evento?");
+        if (confirmed)
+        {
+            await EventService.DeleteEvent(slug);
+            events = await EventService.GetEvents(); // Atualizar a lista de eventos
+        }
+    }
 }

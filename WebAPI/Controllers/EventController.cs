@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/events")] 
+    [Route("api/events")]
     [ApiController]
     public class EventController : ControllerBase
     {
@@ -52,58 +52,21 @@ namespace WebAPI.Controllers
             return Ok(eventDto);
         }
 
-        [HttpGet("register/{eventId}/{userId}")]
-        public async Task<IActionResult> RegisterUserToEvent(Guid eventId, Guid? userId)
+        // DELETE: api/events/slug/{slug}
+        [HttpDelete("slug/{slug}")]
+        public async Task<IActionResult> DeleteEvent(string slug)
         {
             var _context = new ApplicationDbContext();
-            if (!userId.HasValue || userId == Guid.Empty)
+            var eventEntity = await _context.Events.FirstOrDefaultAsync(e => e.Slug == slug);
+            if (eventEntity == null)
             {
-                // Handling not logged-in users
-                return Unauthorized("User not logged in.");
+                return NotFound();
             }
 
-            // Check if the user is already a participant
-            var isParticipant = await _context.EventParticipants
-                .AnyAsync(ep => ep.EventId == eventId && ep.UserId == userId.Value);
-
-            if (isParticipant)
-            {
-                return Ok("Already Participating");
-            }
-
-            // Add user as a participant if not already
-            var participant = new EventParticipant
-            {
-                EventId = eventId,
-                UserId = userId.Value
-            };
-            _context.EventParticipants.Add(participant);
+            _context.Events.Remove(eventEntity);
             await _context.SaveChangesAsync();
 
-            return Ok("Registration Successful");
-        }
-
-        // POST: api/events
-        [HttpPost]
-        public async Task<IActionResult> AddEvent([FromBody] CreateEventDto createEventDto)
-        {
-            var _context = new ApplicationDbContext();
-            var eventEntity = new Event
-            {
-                EventId = Guid.NewGuid(),
-                Name = createEventDto.Name,
-                Slug = createEventDto.Slug
-            };
-
-            _context.Events.Add(eventEntity);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetEvent), new { slug = eventEntity.Slug }, new ResponseEventDto
-            {
-                EventId = eventEntity.EventId,
-                Name = eventEntity.Name,
-                Slug = eventEntity.Slug
-            });
+            return NoContent();
         }
     }
 }
