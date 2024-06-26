@@ -47,7 +47,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("BrandId");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Event", b =>
@@ -69,36 +69,36 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("EventId");
 
-                    b.ToTable("Events", (string)null);
+                    b.ToTable("Events");
 
                     b.HasData(
                         new
                         {
-                            EventId = new Guid("75ef9f1b-6ccb-45ad-8ad3-b03f1a216dec"),
+                            EventId = new Guid("5b50f84e-0cde-43e8-8048-8efdbff24818"),
                             Name = "Event1",
                             Slug = "event1"
                         },
                         new
                         {
-                            EventId = new Guid("235c63fd-b734-46f2-9e99-7afc32f746b1"),
+                            EventId = new Guid("878d8256-50bd-4870-8f52-3e490537bc1c"),
                             Name = "Event2",
                             Slug = "event2"
                         },
                         new
                         {
-                            EventId = new Guid("b79756ef-5e01-4a70-ab07-0e916b8397a4"),
+                            EventId = new Guid("81ec015d-0d73-4f45-a098-01f5eb3cd084"),
                             Name = "Event3",
                             Slug = "event3"
                         },
                         new
                         {
-                            EventId = new Guid("670e8c98-3b34-4da8-b873-4fd591eca753"),
+                            EventId = new Guid("767a6963-6e91-469e-a6d9-2cac0d5bf145"),
                             Name = "Event4",
                             Slug = "event4"
                         },
                         new
                         {
-                            EventId = new Guid("401c9d69-e393-4aab-ada9-4749e32325b5"),
+                            EventId = new Guid("dac5b230-b134-4cd9-a73a-b22a73f76e6b"),
                             Name = "Event5",
                             Slug = "event5"
                         });
@@ -123,7 +123,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EventParticipants", (string)null);
+                    b.ToTable("EventParticipants");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.GrapeType", b =>
@@ -148,7 +148,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("GrapeTypeId");
 
-                    b.ToTable("GrapeTypes", (string)null);
+                    b.ToTable("GrapeTypes");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Permission", b =>
@@ -164,7 +164,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("PermissionId");
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Region", b =>
@@ -205,7 +205,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.RolePermission", b =>
@@ -220,7 +220,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("RolePermissions", (string)null);
+                    b.ToTable("RolePermissions");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.User", b =>
@@ -230,35 +230,24 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("BirthdayDate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FirstName")
+                    b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
-                    b.Property<string>("LastName")
+                    b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
                     b.HasKey("UserId");
 
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.UserRole", b =>
@@ -273,7 +262,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Wine", b =>
@@ -326,7 +315,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Wines", (string)null);
+                    b.ToTable("Wines");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.WineGrapeTypeLink", b =>
@@ -353,7 +342,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("WineId");
 
-                    b.ToTable("WineGrapeTypeLinks", (string)null);
+                    b.ToTable("WineGrapeTypeLinks");
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.EventParticipant", b =>

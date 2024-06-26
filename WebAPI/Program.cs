@@ -12,11 +12,6 @@ builder.Services.AddScoped<WineService>();
 builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
-builder.Services.AddScoped<UserService>(); 
-builder.Services.AddScoped<UserRolesService>();
-builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<RolePermissionsService>();
-builder.Services.AddScoped<PermissonService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 

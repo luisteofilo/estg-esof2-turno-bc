@@ -27,4 +27,5 @@ public class User
     
     public ICollection<UserRole> UserRoles { get; set; }
     public ICollection<EventParticipant> EventParticipants { get; set; }
+    public ICollection<Interaction> Interactions { get; set; }
 }

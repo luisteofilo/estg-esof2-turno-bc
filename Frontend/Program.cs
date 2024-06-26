@@ -12,10 +12,6 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileHelper.GetString("API_URL")) });
 builder.Services.AddScoped<ApiHelper>();
 builder.Services.AddScoped<EventService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<RolesService>();
-builder.Services.AddScoped<PermissionService>();
-
 //builder.Services.AddScoped<EventParticipantService>(); to be implemented
 
 var app = builder.Build();
