@@ -31,10 +31,31 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+      <Content Remove="Views\**" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\DBLayer\DBLayer.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Views\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Views\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Views\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\PostMVCScaffold\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\PostMVCScaffold\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\PostMVCScaffold\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\PostMVCScaffold\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\PostMVCScaffold\Index.cshtml" />
     </ItemGroup>
 
 </Project>

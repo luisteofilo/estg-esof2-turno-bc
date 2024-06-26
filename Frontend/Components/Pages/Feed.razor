@@ -6,10 +6,24 @@
 @inject ApiHelper ApiHelper
 <h3>Feed</h3>
 <div>
-    <div class = feed-create-post>
-        <span>Criar novo post: </span>
-        <input @bind="_newPost.Text"/>
-        <button @onclick="CreatePost">Create Post</button>
+    <div class=feed-create-post>
+        <Modal Title="Modal title">
+            <BodyTemplate>
+                Modal body text goes here.
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Secondary" >Close</Button>
+                <Button Color="ButtonColor.Primary">Save changes</Button>
+            </FooterTemplate>
+        </Modal>
+        <button id="createPostButton" class="btn btn-primary" data-bs-toggle="display">Criar uma publicação</button>
+        <div id="createPostModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <InputText @bind-Value="_newPost.Text"/>
+                <p>baixo</p>
+            </div>
+        </div>
     </div>
     <hr/>
 </div>
@@ -30,8 +44,11 @@
 
 @code
 {
+    // private FeedPostUser _currentUser = new FeedPostUser();
+    // UserState contém o id do utilizador que existe
     private FeedPost _newPost = new FeedPost();
     private FeedPostList _feedPosts = new FeedPostList();
+
     protected override async Task OnInitializedAsync()
     {
         try
@@ -47,9 +64,11 @@
             Console.Error.WriteLine($"Error: {ex.Message}");
         }
     }
-    
+
     private async Task CreatePost()
     {
+        _newPost.CreatorId = UserState.LoggedInUserId.Value;
         await ApiHelper.PostToApiAsync<FeedPost>("api/Post/create", _newPost);
     }
 }
+

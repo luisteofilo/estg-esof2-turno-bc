@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.Extensions.Logging;
 
 namespace ESOF.WebApp.DBLayer.Entities;
 
@@ -22,6 +23,12 @@ public class Post
 
     [Required]
     public PostVisibilityType VisibilityType { get; set; }
+    
+    public Guid? EventId { get; set; }
+    public Event? Event { get; set; }
+    
+    public Guid? WineId { get; set; }
+    public Wine? Wine { get; set; }
     
     [NotMapped]
     public List<User> FavoriteUsers { get; set; }

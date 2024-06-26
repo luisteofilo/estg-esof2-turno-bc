@@ -15,4 +15,7 @@ public class CreateFeedPostDto
     public IEnumerable<CreateFeedPostHashtagDto>? Hashtags { get; set; }
     
     public PostVisibilityType VisibilityType { get; set; }
+    
+    public Guid? EventId { get; set; }
+    public Guid? WineId { get; set; }
 }
