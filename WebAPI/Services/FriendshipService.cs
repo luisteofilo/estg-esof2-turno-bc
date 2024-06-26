@@ -31,7 +31,7 @@ public class FriendshipService
     }
     
     
-        
+    // remove friend
     public async Task RemoveFriendAsync(Guid userId1, Guid userId2)
     {
         var friendship = await _context.Friendships

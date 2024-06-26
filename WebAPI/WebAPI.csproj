@@ -37,4 +37,8 @@
       <ProjectReference Include="..\DBLayer\DBLayer.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Controllers\UserController.cs" />
+    </ItemGroup>
+
 </Project>

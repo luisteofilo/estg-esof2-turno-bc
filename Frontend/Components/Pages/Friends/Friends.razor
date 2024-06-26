@@ -33,41 +33,39 @@
                     </div>
                 }
             </div>
-            <!--___________________________________________________________________________________________________________________________________ -->
-            <div class="request-list">
-                @foreach (var request in receivedRequests)
-                {
-                    <div class="request-card">
-                        <img src="/avatar.jpg" alt="@request.RequesterName" class="request-image"/>
-                        <div class="request-name">@request.RequesterName</div>
-                        <button class="accept-button" @onclick="@(async () => await AcceptFriendRequest(request.RequestId))">Accept</button>
-                        <button class="reject-button" @onclick="@(async () => await RejectFriendRequest(request.RequestId))">Reject</button>
-                    </div>
-                }
-            </div>
-            <!--___________________________________________________________________________________________________________________________________ -->
-            <div class="request-list">
-                @foreach (var request in sentRequests)
-                {
-                    <div class="request-card">
-                        <img src="/avatar.jpg" alt="@request.ReceiverName" class="request-image"/>
-                        <div class="request-name">@request.ReceiverName</div>
-                        <button class="cancel-button" @onclick="@(async () => await CancelFriendRequest(request.RequestId))">Cancel</button>
-                    </div>
-                }
-            </div>
         }
 
         break;
     }
     case 1:
     {
+        <div class="request-list">
+            @foreach (var request in receivedRequests)
+            {
+                <div class="request-card">
+                    <img src="/avatar.jpg" alt="@request.RequesterName" class="request-image"/>
+                    <div class="request-name">@request.RequesterName</div>
+                    <button class="accept-button" @onclick="@(async () => await AcceptFriendRequest(request.RequestId))">Accept</button>
+                    <button class="reject-button" @onclick="@(async () => await RejectFriendRequest(request.RequestId))">Reject</button>
+                </div>
+            }
+        </div>
         break;
     }
-    /*case 2:
+    case 2:
+        <div class="request-list">
+            @foreach (var request in sentRequests)
+            {
+                <div class="request-card">
+                    <img src="/avatar.jpg" alt="@request.ReceiverName" class="request-image"/>
+                    <div class="request-name">@request.ReceiverName</div>
+                    <button class="cancel-button" @onclick="@(async () => await CancelFriendRequest(request.RequestId))">Cancel</button>
+                </div>
+            }
+        </div>
     {
         break;
-    }*/
+    }
 }
 
 @code {
@@ -79,9 +77,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        friends = await Http.GetFromJsonAsync<FriendDto[]>($"api/Friendship/{new Guid("42f44e58-94f1-4ee7-b4b6-76b4742fc130")}");
-        receivedRequests = await Http.GetFromJsonAsync<FriendRequestDto[]>($"api/Friendship/ReceivedRequests/{new Guid("42f44e58-94f1-4ee7-b4b6-76b4742fc130")}");
-        sentRequests = await Http.GetFromJsonAsync<FriendRequestDto[]>($"api/Friendship/SentRequests/{new Guid("42f44e58-94f1-4ee7-b4b6-76b4742fc130")}");
+        friends = await Http.GetFromJsonAsync<FriendDto[]>($"api/Friendship/{new Guid("2ada3e78-5130-4ec0-a7c6-32208439d929")}");
+        receivedRequests = await Http.GetFromJsonAsync<FriendRequestDto[]>($"api/Friendship/ReceivedRequests/{new Guid("2ada3e78-5130-4ec0-a7c6-32208439d929")}");
+        sentRequests = await Http.GetFromJsonAsync<FriendRequestDto[]>($"api/Friendship/SentRequests/{new Guid("2ada3e78-5130-4ec0-a7c6-32208439d929")}");
     }
 
     private void SelectTab(int index)
@@ -94,19 +92,19 @@
     {
         await Http.PostAsJsonAsync($"api/Friendship/AcceptRequest/{requestId}", new { });
     }
-    
+
     //reject friend request
     private async Task RejectFriendRequest(Guid requestId)
     {
         await Http.PostAsJsonAsync($"api/Friendship/RejectRequest/{requestId}", new { });
     }
-    
+
     //cancel friend sent request
     private async Task CancelFriendRequest(Guid requestId)
     {
         await Http.PostAsJsonAsync($"api/Friendship/CancelRequest/{requestId}", new { });
     }
-    
+
     //remove friend
     private async Task RemoveFriend(Guid friendId)
     {

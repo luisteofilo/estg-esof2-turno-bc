@@ -95,12 +95,12 @@ public class FriendRequestsController : ControllerBase
             return Ok(sentRequestDtos);
         }
         
-        [HttpDelete("remove")]
-        public async Task<IActionResult> RemovePendingFriendRequest([FromBody] RemoveFriendRequestDto dto)
+        [HttpDelete("remove/{requestId}")]
+        public async Task<IActionResult> RemovePendingFriendRequest(Guid requestId)
         {
             try
             {
-                await _friendRequestService.RemovePendingFriendRequestAsync(dto.RequestId);
+                await _friendRequestService.RemovePendingFriendRequestAsync(requestId);
                 return Ok("Pending friend request removed.");
             }
             catch (FriendRequestNotFoundException ex)
