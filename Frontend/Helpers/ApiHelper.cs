@@ -1,4 +1,4 @@
-using ESOF.WebApp.WebAPI.DtoClasses;
+﻿using ESOF.WebApp.WebAPI.DtoClasses;
 
 namespace Frontend.Helpers
 {

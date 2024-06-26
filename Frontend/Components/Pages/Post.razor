@@ -99,8 +99,9 @@
     private int CommentCount { get; set; }
     private bool ShowHover { get; set; } = false;
     private bool IsFriend { get; set; }
+    //////////////////////////////////////////////////////////////////////////////////////////////////
     private Guid LoggedInUserId { get; set; } = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd"); // Set the logged-in user's ID
-
+    //////////////////////////////////////////////////////////////////////////////////////////////////
     private bool ShowNotification { get; set; } = false;
     private string NotificationMessage { get; set; }
     private string NotificationType { get; set; }
@@ -219,7 +220,6 @@
         ShowNotification = true;
         StateHasChanged();
 
-        // Hide notification after 3 seconds
         _ = Task.Delay(500).ContinueWith(_ =>
         {
             ShowNotification = false;
