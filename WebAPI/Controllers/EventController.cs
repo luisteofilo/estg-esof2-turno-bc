@@ -85,5 +85,27 @@ namespace WebAPI.Controllers
 
             return Ok("Registration Successful");
         }
+        [HttpGet]
+        public async Task<ActionResult<List<ResponseEventDto>>> GetEvents(
+            [FromQuery] string filtroNome,
+            [FromQuery] string filtroNomeUser,
+            [FromQuery] string filtroNomeVinho,
+            [FromQuery] string filtroRegion,
+            [FromQuery] string filtroBrand,
+            [FromQuery] DateTime? filtroData,
+            [FromQuery] Guid? filtroTipoUva)
+        {
+            try
+            {
+                var eventos = await _eventService.GetEventsFiltered(
+                    filtroNome, filtroNomeUser, filtroNomeVinho, filtroRegion, filtroBrand, filtroData, filtroTipoUva);
+                return Ok(eventos);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching events: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }

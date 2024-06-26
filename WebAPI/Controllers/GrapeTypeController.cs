@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using ESOF.WebApp.DBLayer.Entities;
 using ESOF.WebApp.WebAPI.Services;
 
-[Route("api/[controller]")]
+[Route("api/grape")]
 [ApiController]
 public class GrapeTypeController : ControllerBase
 {

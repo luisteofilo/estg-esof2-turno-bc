@@ -28,6 +28,39 @@ namespace Frontend.Services
                 return new List<EventDto>();
             }
         }
+        public async Task<List<EventDto>> GetEventsSelection(
+            string filtroNome,
+            string filtroNomeUser,
+            string filtroNomeVinho,
+            string filtroRegion,
+            string filtroBrand,
+            DateTime? filtroData,
+            Guid? filtroTipoUva)
+        {
+            try
+            {
+                // Construir a URL com parâmetros de consulta
+                var queryParams = new List<string>();
+                if (!string.IsNullOrEmpty(filtroNome)) queryParams.Add($"filtroNome={Uri.EscapeDataString(filtroNome)}");
+                if (!string.IsNullOrEmpty(filtroNomeUser)) queryParams.Add($"filtroNomeUser={Uri.EscapeDataString(filtroNomeUser)}");
+                if (!string.IsNullOrEmpty(filtroNomeVinho)) queryParams.Add($"filtroNomeVinho={Uri.EscapeDataString(filtroNomeVinho)}");
+                if (!string.IsNullOrEmpty(filtroRegion)) queryParams.Add($"filtroRegion={Uri.EscapeDataString(filtroRegion)}");
+                if (!string.IsNullOrEmpty(filtroBrand)) queryParams.Add($"filtroBrand={Uri.EscapeDataString(filtroBrand)}");
+                if (filtroData.HasValue) queryParams.Add($"filtroData={Uri.EscapeDataString(filtroData.Value.ToString("yyyy-MM-dd"))}");
+                if (filtroTipoUva.HasValue) queryParams.Add($"filtroTipoUva={Uri.EscapeDataString(filtroTipoUva.Value.ToString())}");
+
+                string queryString = string.Join("&", queryParams);
+                string requestUrl = $"api/events/select?{queryString}";
+
+                // Fazer a chamada HTTP para a API
+                return await _httpClient.GetFromJsonAsync<List<EventDto>>(requestUrl);
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Request error: {ex.Message}");
+                return new List<EventDto>();
+            }
+        }
 
         public async Task<EventDto> GetEventBySlug(string slug)
         {

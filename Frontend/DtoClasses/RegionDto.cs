@@ -13,10 +13,4 @@ public class RegionDto
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? DeletedAt { get; set; }
     
-    public ICollection<Wine> Wines { get; set; }
-    
-    public RegionDto()
-    {
-        Wines = new List<Wine>();
-    }
 }

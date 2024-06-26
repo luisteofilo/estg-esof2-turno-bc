@@ -1,77 +1,90 @@
 ﻿@page "/search"
-@using ESOF.WebApp.DBLayer.Context
 @using ESOF.WebApp.DBLayer.Entities
 @using Frontend.DtoClasses
 @using Frontend.Services
-@inject EventService EventService
 @inject GrapeTypeService GrapeTypeService
+@inject EventService EventService
+@inject BrandService BrandService
+@inject RegionService RegionService
+@inject HttpClient Http
 
-@if (errorLoadingData)
-{
-<p>Error loading data. Please try again later.</p>
-}
-else
-{
-    <h3>Pesquisa de Eventos de Vinhos</h3>
+     <h3 style="margin-bottom: 70px;">Pesquisa de Eventos de Vinhos</h3> <!-- Espaço ajustado abaixo do título -->
 
-    <div class="filtros">
-        <label for="nome">Nome do Evento:</label>
-        <input type="text" id="nome" @bind="filtroNome" placeholder="Nome do Evento"/>
-        
-        <label for="nome">Utilizador:</label>
-        <input type="text" id="nome" @bind="filtroNomeUser" placeholder="Nome de um Utilizador"/>
-        
-        <label for="nome">Vinhos:</label>
-        <input type="text" id="nome" @bind="filtroNomeVinho" placeholder="Nome de um Vinho"/>
-
-        <label for="data">Data:</label>
-        <input type="date" id="data" @bind="filtroData"/>
-
-        <label for="tipoUva">Tipo de Uva:</label>
-        <select id="tipoUva" @bind="filtroTipoUva">
-            <option value="">Todos os Tipos</option>
+        <div class="filtros" style="display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+        <div style="flex: 1;">
+            <label for="nome" style="font-weight: bold; font-size: 16px;">Nome do Evento:</label>
+            <input type="text" id="nome" @bind="filtroNome" placeholder="Nome do Evento" style="width: 100%; margin-bottom: 10px;" />
+        </div>
+        <div style="flex: 1;">
+            <label for="nomeUser" style="font-weight: bold; font-size: 16px;">Utilizador:</label>
+            <input type="text" id="nomeUser" @bind="filtroNomeUser" placeholder="Nome de um Utilizador" style="width: 100%; margin-bottom: 10px;" />
+        </div>
+        <div style="flex: 1;">
+            <label for="nomeVinho" style="font-weight: bold; font-size: 16px;">Vinhos:</label>
+            <input type="text" id="nomeVinho" @bind="filtroNomeVinho" placeholder="Nome de um Vinho" style="width: 100%; margin-bottom: 10px;" />
+        </div>
+        <div style="flex: 1;">
+            <label for="data" style="font-weight: bold; font-size: 16px;">Data:</label>
+            <input type="date" id="data" @bind="filtroData" style="width: 100%; margin-bottom: 10px;" />
+        </div>
+    </div>
+    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+        <div style="flex: 1;">
+            <label for="tipoBrand" style="font-weight: bold; font-size: 16px;">Marcas:</label>
+            <select id="tipoBrand" @bind="filtroBrand" style="width: 100%; margin-bottom: 10px;">
+                <option value="">Todos os Tipos</option>
+                @foreach (var brand in brands)
+                {
+                    <option value="@brand.BrandId">@brand.Name</option>
+                }
+            </select>
+        </div>
+        <div style="flex: 1;">
+            <label for="tipoRegion" style="font-weight: bold; font-size: 16px;">Região:</label>
+            <select id="tipoRegion" @bind="filtroRegion" style="width: 100%; margin-bottom: 10px;">
+                <option value="">Todos as Regiões</option>
+                @foreach (var regiao in regioes)
+                {
+                    <option value="@regiao.RegionId">@regiao.Name</option>
+                }
+            </select>
+        </div>
+        <div style="flex: 1;">
+            <label for="tipoUva" style="font-weight: bold; font-size: 16px;">Tipo de Uva:</label>
+            <select id="tipoUva" @bind="filtroTipoUva" style="width: 100%; margin-bottom: 10px;">
+                <option value="">Todos os Tipos</option>
                 @foreach (var uva in tiposUva)
                 {
                     <option value="@uva.GrapeTypeId">@uva.Name</option>
                 }
-        </select>
-        <label for="tipoBrand">Marcas:</label>
-        <select id="tipoBrand" @bind="filtroBrand">
-            <option value="">Todos os Tipos</option>
-            @foreach (var brand in brands)
-            {
-            <option value="@brand.BrandId">@brand.Name</option>
-            }
-        </select>
-        /select>
-        <label for="tipoRegion">Região:</label>
-        <select id="tipoRegion" @bind="filtroRegion">
-            <option value="">Todos as Regiões</option>
-            @foreach (var regiao in regioes)
-            {
-            <option value="@regiao.RegionId">@regiao.Name</option>
-            }
-        </select>
+            </select>
+        </div>
+    </div>
+</div>
 
-        <button @onclick="PesquisarEventos">Pesquisar</button>
+    <div style="width: 100%; display: flex; justify-content: center; margin-top: 80px;"> <!-- Espaço ajustado entre campos e botão -->
+        <button @onclick="PesquisarEventos" style="padding: 10px 20px; background-color: purple; color: white; border: none; border-radius: 5px; cursor: pointer;">Pesquisar</button>
     </div>
 
-    <div class="resultados">
-        @if (eventos != null && eventos.Any())
+    <div class="resultados" style="margin-top: 20px;">
+        @if (eventos != null)
         {
-            <ul>
-                @foreach (var evento in eventos)
-                {
-                    <li>@evento.Name - merdas e cenas </li>
-                }
-            </ul>
-        }
-        else
-        {
-            <p>Nenhum evento encontrado.</p>
+            if (eventos.Any())
+            {
+                <ul>
+                    @foreach (var evento in eventos)
+                    {
+                        <li>@evento.Name - merdas e cenas</li>
+                    }
+                </ul>
+            }
+            else if (!string.IsNullOrEmpty(filtroNome) || !string.IsNullOrEmpty(filtroNomeUser) || !string.IsNullOrEmpty(filtroNomeVinho) || filtroData != null || !string.IsNullOrEmpty(filtroBrand) || !string.IsNullOrEmpty(filtroRegion) || filtroTipoUva != null)
+            {
+                <p>Nenhum evento encontrado.</p>
+            }
         }
     </div>
-}
 
 @code {
     private string filtroNome;
@@ -83,82 +96,18 @@ else
     private Guid? filtroTipoUva;
     private bool errorLoadingData;
     private List<EventDto> eventos;
+    private List<GrapeTypeDto> tiposUva = new List<GrapeTypeDto>();
+    private List<BrandDto> brands = new List<BrandDto>();
+    private List<RegionDto> regioes = new List<RegionDto>();
 
-    private List<BrandDto> brands = new List<BrandDto>
+    protected override async Task OnInitializedAsync()
     {
-        new BrandDto
-        {
-            BrandId = Guid.NewGuid(),
-            Name = "Cabernet Sauvignon",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        },
-        new BrandDto
-        {
-            BrandId = Guid.NewGuid(),
-            Name = "Merlot",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        },
-        new BrandDto
-        {
-            BrandId = Guid.NewGuid(),
-            Name = "Chardonnay",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        }
-    };
-    
-private List<RegionDto> regioes = new List<RegionDto>
-{
-new RegionDto
-{
-RegionId = Guid.NewGuid(),
-Name = "Cabernet Sauvignon",
-CreatedAt = DateTime.UtcNow,
-UpdatedAt = DateTime.UtcNow
-},
-new RegionDto
-{
-RegionId = Guid.NewGuid(),
-Name = "Merlot",
-CreatedAt = DateTime.UtcNow,
-UpdatedAt = DateTime.UtcNow
-},
-new RegionDto
-{
-RegionId = Guid.NewGuid(),
-Name = "Chardonnay",
-CreatedAt = DateTime.UtcNow,
-UpdatedAt = DateTime.UtcNow
-}
-};
+        tiposUva = await GrapeTypeService.GetAllGrapeTypes();
+        brands = await BrandService.GetAllBrands();
+        regioes = await RegionService.GetAllRegions();
 
-    private List<GrapeTypeDto> tiposUva = new List<GrapeTypeDto>
-    {
-        new GrapeTypeDto
-        {
-            GrapeTypeId = Guid.NewGuid(),
-            Name = "Cabernet Sauvignon",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        },
-        new GrapeTypeDto
-        {
-            GrapeTypeId = Guid.NewGuid(),
-            Name = "Merlot",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        },
-        new GrapeTypeDto
-        {
-            GrapeTypeId = Guid.NewGuid(),
-            Name = "Chardonnay",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        }
-    };
-
+    }
+   
     private async Task PesquisarEventos()
     {
         eventos = await EventService.GetEvents();

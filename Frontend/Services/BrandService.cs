@@ -8,17 +8,17 @@ using Frontend.DtoClasses;
 
 namespace Frontend.Services
 {
-    public class GrapeTypeService
+    public class BrandService
     {
         private readonly HttpClient _httpClient;
 
-        public GrapeTypeService(HttpClient httpClient)
+        public BrandService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
-        public async Task<List<GrapeTypeDto>?> GetAllGrapeTypes()
+        public async Task<List<BrandDto>?> GetAllBrands()
         {
-            return await _httpClient.GetFromJsonAsync<List<GrapeTypeDto>>("api/grape/index");
+            return await _httpClient.GetFromJsonAsync<List<BrandDto>>("api/brand/index");
         }
     }
 }

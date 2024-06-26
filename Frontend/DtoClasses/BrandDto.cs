@@ -16,11 +16,4 @@ public class BrandDto
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? DeletedAt { get; set; }
     
-    public ICollection<Wine> Wines { get; set; }
-    
-    public BrandDto()
-    {
-        Wines = new List<Wine>();
-    }
-    
 }
