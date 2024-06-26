@@ -1,0 +1,139 @@
+﻿@page "/permissions"
+@using Frontend.Helpers
+@using Frontend.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using Frontend.DtoClasses
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+@inject Frontend.Services.PermissionService PermissionService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>Permissions</PageTitle>
+
+<h1>Permissions</h1>
+
+<p>Here you can see all permissions!</p>
+
+@if (_permissionsDtos == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (_permissionsDtos.Count <= 0)
+{
+    <p><em>No permissions found</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var permission in _permissionsDtos)
+        {
+            <tr>
+                <td>@permission.Name</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => EditPermission(permission.PermissionId)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => DeletePermission(permission.PermissionId)">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<h2>Create New Permission</h2>
+<EditForm Model="newPermission" OnValidSubmit="CreatePermission" FormName="CreatePermissionForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Name">Name:</label>
+        <InputText id="Name" class="form-control" @bind-Value="newPermission.Name" @bind-Value:event="oninput" />
+    </div>
+    <button type="submit" class="btn btn-success">Create Permission</button>
+</EditForm>
+
+@code {
+    private List<PermissionsDto>? _permissionsDtos;
+    private PermissionsDto newPermission = new PermissionsDto();
+    private bool isAuthorized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPermissions();
+    }
+
+    private async Task LoadPermissions()
+    {
+        try
+        {
+            _permissionsDtos = await PermissionService.Get();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            _permissionsDtos = null;
+        }
+    }
+
+    private async Task DeletePermission(Guid permissionId)
+    {
+        try
+        {
+            var result = await PermissionService.Delete(permissionId);
+            if (result)
+            {
+                await LoadPermissions();
+            }
+            else
+            {
+                Console.WriteLine("Error deleting permission!");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while deleting the permission: {ex.Message}");
+        }
+    }
+
+    private void EditPermission(Guid permissionId)
+    {
+        NavigationManager.NavigateTo($"/edit-permission/{permissionId}");
+    }
+
+    private async Task CreatePermission()
+    {
+        try
+        {
+            Console.WriteLine($"Creating permission with name: {newPermission.Name}");
+
+            if (string.IsNullOrWhiteSpace(newPermission.Name))
+            {
+                Console.WriteLine("The Name field is empty.");
+                return;
+            }
+
+            var result = await PermissionService.Create(newPermission);
+                
+            if (result)
+            {
+                await LoadPermissions();
+                newPermission = new PermissionsDto();
+            }
+            else
+            {
+                Console.WriteLine("Error creating permission!");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while creating the permission: {ex.Message}");
+        }
+    }
+}

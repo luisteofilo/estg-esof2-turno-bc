@@ -4,24 +4,23 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
 using System.Threading;
-using Frontend.DtoClasses;
 
 namespace Frontend.Services
 {
-    public class PermissionService
+    public class UserService
     {
         private readonly HttpClient _http;
 
-        public PermissionService(HttpClient http)
+        public UserService(HttpClient http)
         {
             _http = http;
         }
 
-        public async Task<List<PermissionsDto>?> Get(CancellationToken cancellationToken = default)
+        public async Task<List<UserDto>?> Get(CancellationToken cancellationToken = default)
         {
             try
             {
-                return await _http.GetFromJsonAsync<List<PermissionsDto>>("api/Permission", cancellationToken);
+                return await _http.GetFromJsonAsync<List<UserDto>>("api/User", cancellationToken);
             }
             catch (HttpRequestException ex) when (ex.InnerException is IOException)
             {
@@ -39,21 +38,12 @@ namespace Frontend.Services
             return null;
         }
         
-        public async Task<bool> Create(PermissionsDto permissionDto, CancellationToken cancellationToken = default)
+        public async Task<bool> Create(UserDto userDto, CancellationToken cancellationToken = default)
         {
             try
             {
-                var response = await _http.PostAsJsonAsync("api/Permission/create", permissionDto, cancellationToken);
-                if (response.IsSuccessStatusCode)
-                {
-                    return true;
-                }
-                else
-                {
-                    var error = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Error creating permission: {error}");
-                    return false;
-                }
+                var response = await _http.PostAsJsonAsync("api/User/create", userDto, cancellationToken);
+                return response.IsSuccessStatusCode;
             }
             catch (HttpRequestException ex) when (ex.InnerException is IOException)
             {
@@ -67,11 +57,11 @@ namespace Frontend.Services
             return false;
         }
 
-        public async Task<bool> Update(Guid id, PermissionsDto permissionDto, CancellationToken cancellationToken = default)
+        public async Task<bool> Update(Guid id, UserDto userDto, CancellationToken cancellationToken = default)
         {
             try
             {
-                var response = await _http.PutAsJsonAsync($"api/Permission/update/{id}", permissionDto, cancellationToken);
+                var response = await _http.PutAsJsonAsync($"api/User/update/{id}", userDto, cancellationToken);
                 return response.IsSuccessStatusCode;
             }
             catch (HttpRequestException ex) when (ex.InnerException is IOException)
@@ -86,7 +76,7 @@ namespace Frontend.Services
         {
             try
             {
-                var response = await _http.DeleteAsync($"api/Permission/delete/{id}", cancellationToken);
+                var response = await _http.DeleteAsync($"api/User/delete/{id}", cancellationToken);
                 return response.IsSuccessStatusCode;
             }
             catch (HttpRequestException ex) when (ex.InnerException is IOException)
@@ -97,15 +87,15 @@ namespace Frontend.Services
             return false;
         }
         
-        public async Task<PermissionsDto> GetPermissionById(Guid id, CancellationToken cancellationToken = default)
+        public async Task<UserDto> GetUserById(Guid id, CancellationToken cancellationToken = default)
         {
             try
             {
-                return await _http.GetFromJsonAsync<PermissionsDto>($"api/Permission/{id}", cancellationToken);
+                return await _http.GetFromJsonAsync<UserDto>($"api/User/{id}", cancellationToken);
             }
             catch (Exception e)
             {
-                throw new Exception("An error occurred while fetching the permission.", e);
+                throw new Exception("An error occurred while fetching the user.", e);
             }
         }
     }

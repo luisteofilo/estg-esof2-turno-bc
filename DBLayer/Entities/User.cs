@@ -11,10 +11,7 @@ public class User
     public string Email { get; set; }
     
     [Required]
-    public byte[] PasswordHash { get; set; }
-    
-    [Required]
-    public byte[] PasswordSalt { get; set; }
+    public string Password { get; set; }
     
     [Required]
     public string FirstName { get; set; }

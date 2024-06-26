@@ -21,8 +21,7 @@ public class UserService(ApplicationDbContext context)
                 Address = user.Address,
                 BirthdayDate = user.BirthdayDate,
                 Email = user.Email,
-                PasswordHash = user.PasswordHash,
-                PasswordSalt = user.PasswordSalt
+                Password = user.Password
             }).ToList();
         }
         catch (Exception e)
@@ -47,8 +46,7 @@ public class UserService(ApplicationDbContext context)
             Address = user.Address,
             BirthdayDate = user.BirthdayDate,
             Email = user.Email,
-            PasswordHash = user.PasswordHash,
-            PasswordSalt = user.PasswordSalt
+            Password = user.Password
         };
     }
 
@@ -63,8 +61,7 @@ public class UserService(ApplicationDbContext context)
                 Address = createUserDto.Address,
                 BirthdayDate = createUserDto.BirthdayDate,
                 Email = createUserDto.Email,
-                PasswordHash = createUserDto.PasswordHash,
-                PasswordSalt = createUserDto.PasswordSalt
+                Password = createUserDto.Password
             };
 
             context.Users.Add(user);
@@ -78,8 +75,7 @@ public class UserService(ApplicationDbContext context)
                 Address = user.Address,
                 BirthdayDate = user.BirthdayDate,
                 Email = user.Email,
-                PasswordHash = user.PasswordHash,
-                PasswordSalt = user.PasswordSalt
+                
             };
         }
         catch (DbUpdateException e)
@@ -102,8 +98,7 @@ public class UserService(ApplicationDbContext context)
         user.Email = updateUserDto.Email;
         user.FirstName = updateUserDto.FirstName;
         user.LastName = updateUserDto.LastName;
-        user.PasswordHash = updateUserDto.PasswordHash;
-        user.PasswordSalt = updateUserDto.PasswordSalt;
+        user.Password = updateUserDto.Password;
 
         context.SaveChanges();
 
@@ -115,8 +110,7 @@ public class UserService(ApplicationDbContext context)
             Address = user.Address,
             BirthdayDate = user.BirthdayDate,
             Email = user.Email,
-            PasswordHash = user.PasswordHash,
-            PasswordSalt = user.PasswordSalt
+            Password = user.Password
         };
     }
 
@@ -135,6 +129,7 @@ public class UserService(ApplicationDbContext context)
 
                 context.Users.Remove(user);
                 context.SaveChanges();
+                transaction.Commit();
             }
             catch (Exception e)
             {

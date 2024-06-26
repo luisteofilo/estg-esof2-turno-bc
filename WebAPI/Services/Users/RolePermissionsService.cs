@@ -99,6 +99,7 @@ public class RolePermissionsService (ApplicationDbContext context)
 
                 context.RolePermissions.Remove(rolePermission);
                 context.SaveChanges();
+                transaction.Commit();
             }
             catch (Exception e)
             {

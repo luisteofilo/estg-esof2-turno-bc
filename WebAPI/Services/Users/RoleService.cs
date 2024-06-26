@@ -74,7 +74,7 @@ public class RoleService(ApplicationDbContext context)
         }
 
         role.Name = updateRolesDto.Name;
-
+        context.SaveChanges();
         return new ResponseRolesDto
         {
             RoleId = role.RoleId,
@@ -97,6 +97,7 @@ public class RoleService(ApplicationDbContext context)
 
                 context.Roles.Remove(role);
                 context.SaveChanges();
+                transaction.Commit();
             }
             catch (Exception e)
             {

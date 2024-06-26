@@ -1,0 +1,148 @@
+﻿@page "/roles"
+@using Frontend.Helpers
+@using Frontend.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using Frontend.DtoClasses
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+@inject Frontend.Services.RolesService RolesService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JsRuntime
+
+<PageTitle>Roles</PageTitle>
+
+<h1>Roles</h1>
+
+<p>Here you can see all roles!</p>
+
+@if (_rolesDtos == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (_rolesDtos.Count <= 0)
+{
+    <p><em>No roles found</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var role in _rolesDtos)
+        {
+            <tr>
+                <td>@role.Name</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => EditRole(role.RoleId)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => ConfirmDelete(role.RoleId)">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<h2>Create New Role</h2>
+<EditForm Model="newRole" OnValidSubmit="CreateRole" FormName="CreateRoleForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Name">Name:</label>
+        <InputText id="Name" class="form-control" @bind-Value="newRole.Name" />
+    </div>
+    <button type="submit" class="btn btn-success">Create Role</button>
+</EditForm>
+
+@code {
+    private List<RolesDto>? _rolesDtos;
+    private RolesDto newRole = new RolesDto();
+    private bool isAuthorized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRoles();
+    }
+
+    private async Task LoadRoles()
+    {
+        try
+        {
+            _rolesDtos = await RolesService.Get();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            _rolesDtos = null;
+        }
+    }
+
+    private async Task DeleteRole(Guid roleId)
+    {
+        try
+        {
+            var result = await RolesService.Delete(roleId);
+            if (result)
+            {
+                await LoadRoles();
+            }
+            else
+            {
+                Console.WriteLine("Error deleting role!");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while deleting the role: {ex.Message}");
+        }
+    }
+
+    private async Task ConfirmDelete(Guid roleId)
+    {
+        if (await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this role?"))
+        {
+            await DeleteRole(roleId);
+        }
+    }
+
+    private void EditRole(Guid roleId)
+    {
+        NavigationManager.NavigateTo($"/edit-role/{roleId}");
+    }
+
+    private async Task CreateRole()
+    {
+        try
+        {
+            Console.WriteLine($"Creating role with name: {newRole.Name}");
+
+            if (string.IsNullOrWhiteSpace(newRole.Name))
+            {
+                Console.WriteLine("The Name field is empty.");
+                return;
+            }
+
+            var result = await RolesService.Create(newRole);
+                
+            if (result)
+            {
+                await LoadRoles();
+                newRole = new RolesDto();
+            }
+            else
+            {
+                Console.WriteLine("Error creating role!");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while creating the role: {ex.Message}");
+        }
+    }
+}

@@ -1,19 +1,26 @@
 ﻿@page "/users"
 @using Frontend.Helpers
+@using Frontend.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
+@inject Frontend.Services.UserService UserService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Users</PageTitle>
 
 <h1>Users</h1>
 
-<p>This component demonstrates showing data from the API.</p>
+<p>Here you can see all users!</p>
 
-@if (_userEmails == null)
+@if (_userDtos == null)
 {
-    <p>
-        <em>Loading...</em>
-    </p>
+    <p><em>Loading...</em></p>
+}
+else if (_userDtos.Count <= 0)
+{
+    <p><em>No users found</em></p>
 }
 else
 {
@@ -21,25 +28,132 @@ else
         <thead>
         <tr>
             <th>Email</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Address</th>
+            <th>Birthday</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var email in _userEmails)
+        @foreach (var user in _userDtos)
         {
             <tr>
-                <td>@email</td>
+                <td>@user.Email</td>
+                <td>@user.FirstName</td>
+                <td>@user.LastName</td>
+                <td>@user.Address</td>
+                <td>@user.BirthdayDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => EditUser(user.UserId)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteUser(user.UserId)">Delete</button>
+                </td>
             </tr>
         }
         </tbody>
     </table>
 }
 
+<h2>Create New User</h2>
+<EditForm Model="newUser" OnValidSubmit="CreateUser" FormName="CreateUserForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <InputText id="email" class="form-control" @bind-Value="newUser.Email" />
+    </div>
+    <div class="form-group">
+        <label for="firstName">First Name:</label>
+        <InputText id="firstName" class="form-control" @bind-Value="newUser.FirstName" />
+    </div>
+    <div class="form-group">
+        <label for="lastName">Last Name:</label>
+        <InputText id="lastName" class="form-control" @bind-Value="newUser.LastName" />
+    </div>
+    <div class="form-group">
+        <label for="address">Address:</label>
+        <InputText id="address" class="form-control" @bind-Value="newUser.Address" />
+    </div>
+    <div class="form-group">
+        <label for="birthday">Birthday:</label>
+        <InputDate id="birthday" class="form-control" @bind-Value="newUser.BirthdayDate" />
+    </div>
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <InputText id="password" type="password" class="form-control" @bind-Value="newUser.Password" />
+    </div>
+    <button type="submit" class="btn btn-success">Create User</button>
+</EditForm>
+
 @code {
-    private string[]? _userEmails;
+    private List<UserDto>? _userDtos;
+    private UserDto newUser = new UserDto();
+    private bool isAuthorized = false;
 
     protected override async Task OnInitializedAsync()
     {
-        _userEmails = await ApiHelper.GetFromApiAsync<string[]>("users/emails");
+        await LoadUsers();
     }
-    
+
+    private async Task LoadUsers()
+    {
+        try
+        {
+            _userDtos = await UserService.Get();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            _userDtos = null;
+        }
+    }
+
+    private async Task DeleteUser(Guid UserId)
+    {
+        try
+        {
+            var result = await UserService.Delete(UserId);
+            Console.WriteLine(result);
+            if (result)
+            {
+                await LoadUsers();
+            }
+            else
+            {
+                Console.WriteLine("Error deleting user!");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while deleting the user: {ex.Message}");
+        }
+    }
+
+    private void EditUser(Guid UserId)
+    {
+        NavigationManager.NavigateTo($"/edit-user/{UserId}");
+    }
+
+    private async Task CreateUser()
+    {
+        try
+        {
+            var result = await UserService.Create(newUser);
+                
+            if (result)
+            {
+                await LoadUsers();
+                newUser = new UserDto();
+            }
+            else
+            {
+                Console.WriteLine("Error creating user!");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while creating the user: {ex.Message}");
+        }
+    }
 }

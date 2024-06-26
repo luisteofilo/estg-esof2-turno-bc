@@ -99,6 +99,7 @@ public class PermissonService(ApplicationDbContext context)
 
                 context.Permissions.Remove(permission);
                 context.SaveChanges();
+                transaction.Commit();
             }
             catch (Exception e)
             {

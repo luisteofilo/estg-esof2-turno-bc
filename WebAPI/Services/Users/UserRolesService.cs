@@ -99,6 +99,7 @@ public class UserRolesService (ApplicationDbContext context)
 
                 context.UserRoles.Remove(userRoles);
                 context.SaveChanges();
+                transaction.Commit();
             }
             catch (Exception e)
             {

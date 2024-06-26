@@ -1,104 +1,65 @@
 ﻿@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using Frontend.Services
+@inject NavigationManager NavigationManager
+@inject UserService UserService
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #6b73ff 10%, #000dff 100%);
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            margin: 20px;
-        }
-        h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .form-group input[type="date"] {
-            padding: 7px;
-        }
-        .form-group input[type="password"] {
-            letter-spacing: 1px;
-        }
-        .form-group input[type="submit"] {
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 10px 15px;
-            font-size: 16px;
-        }
-        .form-group input[type="submit"]:hover {
-            background-color: #4cae4c;
-        }
-    </style>
-</head>
-<body>
 <div class="container">
     <h2>User Registration</h2>
-    <form action="/submit_registration" method="POST">
-        <div class="form-group">
-            <label for="firstName">First Name:</label>
-            <input type="text" id="firstName" name="firstName" required>
+    
+    <EditForm Model="@newUser" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label for="firstName" class="form-label">First Name:</label>
+            <InputText id="firstName" class="form-control" @bind-Value="newUser.FirstName" />
         </div>
-        <div class="form-group">
-            <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" name="lastName" required>
+        <div class="mb-3">
+            <label for="lastName" class="form-label">Last Name:</label>
+            <InputText id="lastName" class="form-control" @bind-Value="newUser.LastName" />
         </div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <InputText id="email" class="form-control" @bind-Value="newUser.Email" />
         </div>
-        <div class="form-group">
-            <label for="address">Address:</label>
-            <input type="text" id="address" name="address" required>
+        <div class="mb-3">
+            <label for="address" class="form-label">Address:</label>
+            <InputText id="address" class="form-control" @bind-Value="newUser.Address" />
         </div>
-        <div class="form-group">
-            <label for="birthdayDate">Birthday Date:</label>
-            <input type="date" id="birthdayDate" name="birthdayDate" required>
+        <div class="mb-3">
+            <label for="birthdayDate" class="form-label">Birthday Date:</label>
+            <InputDate id="birthdayDate" class="form-control" @bind-Value="newUser.BirthdayDate" />
         </div>
-        <div class="form-group">
-            <label for="passwordHash">Password:</label>
-            <input type="password" id="passwordHash" name="passwordHash" required>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <InputText id="password" type="password" class="form-control" @bind-Value="newUser.Password" />
         </div>
-        <div class="form-group">
-            <label for="passwordSalt">Password Salt:</label>
-            <input type="password" id="passwordSalt" name="passwordSalt" required>
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Register">
-        </div>
-    </form>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </EditForm>
 </div>
-</body>
-</html>
+
+@code {
+    private UserDto newUser = new UserDto();
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var success = await UserService.Create(newUser);
+            if (success)
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                Console.WriteLine("Registration failed");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+    
+}
