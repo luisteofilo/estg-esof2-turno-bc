@@ -1,6 +1,4 @@
 using System.Linq.Expressions;
-using System.Linq.Expressions;
-
 using DotNetEnv;
 using ESOF.WebApp.DBLayer.Entities;
 using Helpers;
@@ -54,10 +52,16 @@ public partial class ApplicationDbContext : DbContext
 
     public DbSet<Interaction> Interaction { get; set; }
     
+    public DbSet<TasteQuestionType> TasteQuestionTypes { get; set; }
+    public DbSet<TasteQuestion> TasteQuestions { get; set; }
+    public DbSet<TasteEvaluation> TasteEvaluations { get; set; }
+    public DbSet<TasteEvaluationQuestion> TasteEvaluationQuestions { get; set; }
+    
     //QRCODE
     public DbSet<Event> Events { get; set; }
     public DbSet<EventParticipant> EventParticipants { get; set; }
     //QRCODE
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
@@ -77,6 +81,10 @@ public partial class ApplicationDbContext : DbContext
         BuildRegions(modelBuilder);
         BuildGrapeTypes(modelBuilder);
         BuildWineGrapeTypeLinks(modelBuilder);
+        BuildTasteQuestionTypes(modelBuilder);
+        BuildTasteQuestions(modelBuilder);
+        BuildTasteEvaluations(modelBuilder);
+        BuildTasteEvaluationQuestions(modelBuilder);
         BuildInteraction(modelBuilder);
         base.OnModelCreating(modelBuilder);
         
