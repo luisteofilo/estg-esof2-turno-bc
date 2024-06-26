@@ -17,6 +17,17 @@ namespace Frontend.Services
             _http = http;
         }
 
+        /**
+         *
+         * Get all TasteEvaluationDto objects from the backend
+         *
+         * @param cancellationToken Token to cancel the request
+         *
+         * @return List of TasteEvaluationDto objects
+         *
+         * @exception HttpRequestException An error occurred while sending the request
+         * 
+         */
         public async Task<List<TasteEvaluationDto>?> Get(CancellationToken cancellationToken = default)
         {
             try
@@ -39,6 +50,17 @@ namespace Frontend.Services
             return null;
         }
         
+        /**
+         *
+         * Get a TasteEvaluationDto object by its id
+         *
+         * @param id Id of the TasteEvaluationDto object
+         *
+         * @param cancellationToken Token to cancel the request
+         *
+         * @return TasteEvaluationDto object
+         * 
+         */
         public Boolean Create(TasteEvaluationDto data, CancellationToken cancellationToken = default)
         {
             try
@@ -62,6 +84,19 @@ namespace Frontend.Services
             return false;
         }
         
+        /**
+         *
+         * Update a TasteEvaluationDto object
+         *
+         * @param id Id of the TasteEvaluationDto object
+         *
+         * @param data New data for the TasteEvaluationDto object
+         *
+         * @param cancellationToken Token to cancel the request
+         *
+         * @return Boolean indicating if the update was successful
+         * 
+         */
         public Boolean Update(Guid id, TasteEvaluationDto data, CancellationToken cancellationToken = default)
         {
             try
@@ -85,6 +120,17 @@ namespace Frontend.Services
             return false;
         }
         
+        /**
+         *
+         * Delete a TasteEvaluationDto object by its id
+         *
+         * @param id Id of the TasteEvaluationDto object
+         *
+         * @param cancellationToken Token to cancel the request
+         *
+         * @return Boolean indicating if the delete was successful
+         * 
+         */
         public Boolean Delete(Guid id, CancellationToken cancellationToken = default)
         {
             try

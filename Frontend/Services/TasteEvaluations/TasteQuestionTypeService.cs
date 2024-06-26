@@ -17,6 +17,17 @@ namespace Frontend.Services
             _http = http;
         }
         
+        /**
+         *
+         * Get all TasteQuestionTypeDto objects from the backend
+         *
+         * @param cancellationToken Token to cancel the request
+         *
+         * @return List of TasteQuestionTypeDto objects
+         *
+         * @exception HttpRequestException An error occurred while sending the request
+         * 
+         */
         public async Task<List<TasteQuestionTypeDto>?> Get(CancellationToken cancellationToken = default)
         {
             try
@@ -39,6 +50,15 @@ namespace Frontend.Services
             return null;
         }
         
+        /**
+         *
+         * Get a TasteQuestionTypeDto object by its id
+         *
+         * @param id Id of the TasteQuestionTypeDto object
+         *
+         * @param cancellationToken Token to cancel the request
+         *
+         */
         public string GetType(Guid id, CancellationToken cancellationToken = default)
         {
             try
@@ -62,6 +82,17 @@ namespace Frontend.Services
             return "";
         }
         
+        /**
+         *
+         * Create a new TasteQuestionTypeDto object
+         *
+         * @param data TasteQuestionTypeDto object to create
+         *
+         * @param cancellationToken Token to cancel the request
+         *
+         * @return Boolean indicating success
+         * 
+         */
         public Boolean Create(TasteQuestionTypeDto data, CancellationToken cancellationToken = default)
         {
             try
@@ -85,6 +116,19 @@ namespace Frontend.Services
             return false;
         }
         
+        /**
+         *
+         * Update a TasteQuestionTypeDto object
+         *
+         * @param id Id of the TasteQuestionTypeDto object
+         *
+         * @param data TasteQuestionTypeDto object to update
+         *
+         * @param cancellationToken Token to cancel the request
+         *
+         * @return Boolean indicating success
+         * 
+         */
         public Boolean Update(Guid id, TasteQuestionTypeDto data, CancellationToken cancellationToken = default)
         {
             try
@@ -108,6 +152,17 @@ namespace Frontend.Services
             return false;
         }
         
+        /**
+         *
+         * Delete a TasteQuestionTypeDto object by its id
+         *
+         * @param id Id of the TasteQuestionTypeDto object
+         *
+         * @param cancellationToken Token to cancel the request
+         *
+         * @return Boolean indicating success
+         * 
+         */
         public Boolean Delete(Guid id, CancellationToken cancellationToken = default)
         {
             try
