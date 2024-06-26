@@ -75,6 +75,11 @@ public class TasteQuestionTypeService(ApplicationDbContext context)
                 Type = createTasteQuestionTypeDto.Type
             };
 
+            if (context.TasteQuestionTypes.Any(tasteQuestion => tasteQuestion.Type == tasteQuestionTypes.Type))
+            {
+                throw new ArgumentException("Error: That taste question type already exists!");
+            }
+
             context.TasteQuestionTypes.Add(tasteQuestionTypes);
             context.SaveChanges();
 
@@ -107,6 +112,11 @@ public class TasteQuestionTypeService(ApplicationDbContext context)
         if (tasteQuestionTypes == null)
         {
             throw new ArgumentException("Error: That taste questions type does not exist!");
+        }
+        
+        if (context.TasteQuestionTypes.Any(tasteQuestion => tasteQuestion.Type == updateTasteQuestionTypeDto.Type))
+        {
+            throw new ArgumentException("Error: That taste question type already exists!");
         }
         
         tasteQuestionTypes.Type = updateTasteQuestionTypeDto.Type;

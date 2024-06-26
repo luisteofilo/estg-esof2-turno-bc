@@ -80,6 +80,21 @@ public class TasteEvaluationQuestionService(ApplicationDbContext context)
                 TasteQuestionId = createTasteEvaluationQuestionDto.TasteQuestionId,
                 Value = createTasteEvaluationQuestionDto.Value
             };
+            
+            if (context.TasteEvaluationQuestions.Any(teq => teq.TasteEvaluationId == tasteEvaluationQuestion.TasteEvaluationId && teq.TasteQuestionId == tasteEvaluationQuestion.TasteQuestionId))
+            {
+                throw new ArgumentException("Error: That taste evaluation question already exists!");
+            }
+            
+            if (!context.TasteEvaluations.Any(te => te.TasteEvaluationId == tasteEvaluationQuestion.TasteEvaluationId))
+            {
+                throw new ArgumentException("Error: That taste evaluation does not exist!");
+            }
+            
+            if (!context.TasteQuestions.Any(tq => tq.TasteQuestionId == tasteEvaluationQuestion.TasteQuestionId))
+            {
+                throw new ArgumentException("Error: That taste question does not exist!");
+            }
 
             context.TasteEvaluationQuestions.Add(tasteEvaluationQuestion);
             context.SaveChanges();
@@ -117,6 +132,21 @@ public class TasteEvaluationQuestionService(ApplicationDbContext context)
             throw new ArgumentException("Error: That taste evaluation question does not exist!");
         }
 
+        if (context.TasteEvaluationQuestions.Any(teq => teq.TasteEvaluationId == updateTasteEvaluationDto.TasteEvaluationId && teq.TasteQuestionId == updateTasteEvaluationDto.TasteQuestionId))
+        {
+            throw new ArgumentException("Error: That taste evaluation question already exists!");
+        }
+        
+        if (!context.TasteEvaluations.Any(te => te.TasteEvaluationId == updateTasteEvaluationDto.TasteEvaluationId))
+        {
+            throw new ArgumentException("Error: That taste evaluation does not exist!");
+        }
+        
+        if (!context.TasteQuestions.Any(tq => tq.TasteQuestionId == updateTasteEvaluationDto.TasteQuestionId))
+        {
+            throw new ArgumentException("Error: That taste question does not exist!");
+        }
+        
         tasteEvaluationQuestion.TasteEvaluationId = updateTasteEvaluationDto.TasteEvaluationId;
         tasteEvaluationQuestion.TasteQuestionId = updateTasteEvaluationDto.TasteQuestionId;
         tasteEvaluationQuestion.Value = updateTasteEvaluationDto.Value;
