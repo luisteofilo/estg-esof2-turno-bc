@@ -23,9 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Migrations\20240529193143_InitialDataSeed.cs">
-        <DependentUpon>20240529192712_Initial.cs</DependentUpon>
-      </Compile>
+        <Folder Include="Migrations\" />
     </ItemGroup>
 
 </Project>
