@@ -34,7 +34,6 @@ namespace Frontend.Services
             string filtroNomeVinho,
             string filtroRegion,
             string filtroBrand,
-            DateTime? filtroData,
             Guid? filtroTipoUva)
         {
             try
@@ -46,7 +45,6 @@ namespace Frontend.Services
                 if (!string.IsNullOrEmpty(filtroNomeVinho)) queryParams.Add($"filtroNomeVinho={Uri.EscapeDataString(filtroNomeVinho)}");
                 if (!string.IsNullOrEmpty(filtroRegion)) queryParams.Add($"filtroRegion={Uri.EscapeDataString(filtroRegion)}");
                 if (!string.IsNullOrEmpty(filtroBrand)) queryParams.Add($"filtroBrand={Uri.EscapeDataString(filtroBrand)}");
-                if (filtroData.HasValue) queryParams.Add($"filtroData={Uri.EscapeDataString(filtroData.Value.ToString("yyyy-MM-dd"))}");
                 if (filtroTipoUva.HasValue) queryParams.Add($"filtroTipoUva={Uri.EscapeDataString(filtroTipoUva.Value.ToString())}");
 
                 string queryString = string.Join("&", queryParams);

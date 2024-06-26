@@ -17,4 +17,5 @@ public class Event
 
     // Navigation property for associated EventParticipants
     public ICollection<EventParticipant> EventParticipants { get; set; }
+     public ICollection<Wine> Wines { get; set; }
 }

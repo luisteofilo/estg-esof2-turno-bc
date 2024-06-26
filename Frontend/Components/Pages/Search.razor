@@ -110,6 +110,6 @@
    
     private async Task PesquisarEventos()
     {
-        eventos = await EventService.GetEvents();
+        eventos = await EventService.GetEventsSelection(filtroNome ,filtroNomeUser, filtroNomeVinho, filtroRegion, filtroBrand, filtroTipoUva);
     }
 }

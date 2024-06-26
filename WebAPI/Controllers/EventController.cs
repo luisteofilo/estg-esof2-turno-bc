@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using ESOF.WebApp.WebAPI.Services;
 
 
 namespace WebAPI.Controllers
@@ -14,6 +15,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
+        private readonly EventService _eventService;
 
         // GET: api/events
         [HttpGet]
@@ -85,20 +87,19 @@ namespace WebAPI.Controllers
 
             return Ok("Registration Successful");
         }
-        [HttpGet]
+        [HttpGet("search")]
         public async Task<ActionResult<List<ResponseEventDto>>> GetEvents(
             [FromQuery] string filtroNome,
             [FromQuery] string filtroNomeUser,
             [FromQuery] string filtroNomeVinho,
             [FromQuery] string filtroRegion,
             [FromQuery] string filtroBrand,
-            [FromQuery] DateTime? filtroData,
             [FromQuery] Guid? filtroTipoUva)
         {
             try
             {
-                var eventos = await _eventService.GetEventsFiltered(
-                    filtroNome, filtroNomeUser, filtroNomeVinho, filtroRegion, filtroBrand, filtroData, filtroTipoUva);
+                var eventos = await _eventService.SearchEvents(
+                    filtroNome, filtroNomeUser, filtroNomeVinho, filtroRegion, filtroBrand, filtroTipoUva);
                 return Ok(eventos);
             }
             catch (Exception ex)
