@@ -23,79 +23,113 @@
 </nav>
 
 <h3>Taste</h3>
-<p>Here you can control everything related to the wine tasting evaluations.</p>
+@if (isAdmin)
+{
+    <p>Here you can control everything related to the wine tasting evaluations.</p>
+}
+else
+{
+    <p>Here you can evaluate the wines you tasted in an event.</p>
+}
 
 <hr class="hr" />
 
+@if (isAdmin)
+{
+    <h4>Administration</h4>
+    <p>What do you want to do?</p>
+
+    <div class="d-flex gap-2 justify-content-start">
+        <div class="card w-100">
+            <div class="card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll"><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg> Evaluations <span class="badge text-bg-warning">event-based</span>
+            </div>
+            <div class="card-body">
+                <div class="card-text">
+                    Here you'll be able to:
+                    <ul>
+                        <li>Create a evaluation for a user</li>
+                        <li>Update a user evaluation</li>
+                        <li>Change the wine score given by the user</li>
+                        <li>Delete a evaluation</li>
+                    </ul>
+                </div>
+                <a href="taste/evaluations" class="btn btn-primary w-100">Go to evaluations page</a>
+            </div>
+        </div>
+        <div class="card w-100">
+            <div class="card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-question"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg> Questions <span class="badge text-bg-warning">event-based</span>
+            </div>
+            <div class="card-body">
+                <div class="card-text">
+                    Here you'll be able to:
+                    <ul>
+                        <li>Create a form by creating questions</li>
+                        <li>Create a question</li>
+                        <li>Update a question</li>
+                        <li>Delete a question</li>
+                    </ul>
+                </div>
+                <a href="taste/questions" class="btn btn-primary w-100">Go to questions page</a>
+            </div>
+        </div>
+        <div class="card w-100">
+            <div class="card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-pen"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5.5"/><path d="M4 13.5V6a2 2 0 0 1 2-2h2"/><path d="M13.378 15.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg> Question Types
+            </div>
+            <div class="card-body">
+                <div class="card-text">
+                    Here you'll be able to:
+                    <ul>
+                        <li>View all existing types</li>
+                        <li>Create a question type</li>
+                        <li>Update a question type</li>
+                        <li>Delete a question type</li>
+                    </ul>
+                </div>
+                <a href="taste/questions/types" class="btn btn-primary w-100">Go to question types page</a>
+            </div>
+        </div>
+        <div class="card w-100">
+            <div class="card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-check"><path d="M8 3H2v15h7c1.7 0 3 1.3 3 3V7c0-2.2-1.8-4-4-4Z"/><path d="m16 12 2 2 4-4"/><path d="M22 6V3h-6c-2.2 0-4 1.8-4 4v14c0-1.7 1.3-3 3-3h7v-2.3"/></svg> Form Viewer <span class="badge text-bg-success">NEW</span>
+            </div>
+            <div class="card-body">
+                <div class="card-text">
+                    Here you'll be able to:
+                    <ul>
+                        <li>Simulate how the form will look like to users</li>
+                        <li>Test the form yourself</li>
+                        <li>View everything in detail</li>
+                        <span class="badge text-bg-warning">NOTE</span> This feature is still in tests!
+                    </ul>
+                </div>
+                <a href="taste/viewer" class="btn btn-primary w-100">Go to form viewer page</a>
+            </div>
+        </div>
+    </div>
+    
+    
+    <hr class="hr" />
+}
+
+<h3 class="mt-3">User</h3>
 <p>What do you want to do?</p>
 
-<div class="d-flex gap-2 justify-content-start">
-    <div class="card w-100">
+<div class="d-flex gap-2 justify-content-start mb-5">
+    <div class="card w-auto">
         <div class="card-header">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll"><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg> Evaluations <span class="badge text-bg-warning">event-based</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wine"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></svg> Evaluate a wine
         </div>
         <div class="card-body">
-            <div class="card-text">
-                Here you'll be able to:
-                <ul>
-                    <li>Create a evaluation for a user</li>
-                    <li>Update a user evaluation</li>
-                    <li>Change the wine score given by the user</li>
-                    <li>Delete a evaluation</li>
-                </ul>
-            </div>
-            <a href="taste/evaluations" class="btn btn-primary w-100">Go to evaluations page</a>
-        </div>
-    </div>
-    <div class="card w-100">
-        <div class="card-header">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-question"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg> Questions <span class="badge text-bg-warning">event-based</span>
-        </div>
-        <div class="card-body">
-            <div class="card-text">
-                Here you'll be able to:
-                <ul>
-                    <li>Create a form by making a group of questions</li>
-                    <li>Create a question</li>
-                    <li>Update a question</li>
-                    <li>Delete a question</li>
-                </ul>
-            </div>
-            <a href="taste/questions" class="btn btn-primary w-100">Go to questions page</a>
-        </div>
-    </div>
-    <div class="card w-100">
-        <div class="card-header">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-pen"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5.5"/><path d="M4 13.5V6a2 2 0 0 1 2-2h2"/><path d="M13.378 15.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg> Question Types
-        </div>
-        <div class="card-body">
-            <div class="card-text">
-                Here you'll be able to:
-                <ul>
-                    <li>View all existing types</li>
-                    <li>Create a question type</li>
-                    <li>Update a question type</li>
-                    <li>Delete a question type</li>
-                </ul>
-            </div>
-            <a href="taste/questions/types" class="btn btn-primary w-100">Go to question types page</a>
-        </div>
-    </div>
-    <div class="card w-100">
-        <div class="card-header">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-check"><path d="M8 3H2v15h7c1.7 0 3 1.3 3 3V7c0-2.2-1.8-4-4-4Z"/><path d="m16 12 2 2 4-4"/><path d="M22 6V3h-6c-2.2 0-4 1.8-4 4v14c0-1.7 1.3-3 3-3h7v-2.3"/></svg> Form Viewer <span class="badge text-bg-success">NEW</span>
-        </div>
-        <div class="card-body">
-            <div class="card-text">
-                Here you'll be able to:
-                <ul>
-                    <li>Simulate how the form will look like to users</li>
-                    <li>Test the form yourself</li>
-                    <li>View everything in detail</li>
-                    <span class="badge text-bg-warning">NOTE</span> This feature is still in tests!
-                </ul>
-            </div>
-            <a href="taste/viewer" class="btn btn-primary w-100">Go to form viewer page</a>
+            <p>If you recently participated in an event, you can evaluate the wines you tasted!</p>
+            <p>
+                You'll be answering a quick form, that will evaluate your tasting of the wine<br/>
+                and it will automatically generate a score for the wine.
+            </p>
+            <p>Are you ready?</p>
+            <a href="taste/evaluate" class="btn btn-primary w-100">Let's do it!</a>
         </div>
     </div>
 </div>
@@ -103,4 +137,5 @@
 @code
 {
     // TODO: Check if user is an administrator or a regular user
+    private Boolean isAdmin = true;
 }
