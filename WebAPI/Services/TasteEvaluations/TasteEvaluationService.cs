@@ -76,32 +76,28 @@ public class TasteEvaluationService(ApplicationDbContext context)
     {
         try
         {
-            var tasteEvaluation = new TasteEvaluation
+            TasteEvaluation tasteEvaluation;
+                
+            if (createTasteEvaluationDto.TasteEvaluationId != null)
             {
-                UserId = createTasteEvaluationDto.UserId,
-                WineId = createTasteEvaluationDto.WineId,
-                EventId = createTasteEvaluationDto.EventId,
-                WineScore = createTasteEvaluationDto.WineScore
-            };
-            
-            if (context.TasteEvaluations.Any(te => te.UserId == tasteEvaluation.UserId && te.WineId == tasteEvaluation.WineId && te.EventId == tasteEvaluation.EventId))
-            {
-                throw new ArgumentException("Error: That taste evaluation already exists!");
+                tasteEvaluation = new TasteEvaluation
+                {
+                    TasteEvaluationId = createTasteEvaluationDto.TasteEvaluationId,
+                    UserId = createTasteEvaluationDto.UserId,
+                    WineId = createTasteEvaluationDto.WineId,
+                    EventId = createTasteEvaluationDto.EventId,
+                    WineScore = createTasteEvaluationDto.WineScore
+                };
             }
-            
-            if (!context.Users.Any(u => u.UserId == tasteEvaluation.UserId))
+            else
             {
-                throw new ArgumentException("Error: That user does not exist!");
-            }
-            
-            if (!context.Wines.Any(w => w.WineId == tasteEvaluation.WineId))
-            {
-                throw new ArgumentException("Error: That wine does not exist!");
-            }
-            
-            if (!context.Events.Any(e => e.EventId == tasteEvaluation.EventId))
-            {
-                throw new ArgumentException("Error: That event does not exist!");
+                tasteEvaluation = new TasteEvaluation
+                {
+                    UserId = createTasteEvaluationDto.UserId,
+                    WineId = createTasteEvaluationDto.WineId,
+                    EventId = createTasteEvaluationDto.EventId,
+                    WineScore = createTasteEvaluationDto.WineScore
+                };
             }
 
             context.TasteEvaluations.Add(tasteEvaluation);
