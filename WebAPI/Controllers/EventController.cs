@@ -57,7 +57,7 @@ namespace WebAPI.Controllers
 
             return Ok(eventDto);
         }
-        
+
         // CREATE: api/events/create
         [HttpPost("create")]
         public async Task<ActionResult<ResponseEventDto>> CreateEvent(CreateEventDto newEvent)
@@ -86,9 +86,9 @@ namespace WebAPI.Controllers
             });
         }
 
-        // PUT: api/events/{slug}
+// PUT: api/events/{slug}
         [HttpPut("{slug}")]
-        public async Task<IActionResult> UpdateEvent(string slug, UpdateEventDto updatedEvent)
+        public async Task<IActionResult> UpdateEvent(string slug, [FromBody] UpdateEventDto updatedEvent)
         {
             var _context = new ApplicationDbContext();
             var eventEntity = await _context.Events.FirstOrDefaultAsync(e => e.Slug == slug);
