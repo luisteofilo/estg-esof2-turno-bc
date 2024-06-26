@@ -19,13 +19,13 @@ public class FeedPostDto
     
     public PostVisibilityType? VisibilityType { get; set; }
     
-    public IEnumerable<FeedPostUserDto>? FavoriteUsers { get; set; }
-    
-    public IEnumerable<FeedPostUserDto>? HiddenUsers { get; set; }
-    
-    public IEnumerable<FeedPostUserDto>? ViewUsers { get; set; }
-    
-    public IEnumerable<Tuple<FeedPostUserDto, FeedPostUserDto>>? ShareUsers { get; set; }
+    // public IEnumerable<FeedPostUserDto>? FavoriteUsers { get; set; }
+    //
+    // public IEnumerable<FeedPostUserDto>? HiddenUsers { get; set; }
+    //
+    // public IEnumerable<FeedPostUserDto>? ViewUsers { get; set; }
+    //
+    // public IEnumerable<Tuple<FeedPostUserDto, FeedPostUserDto>>? ShareUsers { get; set; }
     
     public Guid? EventId { get; set; }
     public ResponseEventDto? Event { get; set; }

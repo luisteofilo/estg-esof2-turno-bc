@@ -66,26 +66,26 @@ public class FeedPostMedia
 
 public class FeedPostUser
 {
-    public List<FeedPost> CreatedPosts { get; set; }
+    public List<FeedPost>? CreatedPosts { get; set; }
     
-    public List<FeedPost> ViewedPosts { get; set; }
+    public List<FeedPost>? ViewedPosts { get; set; }
     
-    public List<FeedPost> FavoritedPosts { get; set; }
-    public List<FeedPost> HiddenPosts { get; set; }
+    public List<FeedPost>? FavoritedPosts { get; set; }
+    public List<FeedPost>? HiddenPosts { get; set; }
     
-    public List<Tuple<FeedPost,FeedPost>> ReceivedPosts { get; set; }
-    public List<Tuple<FeedPost,FeedPost>> SentPosts { get; set; }
+    public List<Tuple<FeedPost,FeedPost>>? ReceivedPosts { get; set; }
+    public List<Tuple<FeedPost,FeedPost>>? SentPosts { get; set; }
     
-    public List<FeedPost> Followers { get; set; }
-    public List<FeedPost> Following { get; set; }
+    public List<FeedPost>? Followers { get; set; }
+    public List<FeedPost>? Following { get; set; }
     
     public Guid UserId { get; set; }
     
     public string email { get; set; }
     
-    public byte[] PasswordHash { get; set; }
+    public byte[]? PasswordHash { get; set; }
     
-    public byte[] PasswordSalt { get; set; }
+    public byte[]? PasswordSalt { get; set; }
     /*public ICollection<UserRole> UserRoles { get; set; }*/
 }
 

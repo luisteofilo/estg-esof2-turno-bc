@@ -23,12 +23,21 @@ public class PostService
     {
         try
         {
-            var posts = await _context.Posts.Select(p => MapToPostDto(p)).ToListAsync();
+            var posts = await _context.Posts.Select(p => new FeedPostDto()
+            {
+                PostId = p.PostId,
+                Text = p.Text,
+                CreatorId = p.CreatorId,
+                DateTimePost = p.DateTimePost,
+                VisibilityType = p.VisibilityType
+            }).ToListAsync();
 
             foreach (var p in posts)
             {
-                Task getHashtags = GetHashtagDtosOfPost(p.PostId);
-                Task getMedia = GetMediaDtosOfPost(p.PostId);
+                var tasks = new List<Task>();
+                Task<List<FeedPostHashtagDto>> getHashtags = GetHashtagDtosOfPost(p.PostId);
+                tasks.Add(getHashtags);
+                // Task<List<FeedPostMediaDto>> getMedia = GetMediaDtosOfPost(p.PostId);
                 
                 var creator = await _context.Users.FindAsync(p.CreatorId);
                 p.Creator = new FeedPostUserDto()
@@ -45,7 +54,7 @@ public class PostService
                     else
                         p.EventId = null;
                 }
-
+            
                 if (p.WineId is not null)
                 {
                     var postWine = await _context.Wines.FindAsync(p.WineId);
@@ -54,8 +63,10 @@ public class PostService
                     else
                         p.WineId = null;
                 }
-
-                Task.WaitAll(getHashtags, getMedia);
+            
+                await Task.WhenAll(tasks);
+                
+                p.Hashtags = getHashtags.Result;
             }
             
             return posts;
@@ -71,7 +82,7 @@ public class PostService
         var hashtags = await _context.Hashtags
             .Where(h => h.Posts.Any(hp => hp.PostId == postId))
             .ToListAsync();
-                
+        
         var hashtagDtos = new List<FeedPostHashtagDto>();
                 
         foreach (var h in hashtags)
