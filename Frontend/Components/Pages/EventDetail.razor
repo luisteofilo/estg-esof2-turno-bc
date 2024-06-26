@@ -12,33 +12,86 @@
 
 <PageTitle>Event Detail</PageTitle>
 
-<h3>Event Detail</h3>
+<div class="container mt-4">
+    <h3 class="text-center" style="font-size: 3rem;">Event Detail</h3>
+    <div class="row">
+        <div class="col-md-8">
+            @if (eventDto == null)
+            {
+                <p><em>Event not found or error fetching event details.</em></p>
+            }
+            else
+            {
+                <h1 style="font-size: 3rem;">@eventDto.Name</h1>
+                <p><strong>Description:</strong> @eventDto.Description</p>
+                <p><strong>Blind Tasting:</strong> @(eventDto.BlindTasting ? "Yes" : "No")</p>
+                <p><strong>Wine Type:</strong> @eventDto.WineType</p>
 
-@if (eventDto == null)
-{
-    <p><em>Event not found or error fetching event details.</em></p>
-}
-else
-{
-    <h4>@eventDto.Name</h4>
-    <p>ID: @eventDto.EventId</p>
-    <div>
-        <img src="@qrCodeImage" alt="Event QR Code" />
-        <p>URL: @qrCodeUrl</p>
+                <h4>Participants</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (participants != null && participants.Count > 0)
+                        {
+                            @foreach (var participant in participants)
+                            {
+                                <tr>
+                                    <td>@participant.Email</td>
+                                    <td><button class="btn btn-danger btn-sm" @onclick="() => RemoveParticipant(participant.EventParticipantId)">Remove</button></td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Adicionar participantes fictícios -->
+                            <tr>
+                                <td>john.doe@example.com</td>
+                                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                            </tr>
+                            <tr>
+                                <td>jane.doe@example.com</td>
+                                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                            </tr>
+                            <tr>
+                                <td>alice.smith@example.com</td>
+                                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                            </tr>
+                            <tr>
+                                <td>bob.jones@example.com</td>
+                                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                            </tr>
+                            <tr>
+                                <td>charlie.brown@example.com</td>
+                                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                            </tr>
+                            <tr>
+                                <td>diana.ross@example.com</td>
+                                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+        <div class="col-md-4 d-flex flex-column align-items-center">
+            @if (eventDto != null)
+            {
+                <div class="d-flex flex-column align-items-center">
+                    <img src="@qrCodeImage" alt="Event QR Code" class="img-fluid mb-3" />
+                    <div class="input-group mt-3">
+                        <input type="email" class="form-control" @bind="newParticipantEmail" placeholder="Enter email" />
+                        <button class="btn btn-primary ml-2" @onclick="AddParticipant">Add Participant</button>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
-
-    <h4>Participants</h4>
-    <ul>
-        @foreach (var participant in participants)
-        {
-            <li>@participant.Email <button @onclick="() => RemoveParticipant(participant.EventParticipantId)">Remove</button></li>
-        }
-    </ul>
-    <input type="email" @bind="newParticipantEmail" placeholder="Enter email" />
-    <button @onclick="AddParticipant">Add Participant</button>
-
-    <button class="btn btn-primary mt-3" @onclick="EditEvent">Edit Event</button>
-}
+</div>
 
 @code {
     [Parameter]

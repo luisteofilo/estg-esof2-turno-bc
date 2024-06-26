@@ -1,7 +1,7 @@
 ﻿@page "/events"
 @inject Frontend.Services.EventService EventService
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 @using Frontend.DtoClasses
 
 <PageTitle>Eventos</PageTitle>
@@ -28,7 +28,7 @@ else
                     <a href="events/@eventDto.Slug" class="text-decoration-none">@eventDto.Name</a>
                 </div>
                 <div>
-                    <button class="btn btn-secondary btn-sm" @onclick="() => EditEvent(eventDto.Slug)">Editar</button>
+                    <NavLink class="btn btn-secondary btn-sm" href="@($"/events/edit/{eventDto.Slug}")">Editar</NavLink>
                     <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDeleteEvent(eventDto.Slug)">Apagar</button>
                 </div>
             </div>
@@ -41,39 +41,23 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Initializing event list..."); // Log para depuração
         events = await EventService.GetEvents();
-        Console.WriteLine($"Loaded {events.Count} events."); // Log para depuração
-    }
-
-    private void EditEvent(string slug)
-    {
-        NavigationManager.NavigateTo($"/events/edit/{slug}");
     }
 
     private async Task ConfirmDeleteEvent(string slug)
     {
-        Console.WriteLine($"Attempting to delete event with slug: {slug}"); // Log para depuração
-
-        // Adicionando JavaScript para confirmar se o evento de clique está sendo capturado
-        await JSRuntime.InvokeVoidAsync("console.log", $"Delete button clicked for event: {slug}");
-
-        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Tem certeza que deseja apagar este evento?");
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Tem certeza que deseja apagar este evento?");
         if (confirmed)
         {
             await DeleteEvent(slug);
-        }
-        else
-        {
-            Console.WriteLine("Delete action was cancelled."); // Log para depuração
         }
     }
 
     private async Task DeleteEvent(string slug)
     {
         await EventService.DeleteEvent(slug);
-        Console.WriteLine($"Deleted event with slug: {slug}"); // Log para depuração
         events = await EventService.GetEvents(); // Atualizar a lista de eventos
         StateHasChanged(); // Atualiza a interface
     }
+
 }

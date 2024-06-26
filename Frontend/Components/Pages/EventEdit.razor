@@ -44,7 +44,7 @@ else
             <input id="wineType" class="form-control" @bind="_event.WineType" />
         </div>
 
-        <button class="btn btn-primary" @onclick="UpdateEvent">Save</button>
+        <button type="button" class="btn btn-primary" @onclick="() => {UpdateEvent(); }"> Save</button>
     </div>
 }
 
@@ -59,7 +59,24 @@ else
     {
         if (Slug != null)
         {
-            _event = await EventService.GetEventBySlug(Slug);
+            Console.WriteLine($"Fetching event with slug: {Slug}"); // Log para depuração
+            try
+            {
+                _event = await EventService.GetEventBySlug(Slug);
+                if (_event != null)
+                {
+                    Console.WriteLine($"Event fetched: {_event.Name}"); // Log para depuração
+                }
+                else
+                {
+                    Console.WriteLine("Event not found."); // Log para depuração
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching event: {ex.Message}"); // Log para depuração
+                _error = "Error loading event.";
+            }
         }
     }
 
@@ -71,13 +88,16 @@ else
 
             try
             {
+                Console.WriteLine($"Updating event with slug: {_event.Slug}"); // Log para depuração
                 await EventService.UpdateEvent(_event);
+                Console.WriteLine($"Event updated successfully: {_event.Slug}"); // Log para depuração
                 NavigationManager.NavigateTo("/events");
             }
             catch (Exception e)
             {
                 _error = e.Message;
+                Console.WriteLine($"Error updating event: {_error}"); // Log para depuração
             }
         }
     }
-}
+}}
