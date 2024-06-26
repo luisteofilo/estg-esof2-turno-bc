@@ -1,14 +1,16 @@
 .post {
     border: 1px solid #ccc;
     padding: 10px;
-    margin-bottom: 10px;
     border-radius: 10px;
+    max-width: 600px;
+    margin: 0 auto; 
 }
 
 .post-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 8px;
 }
 
 .profile-image {
@@ -27,6 +29,7 @@
 }
 
 .post-meta {
+    margin-top:0.5mm;
     font-size: 0.85em;
     color: #777;
 }
@@ -36,8 +39,11 @@
 }
 
 .menu-button {
-    background: none;
-    border: none;
+    background-color: #ffffff;
+    color: black;
+    border-radius: 10px;
+    margin-top: 0.8px;
+    border: 1px solid black;
     font-size: 1.5em;
     cursor: pointer;
 }

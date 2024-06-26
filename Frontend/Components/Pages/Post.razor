@@ -10,13 +10,11 @@
         <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
         <div class="post-info">
             <div class="post-author">@PostLine.Creator.email</div>
-            <div class="post-meta">@PostLine.DateTimePost · @PostLine.VisibilityType</div>
+            <div class="post-meta">@PostLine.DateTimePost.ToString("dd/MM/yyyy HH:mm") · @((MarkupString)_visibilityTypePic) @PostLine.VisibilityType</div>
         </div>
         <div class="post-menu">
             <button class="menu-button">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
+                ⋯
             </button>
         </div>
     </div>
@@ -28,8 +26,13 @@
 
 @code{
   
-    [Parameter] public FeedPost PostLine { get; set; } = new FeedPost();
+    [Parameter] public FeedPost PostLine { get; set; } = new FeedPost()
+    {
+        Creator = new FeedPostUser()
+    };
     private FeedPostList _feedPosts = new FeedPostList();
+    
+    private string _visibilityTypePic = "";
     
     protected override async Task OnInitializedAsync()
     {
@@ -37,6 +40,7 @@
         {
             _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
             PostLine = _feedPosts.Posts[0];
+            SetVisibilityTypePic();
         }
         catch (ApplicationException ex)
         {
@@ -47,5 +51,24 @@
             Console.Error.WriteLine($"Error: {ex.Message}");
         }
     }
+    
+    private void SetVisibilityTypePic()
+    {
+        if (PostLine.VisibilityType == FeedPostVisibilityType.Public)
+        {
+            _visibilityTypePic = "🌍"; 
+        }
+        else if (PostLine.VisibilityType == FeedPostVisibilityType.Followers)
+        {
+            _visibilityTypePic = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"13\" height=\"13\" fill=\"currentColor\" class=\"bi bi-people-fill\" viewBox=\"0 0 16 16\">" +
+                                 "<path d=\"M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5\"/>" +
+                                 "</svg>";
+        }
+        else
+        {
+            _visibilityTypePic = ""; 
+        }
+    }
+    
 
 }
