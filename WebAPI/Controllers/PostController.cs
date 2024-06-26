@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,7 @@ namespace ESOF.WebApp.WebAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
+    
 
         [HttpPost("create")]
         public async Task<ActionResult<FeedPostDto>> CreatePost([FromBody] CreateFeedPostDto createPostDto)

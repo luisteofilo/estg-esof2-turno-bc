@@ -28,20 +28,20 @@ public class FriendshipController : ControllerBase
 
         return Ok(friendsDtos);
     }
-
     [HttpDelete("remove-friend")]
     public async Task<IActionResult> RemoveFriend(Guid userId1, Guid userId2)
     {
         try
         {
             await _friendshipService.RemoveFriendAsync(userId1, userId2);
-            return Ok("Friendship removed.");
+            return Ok(new { message = "Friendship removed successfully." });
         }
         catch (FriendshipNotFoundException)
         {
-            return NotFound("Friendship not found.");
+            return NotFound(new { message = "Friendship not found." });
         }
     }
+
     
     [HttpGet("ReceivedRequests/{userId}")]
     public async Task<IActionResult> GetReceivedFriendRequests(Guid userId)

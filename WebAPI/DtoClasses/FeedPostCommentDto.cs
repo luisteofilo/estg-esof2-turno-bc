@@ -1,6 +1,6 @@
 ﻿namespace ESOF.WebApp.WebAPI.DtoClasses;
 
-public class CommentDto
+public class FeedPostCommentDto
 {
     public Guid CommentId { get; set; }
     public Guid PostId { get; set; }
@@ -8,5 +8,5 @@ public class CommentDto
     public string Content { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public string UserName { get; set; }
+    public FeedPostUserDto User { get; set; }
 }

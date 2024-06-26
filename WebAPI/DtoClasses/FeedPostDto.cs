@@ -25,4 +25,11 @@ public class FeedPostDto
     public IEnumerable<FeedPostUserDto>? ViewUsers { get; set; }
     
     public IEnumerable<Tuple<FeedPostUserDto, FeedPostUserDto>>? ShareUsers { get; set; }
+    
+    public int LikeCount { get; set; } 
+    public bool IsLiked { get; set; } 
+    public IEnumerable<FeedPostUserDto>? Likes { get; set; } 
+        
+    public int CommentCount { get; set; } 
+    public IEnumerable<FeedPostCommentDto>? Comments { get; set; }
 }

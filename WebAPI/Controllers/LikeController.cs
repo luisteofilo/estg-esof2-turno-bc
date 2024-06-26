@@ -51,4 +51,11 @@ public class LikesController : ControllerBase
         var count = await _likeService.GetLikeCountForPostAsync(postId);
         return Ok(count);
     }
+    
+    [HttpGet("isliked/{postId}/{userId}")]
+    public async Task<IActionResult> IsLiked(Guid postId, Guid userId)
+    {
+        var isLiked = await _likeService.IsPostLikedByUserAsync(postId, userId);
+        return Ok(isLiked);
+    }
 }
