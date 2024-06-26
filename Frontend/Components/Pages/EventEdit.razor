@@ -1,0 +1,83 @@
+﻿@page "/events/edit/{slug}"
+@inject Frontend.Services.EventService EventService
+@inject NavigationManager NavigationManager
+@using Frontend.DtoClasses
+
+<PageTitle>Edit Event</PageTitle>
+
+<h3>Edit Event</h3>
+
+@if (_event == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>
+        @if (!string.IsNullOrEmpty(_error))
+        {
+            <div class="alert alert-danger">@_error</div>
+        }
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Event Name</label>
+            <input id="name" class="form-control" @bind="_event.Name" />
+        </div>
+
+        <div class="mb-3">
+            <label for="slug" class="form-label">Event Slug</label>
+            <input id="slug" class="form-control" @bind="_event.Slug" disabled />
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input id="description" class="form-control" @bind="_event.Description" />
+        </div>
+
+        <div class="mb-3">
+            <label for="blindTasting" class="form-label">Blind Tasting</label>
+            <input id="blindTasting" type="checkbox" @bind="_event.BlindTasting" />
+        </div>
+
+        <div class="mb-3">
+            <label for="wineType" class="form-label">Wine Type</label>
+            <input id="wineType" class="form-control" @bind="_event.WineType" />
+        </div>
+
+        <button class="btn btn-primary" @onclick="UpdateEvent">Save</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string? Slug { get; set; }
+
+    private EventDto? _event;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Slug != null)
+        {
+            _event = await EventService.GetEventBySlug(Slug);
+        }
+    }
+
+    private async Task UpdateEvent()
+    {
+        if (_event != null)
+        {
+            _error = string.Empty;
+
+            try
+            {
+                await EventService.UpdateEvent(_event);
+                NavigationManager.NavigateTo("/events");
+            }
+            catch (Exception e)
+            {
+                _error = e.Message;
+            }
+        }
+    }
+}

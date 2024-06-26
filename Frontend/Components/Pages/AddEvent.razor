@@ -16,23 +16,31 @@
         <div class="alert alert-danger" role="alert">
             @_error    
         </div>
-    }    
-    
-    @if (_success != String.Empty)
-    {
-        <div class="alert alert-success" role="alert">
-            @_success    
-        </div>
     }
-    
+
     <div class="mb-3">
         <label for="name" class="form-label">Event name</label>
-        <input id="name" class="form-control" @bind="_eventSlug"/>
+        <input id="name" class="form-control" @bind="_eventName"/>
     </div>
 
     <div class="mb-3">
         <label for="slug" class="form-label">Event slug</label>
-        <input id="slug" class="form-control" @bind="_eventName"/>
+        <input id="slug" class="form-control" @bind="_eventSlug"/>
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea id="description" class="form-control" @bind="_eventDescription"></textarea>
+    </div>
+    
+    <div class="mb-3 form-check">
+        <input type="checkbox" id="blindTasting" class="form-check-input" @bind="_blindTasting"/>
+        <label for="blindTasting" class="form-check-label">Blind Tasting</label>
+    </div>
+
+    <div class="mb-3">
+        <label for="wineType" class="form-label">Wine Type</label>
+        <input id="wineType" class="form-control" @bind="_wineType"/>
     </div>
 
     <button type="button" class="btn btn-primary" @onclick="() => { CreateNewEvent(); }">Create</button>
@@ -40,13 +48,15 @@
 
 @code {
     private string _error = String.Empty;
-    private string _success = String.Empty;
     private string _eventName = String.Empty;
     private string _eventSlug = String.Empty;
+    private string _eventDescription = String.Empty;
+    private bool _blindTasting = false;
+    private string _wineType = String.Empty;
     
     private async Task CreateNewEvent()
     {
-        if (_eventName == String.Empty || _eventSlug == String.Empty)
+        if (_eventName == String.Empty || _eventSlug == String.Empty || _eventDescription == String.Empty || _wineType == String.Empty)
         {
             _error = "Please, fill all the fields.";
             return;
@@ -56,10 +66,13 @@
 
         try
         {
-            await EventService.AddEvent(new CreateEventDto()
+            await EventService.AddEvent(new EventDto()
             {
                 Name = _eventName,
-                Slug = _eventSlug
+                Slug = _eventSlug,
+                Description = _eventDescription,
+                BlindTasting = _blindTasting,
+                WineType = _wineType
             });
         }
         catch (Exception e)
@@ -67,12 +80,7 @@
             _error = e.Message;
             return;
         }
-        finally
-        {
-            _success = "Event created successfully! Redirecting...";
-        }
         
-        await Task.Delay(2000);
         NavigationManager.NavigateTo("/events");
     }
 }

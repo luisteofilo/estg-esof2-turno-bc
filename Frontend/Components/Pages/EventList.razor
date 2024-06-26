@@ -6,55 +6,74 @@
 
 <PageTitle>Eventos</PageTitle>
 
-<div class="container mt-3">
-    <h3>Eventos</h3>
+<h3>Eventos</h3>
 
-    <button class="btn btn-primary mb-3" @onclick="AddEvent">Adicionar Evento</button>
+<NavLink class="btn btn-primary mb-3" href="/events/create">Adicionar Evento</NavLink>
 
-    @if (events == null)
-    {
-        <p><em>Carregando...</em></p>
-    }
-    else if (events.Count == 0)
-    {
-        <p><em>Nenhum evento encontrado.</em></p>
-    }
-    else
-    {
-        <div class="list-group">
-            @foreach (var eventDto in events)
-            {
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <a href="events/@eventDto.Slug" class="text-decoration-none">@eventDto.Name</a>
-                    </div>
-                    <button class="btn btn-danger btn-sm" @onclick="@(async () => await DeleteEvent(eventDto.Slug))">Apagar</button>
+@if (events == null)
+{
+    <p><em>Carregando...</em></p>
+}
+else if (events.Count == 0)
+{
+    <p><em>Nenhum evento encontrado.</em></p>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var eventDto in events)
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="events/@eventDto.Slug" class="text-decoration-none">@eventDto.Name</a>
                 </div>
-            }
-        </div>
-    }
-</div>
+                <div>
+                    <button class="btn btn-secondary btn-sm" @onclick="() => EditEvent(eventDto.Slug)">Editar</button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDeleteEvent(eventDto.Slug)">Apagar</button>
+                </div>
+            </div>
+        }
+    </div>
+}
 
 @code {
     private List<EventDto> events;
 
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine("Initializing event list..."); // Log para depuração
         events = await EventService.GetEvents();
+        Console.WriteLine($"Loaded {events.Count} events."); // Log para depuração
     }
 
-    private void AddEvent()
+    private void EditEvent(string slug)
     {
-        NavigationManager.NavigateTo("/events/create");
+        NavigationManager.NavigateTo($"/events/edit/{slug}");
+    }
+
+    private async Task ConfirmDeleteEvent(string slug)
+    {
+        Console.WriteLine($"Attempting to delete event with slug: {slug}"); // Log para depuração
+
+        // Adicionando JavaScript para confirmar se o evento de clique está sendo capturado
+        await JSRuntime.InvokeVoidAsync("console.log", $"Delete button clicked for event: {slug}");
+
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Tem certeza que deseja apagar este evento?");
+        if (confirmed)
+        {
+            await DeleteEvent(slug);
+        }
+        else
+        {
+            Console.WriteLine("Delete action was cancelled."); // Log para depuração
+        }
     }
 
     private async Task DeleteEvent(string slug)
     {
-        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Tem certeza que deseja apagar este evento?");
-        if (confirmed)
-        {
-            await EventService.DeleteEvent(slug);
-            events = await EventService.GetEvents(); // Atualizar a lista de eventos
-        }
+        await EventService.DeleteEvent(slug);
+        Console.WriteLine($"Deleted event with slug: {slug}"); // Log para depuração
+        events = await EventService.GetEvents(); // Atualizar a lista de eventos
+        StateHasChanged(); // Atualiza a interface
     }
 }

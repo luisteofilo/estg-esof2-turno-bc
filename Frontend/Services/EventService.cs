@@ -2,9 +2,8 @@
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Frontend.DtoClasses;
-using System;
 using Microsoft.Extensions.Logging;
+using Frontend.DtoClasses;
 
 namespace Frontend.Services
 {
@@ -47,11 +46,24 @@ namespace Frontend.Services
             }
         }
 
-        public async Task AddEvent(CreateEventDto newEvent)
+        public async Task AddEvent(EventDto newEvent)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/events", newEvent);
+                var response = await _httpClient.PostAsJsonAsync("api/events/create", newEvent);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError($"Request error: {ex.Message}");
+            }
+        }
+
+        public async Task UpdateEvent(EventDto updatedEvent)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/events/{updatedEvent.Slug}", updatedEvent);
                 response.EnsureSuccessStatusCode();
             }
             catch (HttpRequestException ex)
@@ -72,7 +84,7 @@ namespace Frontend.Services
                 _logger.LogError($"Request error: {ex.Message}");
             }
         }
-        
+
         public async Task<List<EventParticipantDto>> GetParticipants(Guid eventId)
         {
             try

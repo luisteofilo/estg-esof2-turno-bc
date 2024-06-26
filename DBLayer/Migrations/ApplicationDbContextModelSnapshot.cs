@@ -61,8 +61,10 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.Property<bool>("BlindTasting")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -74,6 +76,11 @@ namespace ESOF.WebApp.DBLayer.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<string>("WineType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
                     b.HasKey("EventId");
 
                     b.ToTable("Events");
@@ -81,43 +88,48 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasData(
                         new
                         {
-                            EventId = new Guid("c43482fc-c9b9-4106-9497-cec7ddea1745"),
+                            EventId = new Guid("b5acfc13-3092-453b-89f4-596de2b1b354"),
                             BlindTasting = false,
-                            Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Description for Event 1",
                             Name = "Event1",
-                            Slug = "event1"
+                            Slug = "event1",
+                            WineType = "Red"
                         },
                         new
                         {
-                            EventId = new Guid("3cf47f51-0df2-4d36-8b85-8c6a35e0acb3"),
-                            BlindTasting = false,
-                            Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EventId = new Guid("598cdd9b-4771-4cc4-ba60-3f015d9921d9"),
+                            BlindTasting = true,
+                            Description = "Description for Event 2",
                             Name = "Event2",
-                            Slug = "event2"
+                            Slug = "event2",
+                            WineType = "White"
                         },
                         new
                         {
-                            EventId = new Guid("3956f3a7-cef6-42ac-9565-96fde9349ba2"),
-                            BlindTasting = false,
-                            Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EventId = new Guid("2159ecd2-086f-44bb-a532-699b80aae184"),
+                            BlindTasting = true,
+                            Description = "Description for Event 3",
                             Name = "Event3",
-                            Slug = "event3"
+                            Slug = "event3",
+                            WineType = "Sparkling"
                         },
                         new
                         {
-                            EventId = new Guid("bf77fb6e-3069-4f86-bb6a-d549c1ec0969"),
+                            EventId = new Guid("f69e618a-9056-4d9b-86f1-4eebffcc3239"),
                             BlindTasting = false,
-                            Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Description for Event 4",
                             Name = "Event4",
-                            Slug = "event4"
+                            Slug = "event4",
+                            WineType = "Rose"
                         },
                         new
                         {
-                            EventId = new Guid("b6300006-a07e-43de-a0d1-627ea7f21cb8"),
+                            EventId = new Guid("2f746ea3-b15b-4d76-af71-50f5ee706412"),
                             BlindTasting = false,
-                            Date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Description for Event 5",
                             Name = "Event5",
-                            Slug = "event5"
+                            Slug = "event5",
+                            WineType = "Desset"
                         });
                 });
 

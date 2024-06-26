@@ -1,6 +1,7 @@
 ﻿@page "/events/{Slug}"
 @inject Frontend.Services.EventService EventService
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 @using Frontend.DtoClasses
 @using Frontend.Helpers 
 @using ZXing
@@ -35,6 +36,8 @@ else
     </ul>
     <input type="email" @bind="newParticipantEmail" placeholder="Enter email" />
     <button @onclick="AddParticipant">Add Participant</button>
+
+    <button class="btn btn-primary mt-3" @onclick="EditEvent">Edit Event</button>
 }
 
 @code {
@@ -107,7 +110,6 @@ else
 
     private async Task AddParticipant()
     {
-        // Lookup the user ID by email (you would need an API endpoint for this)
         var userId = await LookupUserIdByEmail(newParticipantEmail);
         if (userId != Guid.Empty)
         {
@@ -124,8 +126,11 @@ else
 
     private async Task<Guid> LookupUserIdByEmail(string email)
     {
-        // Implement this method to call an API endpoint to get the user ID by email
-        // For now, we'll return a dummy value
         return Guid.NewGuid();
+    }
+
+    private void EditEvent()
+    {
+        NavigationManager.NavigateTo($"/events/edit/{Slug}");
     }
 }

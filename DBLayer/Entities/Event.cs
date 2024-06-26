@@ -13,15 +13,18 @@ namespace ESOF.WebApp.DBLayer.Entities
         [Required]
         [StringLength(255)]
         public string Name { get; set; }
-        
-        [Required]
-        public DateTime Date { get; set; }
-        
+
         public bool BlindTasting { get; set; }
         
         [Required]
         [StringLength(255)]
         public string Slug { get; set; }
+        
+        public string Description { get; set; } 
+        
+        
+        public string WineType { get; set; } 
+        
         
         public ICollection<Wine> Wines { get; set; }
         public ICollection<EventParticipant> EventParticipants { get; set; }
