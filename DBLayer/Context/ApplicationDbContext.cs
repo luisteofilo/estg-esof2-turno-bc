@@ -50,9 +50,18 @@ public partial class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        var db = EnvFileHelper.GetString("POSTGRES_DB");
+        var user = EnvFileHelper.GetString("POSTGRES_USER");
+        var password = EnvFileHelper.GetString("POSTGRES_PASSWORD");
+        var port = EnvFileHelper.GetString("POSTGRES_PORT");
+        var host = EnvFileHelper.GetString("POSTGRES_HOST");
+        
+        if (!optionsBuilder.IsConfigured)
+        {
+            var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={password}";
+            optionsBuilder.UseNpgsql(connectionString);
+        }
         base.OnConfiguring(optionsBuilder);
-
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
