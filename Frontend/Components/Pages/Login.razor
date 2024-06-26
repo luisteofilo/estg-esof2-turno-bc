@@ -1,94 +1,23 @@
 ﻿@page "/login"
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Login</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #6b73ff 10%, #000dff 100%);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            overflow: hidden;
-        }
-        .container {
-            background-color: #fff;
-            padding: 40px 60px;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-        }
-        .container h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        .form-group input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-left: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .form-group input[type="submit"] {
-            width: 100%;
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 15px;
-            font-size: 18px;
-            transition: background-color 0.3s ease;
-        }
-        .form-group input[type="submit"]:hover {
-            background-color: #4cae4c;
-        }
-        .form-group a {
-            color: #555;
-            text-decoration: none;
-            display: block;
-            margin-top: 10px;
-        }
-        .form-group a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
 <body>
-    <div class="container">
+    <div class="mb-3">
         <h2>Login</h2>
         <form action="/submit_login" method="POST">
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+            <div class="mb-2">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" id="email" name="email" required class="form-control">
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" id="password" name="password" required class="form-control">
             </div>
-            <div class="form-group">
-                <input type="submit" value="Login">
-            </div>
-            <div class="form-group">
+            <button type="button" class="position-relative py-2 px-4 text-bg-secondary border border-secondary rounded-pill">
+              Login 
+            </button>
+            <div class="mb-3">
                 <a href="register">Não tens conta? Cria agora!</a>
             </div>
         </form>
     </div>
 </body>
-</html>
