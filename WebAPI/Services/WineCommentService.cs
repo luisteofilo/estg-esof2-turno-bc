@@ -14,8 +14,6 @@
         {
             _context = context;
         }
-
-
         
         public async Task<IEnumerable<ResponseWineCommentDto>> GetWineCommentsByWine(Guid id)
         {
@@ -25,10 +23,11 @@
                     .Where(w => w.WineId == id)
                     .ToListAsync();
 
-                if (wineComments.Count == 0)
+                /*if (wineComments.Count == 0)
                 {
                     throw new ArgumentException("Wine has no comments!");
-                }
+                }*/
+                
                 return wineComments.Select(wineComment => new ResponseWineCommentDto
                 {
                     WineCommentId = wineComment.WineCommentId,

@@ -1,5 +1,6 @@
 using ESOF.WebApp.DBLayer.Context;
 using ESOF.WebApp.WebAPI.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddScoped<WineCommentService>();
 builder.Services.AddDbContext<ApplicationDbContext>();  
+
 
 var app = builder.Build();
 
