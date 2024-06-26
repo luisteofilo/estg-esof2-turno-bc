@@ -70,15 +70,31 @@
                         @* ----------------------------------- *@
                         <td><NavLink href="/users">@tasteEvaluation.UserId</NavLink></td>
                         
-                        @* ----------------------------------- *@
-                        @* TODO: Make it appear the event name *@
-                        @* ----------------------------------- *@
-                        <td><NavLink href="/events">@tasteEvaluation.EventId</NavLink></td>
+                        <td><NavLink href="/events">@{
+                            if (_events != null)
+                            {
+                                foreach (var _event in _events)
+                                {
+                                    if (_event.EventId == tasteEvaluation.EventId)
+                                    {
+                                        @_event.Name;
+                                    }
+                                }
+                            }
+                        }</NavLink></td>
                         
-                        @* ----------------------------------- *@
-                        @* TODO: Make it appear the wine name  *@
-                        @* ----------------------------------- *@
-                        <td><NavLink href="/wines">@tasteEvaluation.WineId</NavLink></td>
+                        <td><NavLink href="/wines">@{
+                           if (_wines != null)
+                           {
+                               foreach (var wine in _wines)
+                               {
+                                   if (wine.WineId == tasteEvaluation.WineId)
+                                   {
+                                       @wine.label;
+                                   }
+                               }
+                           }
+                        }</NavLink></td>
                         
                         <td>@tasteEvaluation.WineScore</td>
                         <td>
