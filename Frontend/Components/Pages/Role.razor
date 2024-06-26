@@ -5,7 +5,7 @@
 @using Frontend.DtoClasses
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
-@inject Frontend.Services.RolesService RolesService
+@inject RolesService RolesService
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IJSRuntime JsRuntime
@@ -40,7 +40,7 @@ else
                 <td>@role.Name</td>
                 <td>
                     <button class="btn btn-primary" @onclick="() => EditRole(role.RoleId)">Edit</button>
-                    <button class="btn btn-danger" @onclick="() => ConfirmDelete(role.RoleId)">Delete</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteRole(role.RoleId)">Delete</button>
                 </td>
             </tr>
         }
@@ -53,15 +53,16 @@ else
 <form>
     <div class="form-group">
         <label for="Name">Name:</label>
-        <input type="text" id="Name" class="form-control" @bind="newRole.Name" />
+        <input type="text" id="Name" class="form-control" bind="@name" />
     </div>
-    <button type="submit" class="btn btn-success">Create Role</button>
+    <button @onclick="() => CreateRole()" class="btn btn-success">Create Role</button>
 </form>
 
 @code {
-    private List<RolesDto>? _rolesDtos;
+    private List<RolesDto> _rolesDtos;
     private RolesDto newRole = new RolesDto();
     private bool isAuthorized = false;
+    private string name;
 
     protected override async Task OnInitializedAsync()
     {
@@ -101,12 +102,6 @@ else
         }
     }
 
-    private async Task ConfirmDelete(Guid roleId)
-    {
-            await DeleteRole(roleId);
-            Console.WriteLine("ROLE ID: ", roleId);
-    }
-
     private void EditRole(Guid roleId)
     {
         NavigationManager.NavigateTo($"/edit-role/{roleId}");
@@ -116,6 +111,7 @@ else
     {
         try
         {
+            newRole.Name = name;
             Console.WriteLine($"Creating role with name: {newRole.Name}");
 
             if (string.IsNullOrWhiteSpace(newRole.Name))
@@ -124,7 +120,7 @@ else
                 return;
             }
 
-            var result = await RolesService.Create(newRole);
+            var result = RolesService.Create(newRole);
                 
             if (result)
             {

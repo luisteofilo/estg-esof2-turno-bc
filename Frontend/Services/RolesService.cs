@@ -39,25 +39,20 @@ namespace Frontend.Services
             return null;
         }
         
-        public async Task<bool> Create(RolesDto roleDto, CancellationToken cancellationToken = default)
+        public Boolean Create(RolesDto data, CancellationToken cancellationToken = default)
         {
             try
             {
-                var response = await _http.PostAsJsonAsync("api/Role/create", roleDto, cancellationToken);
-                if (response.IsSuccessStatusCode)
-                {
-                    return true;
-                }
-                else
-                {
-                    var error = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Error creating role: {error}");
-                    return false;
-                }
+                _http.PostAsJsonAsync("api/Role/create", data, cancellationToken).Wait(cancellationToken);
+                return true;
             }
             catch (HttpRequestException ex) when (ex.InnerException is IOException)
             {
                 Console.WriteLine($"An IO error has occurred: {ex.Message} | {ex.InnerException?.Message}");
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine($"The operation was canceled: {ex.Message}");
             }
             catch (Exception ex)
             {

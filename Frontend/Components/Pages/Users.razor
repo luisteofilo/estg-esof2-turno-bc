@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
-@inject Frontend.Services.UserService UserService
+@inject UserService UserService
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
@@ -46,7 +46,7 @@ else
                 <td>@user.BirthdayDate.ToString("yyyy-MM-dd")</td>
                 <td>
                     <button class="btn btn-primary" @onclick="() => EditUser(user.UserId)">Edit</button>
-                    <button class="btn btn-danger" @onclick="() => DeleteUser(user.UserId)">Delete</button>
+                    <button class="btn btn-danger" @onclick="() => { DeleteUser(user.UserId); }">Delete</button>
                 </td>
             </tr>
         }

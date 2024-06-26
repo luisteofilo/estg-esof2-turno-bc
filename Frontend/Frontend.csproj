@@ -27,4 +27,8 @@
       <ProjectReference Include="..\WebAPI\WebAPI.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Services\UsersService.cs" />
+    </ItemGroup>
+
 </Project>

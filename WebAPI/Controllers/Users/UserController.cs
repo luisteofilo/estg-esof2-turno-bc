@@ -4,6 +4,8 @@ using ESOF.WebApp.WebAPI.Controller.Dto.Users;
 using ESOF.WebApp.WebAPI.DtoClasses;
 using ESOF.WebApp.WebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using ResponseUserDto = ESOF.WebApp.WebAPI.Controller.Dto.Users.ResponseUserDto;
+
 namespace ESOF.WebApp.WebAPI.Controllers;
 
 [Route("api/[controller]")]
