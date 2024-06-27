@@ -38,4 +38,5 @@ public class User
 
     public ICollection<EventParticipant> EventParticipants { get; set; }
     public ICollection<Interaction> Interactions { get; set; }
+    public string Id { get; }
 }

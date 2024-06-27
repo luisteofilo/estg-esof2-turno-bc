@@ -31,6 +31,10 @@ builder.Services.AddScoped<InteractionService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
