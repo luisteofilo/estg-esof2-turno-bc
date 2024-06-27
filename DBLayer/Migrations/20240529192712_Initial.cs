@@ -48,7 +48,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
                 });
-
+            
             migrationBuilder.CreateTable(
                 name: "RolePermissions",
                 columns: table => new

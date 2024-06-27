@@ -6,22 +6,17 @@
 @inject ApiHelper ApiHelper
 <h3>Feed</h3>
 <div>
-    <div class=feed-create-post>
-        <button id="createPostButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">Criar uma publicação</button>
-        <div id="createPostModal" class="modal">
-            <div class="modal-content">
-                <button id="closeModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">&times;</button>
-                <InputText @bind-Value="_newPost.Text"/>
-                <p>baixo</p>
-            </div>
-        </div>
+    <div class="feed-create-post">
+        <span>Create new post: </span>
+        <input @bind="_newPost.Text" placeholder="What's on your mind?"/>
+        <button @onclick="CreatePost">Create Post</button>
     </div>
     <hr/>
 </div>
 <div>
-    @if (_feedPosts.Posts.Count == 0)
+    @if (_feedPosts.Posts == null || _feedPosts.Posts.Count == 0)
     {
-        <h4>Não há posts</h4>
+        <h4>No posts available</h4>
     }
     else
     {
@@ -32,19 +27,24 @@
     }
 </div>
 
-
-@code
-{
-    // private FeedPostUser _currentUser = new FeedPostUser();
-    // UserState contém o id do utilizador que existe
+@code {
     private FeedPost _newPost = new FeedPost();
     private FeedPostList _feedPosts = new FeedPostList(){Posts = new List<FeedPost>()};
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
         try
         {
-            _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
+            var posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
+            if (posts != null)
+            {
+                _feedPosts.Posts = posts;
+            }
         }
         catch (ApplicationException ex)
         {
@@ -59,7 +59,22 @@
     private async Task CreatePost()
     {
         _newPost.CreatorId = UserState.LoggedInUserId.Value;
-        await ApiHelper.PostToApiAsync<FeedPost>("api/Post/create", _newPost);
+        try
+        {
+            var createdPost = await ApiHelper.PostToApiAsync<FeedPost, FeedPost>("api/Post/create", _newPost);
+            if (createdPost != null)
+            {
+                _feedPosts.Posts.Insert(0, createdPost); 
+                _newPost = new FeedPost(); 
+            }
+        }
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to create post: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
     }
 }
-

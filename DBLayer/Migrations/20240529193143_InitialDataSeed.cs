@@ -56,8 +56,11 @@ namespace ESOF.WebApp.DBLayer.Migrations
         // Adding users
         var adminUserId = Guid.NewGuid();
         var normalUserId = Guid.NewGuid();
+        var newUserId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd"); // Specified user ID
+
         PasswordHelper.CreatePasswordHash("root", out byte[] adminPasswordHash, out byte[] adminPasswordSalt);
         PasswordHelper.CreatePasswordHash("normal", out byte[] normalPasswordHash, out byte[] normalPasswordSalt);
+        PasswordHelper.CreatePasswordHash("newuser", out byte[] newUserPasswordHash, out byte[] newUserPasswordSalt); // New user password
 
         migrationBuilder.InsertData(
             table: "Users",
@@ -65,7 +68,8 @@ namespace ESOF.WebApp.DBLayer.Migrations
             values: new object[,]
             {
                 { adminUserId, "root@example.com", adminPasswordHash, adminPasswordSalt },
-                { normalUserId, "normal@example.com", normalPasswordHash, normalPasswordSalt }
+                { normalUserId, "normal@example.com", normalPasswordHash, normalPasswordSalt },
+                { newUserId, "newuser@example.com", newUserPasswordHash, newUserPasswordSalt } 
             });
 
         // Adding user-roles

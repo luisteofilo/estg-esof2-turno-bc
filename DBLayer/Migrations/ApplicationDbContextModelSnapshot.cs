@@ -47,7 +47,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("BrandId");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Event", b =>
@@ -69,7 +69,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("EventId");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
 
                     b.HasData(
                         new
@@ -123,7 +123,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EventParticipants");
+                    b.ToTable("EventParticipants", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Follow", b =>
@@ -138,7 +138,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("UserFollowedId");
 
-                    b.ToTable("Follows");
+                    b.ToTable("Follows", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.GrapeType", b =>
@@ -163,7 +163,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("GrapeTypeId");
 
-                    b.ToTable("GrapeTypes");
+                    b.ToTable("GrapeTypes", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Hashtag", b =>
@@ -181,7 +181,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("HashtagId");
 
-                    b.ToTable("Hashtags");
+                    b.ToTable("Hashtags", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Permission", b =>
@@ -197,7 +197,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("PermissionId");
 
-                    b.ToTable("Permissions");
+                    b.ToTable("Permissions", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Post", b =>
@@ -232,7 +232,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("PostWineId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostMedia", b =>
@@ -260,7 +260,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("MediaPostId");
 
-                    b.ToTable("PostMedia");
+                    b.ToTable("PostMedia", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserFavorite", b =>
@@ -275,7 +275,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("FavoriteUserId");
 
-                    b.ToTable("PostUserFavorite");
+                    b.ToTable("PostUserFavorite", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserHidden", b =>
@@ -290,7 +290,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("HiddenUserId");
 
-                    b.ToTable("PostUserHidden");
+                    b.ToTable("PostUserHidden", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserShare", b =>
@@ -310,7 +310,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("UserSentId");
 
-                    b.ToTable("PostUserShare");
+                    b.ToTable("PostUserShare", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.PostUserView", b =>
@@ -325,7 +325,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("ViewedUserId");
 
-                    b.ToTable("PostUserView");
+                    b.ToTable("PostUserView", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Region", b =>
@@ -366,7 +366,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.RolePermission", b =>
@@ -381,7 +381,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("RolePermissions");
+                    b.ToTable("RolePermissions", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.User", b =>
@@ -408,7 +408,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.UserRole", b =>
@@ -423,7 +423,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.Wine", b =>
@@ -476,7 +476,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Wines");
+                    b.ToTable("Wines", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.WineGrapeTypeLink", b =>
@@ -503,7 +503,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("WineId");
 
-                    b.ToTable("WineGrapeTypeLinks");
+                    b.ToTable("WineGrapeTypeLinks", (string)null);
                 });
 
             modelBuilder.Entity("HashtagPost", b =>
@@ -518,7 +518,7 @@ namespace ESOF.WebApp.DBLayer.Migrations
 
                     b.HasIndex("PostsPostId");
 
-                    b.ToTable("HashtagPost");
+                    b.ToTable("HashtagPost", (string)null);
                 });
 
             modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.EventParticipant", b =>

@@ -1,9 +1,13 @@
 .post {
     border: 1px solid #ccc;
     padding: 10px;
+    margin-bottom: 10px;
     border-radius: 10px;
     max-width: 600px;
     margin: 0 auto; 
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .post-header {
@@ -64,11 +68,75 @@
     transition: color 0.3s;
 }
 
-.share-button:hover {
-    background-color: #d8dbe0;
+
+.post-actions .btn-secondary {
+    margin-left: 10px; /* Add margin to the left to move it to the right */
 }
+
+.post-actions i {
+    margin-right: 5px;
+}
+
+.post-comments {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.comment {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.comment:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.hover-menu {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.hover-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.hover-profile-image {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.hover-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.hover-name {
+    font-weight: bold;
+}
+
+.hover-email {
+    font-size: 0.85em;
+    color: #777;
+}
+
+
 .menu-button:hover {
-    background-color: #d8dbe0; 
+    background-color: #d8dbe0;
 }
 
 .menu-content {

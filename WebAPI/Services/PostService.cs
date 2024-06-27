@@ -23,56 +23,46 @@ public class PostService
     {
         try
         {
-            var posts = await _context.Posts.Select(p => new FeedPostDto()
-            {
-                PostId = p.PostId,
-                Text = p.Text,
-                CreatorId = p.CreatorId,
-                DateTimePost = p.DateTimePost,
-                VisibilityType = p.VisibilityType,
-                WineId = p.WineId,
-                EventId = p.EventId
-            }).ToListAsync();
-            
+            var posts = await _context.Posts
+                .Include(p => p.Creator)
+                .Include(p => p.Likes)
+                .Include(p => p.Comments)
+                .Select(p => new FeedPostDto
+                {
+                    PostId = p.PostId,
+                    Text = p.Text,
+                    CreatorId = p.CreatorId,
+                    Creator = new FeedPostUserDto
+                    {
+                        UserId = p.Creator.UserId,
+                        Email = p.Creator.Email
+                    },
+                    DateTimePost = p.DateTimePost,
+                    VisibilityType = p.VisibilityType,
+                    LikeCount = p.Likes.Count(l => l.IsActive),
+                    IsLiked = false,  
+                    Likes = p.Likes.Where(l => l.IsActive).Select(l => new FeedPostUserDto
+                    {
+                        UserId = l.UserId,
+                        Email = l.User.Email
+                    }).ToList(),
+                    CommentCount = p.Comments.Count,
+                    Comments = p.Comments.Select(c => new FeedPostCommentDto
+                    {
+                        CommentId = c.CommentId,
+                        PostId = c.PostId,
+                        UserId = c.UserId,
+                        Content = c.Content,
+                        CreatedAt = c.CreatedAt,
+                        UpdatedAt = c.UpdatedAt,
+                        User = new FeedPostUserDto
+                        {
+                            UserId = c.User.UserId,
+                            Email = c.User.Email
+                        }
+                    }).ToList()
+                }).ToListAsync();
 
-            foreach (var p in posts)
-            {
-                // var tasks = new List<Task>();
-                // Task<List<FeedPostHashtagDto>> getHashtags = GetHashtagDtosOfPost(p.PostId);
-                // tasks.Add(getHashtags);
-                // Task<List<FeedPostMediaDto>> getMedia = GetMediaDtosOfPost(p.PostId);
-                
-                var creator = await _context.Users.FindAsync(p.CreatorId);
-                p.Creator = new FeedPostUserDto()
-                {
-                    UserId = creator.UserId,
-                    Email = creator.Email
-                };
-                
-                if (p.EventId is not null)
-                {
-                    var postEvent = await _context.Events.FindAsync(p.EventId);
-                    if (postEvent is not null)
-                        p.Event = MapToEventDto(postEvent);
-                    else
-                        p.EventId = null;
-                }
-            
-                if (p.WineId is not null)
-                {
-                    var postWine = await _context.Wines.FindAsync(p.WineId);
-                    if (postWine is not null)
-                        p.Wine = MapToWineDto(postWine);
-                    else
-                        p.WineId = null;
-                }
-            
-                // await Task.WhenAll(tasks);
-                
-                // p.Hashtags = getHashtags.Result;
-                // p.Media = new List<FeedPostMediaDto>();
-            }
-            
             return posts;
         }
         catch (Exception ex)
@@ -80,169 +70,54 @@ public class PostService
             throw new Exception("An error occurred while retrieving posts.", ex);
         }
     }
+    public async Task<FeedPostDto> GetPostById(Guid postId)
+    {
+        var post = await _context.Posts
+            .Include(p => p.Creator)
+            .Include(p => p.Likes)
+            .Include(p => p.Comments)
+            .FirstOrDefaultAsync(p => p.PostId == postId);
 
-    public async Task<List<FeedPostHashtagDto>> GetHashtagDtosOfPost(Guid postId)
-    {
-        var hashtags = await _context.Hashtags
-            .Where(h => h.Posts.Any(hp => hp.PostId == postId))
-            .ToListAsync();
-        
-        var hashtagDtos = new List<FeedPostHashtagDto>();
-                
-        foreach (var h in hashtags)
-        {
-            hashtagDtos.Add(MapToPostHashtagDto(h));
-        }
-
-        return hashtagDtos;
-    }
-
-    private FeedPostHashtagDto MapToPostHashtagDto(Hashtag h)
-    {
-        return new FeedPostHashtagDto()
-        {
-            HashtagId = h.HashtagId,
-            Name = h.Name,
-            NumPosts = h.NumPosts
-        };
-    }
-    
-    public async Task<List<FeedPostMediaDto>> GetMediaDtosOfPost(Guid postId)
-    {
-        var media = await _context.PostMedia
-            .Where(m => m.MediaPostId == postId)
-            .ToListAsync();
-                
-        var mediaDtos = new List<FeedPostMediaDto>();
-                
-        foreach (var m in media)
-        {
-            mediaDtos.Add(MapToPostMediaDto(m));
-        }
-
-        return mediaDtos;
-    }
-
-    public FeedPostMediaDto MapToPostMediaDto(PostMedia m)
-    {
-        return new FeedPostMediaDto()
-        {
-            MediaId = m.MediaId,
-            Data = m.Data,
-            FileExtension = m.FileExtension,
-            Filename = m.Filename,
-            MediaPostId = m.MediaPostId,
-        };
-    }
-
-    public FeedPostDto MapToPostDto(Post p)
-    {
-        return new FeedPostDto()
-        {
-            PostId = p.PostId,
-            Text = p.Text,
-            CreatorId = p.CreatorId,
-            DateTimePost = p.DateTimePost,
-            VisibilityType = p.VisibilityType
-        };
-    }
-    
-    public ResponseEventDto MapToEventDto(Event e)
-    {
-        return new ResponseEventDto()
-        {
-            EventId = e.EventId,
-            Name = e.Name,
-            Slug = e.Slug
-        };
-    }
-    
-    public ResponseWineDto MapToWineDto(Wine w)
-    {
-        return new ResponseWineDto()
-        {
-            WineId = w.WineId,
-            BrandId = w.BrandId,
-            Brand = MapToBrandDto(_context.Brands.Find(w.BrandId)),
-            Label = w.label,
-            Year = w.Year,
-            Category = w.category,
-            LabelDesignation = w.LabelDesignation
-        };
-    }
-
-    public ResponseBrandDto MapToBrandDto(Brand b)
-    {
-        return new ResponseBrandDto()
-        {
-            BrandId = b.BrandId,
-            Description = b.Description,
-            Name = b.Name
-        };
-    }
-    public async Task<FeedPostDto> GetPostById(Guid id)
-    {
-        var post = await _context.Posts.FindAsync(id);
         if (post == null)
             throw new ArgumentException("Post not found.");
+
 
         var postDto = new FeedPostDto
         {
             PostId = post.PostId,
             Text = post.Text,
             CreatorId = post.CreatorId,
+            Creator = new FeedPostUserDto
+            {
+                UserId = post.Creator.UserId,
+                Email = post.Creator.Email
+            },
             DateTimePost = post.DateTimePost,
             VisibilityType = post.VisibilityType,
-        };
-        
-        var creator = await _context.Users.FindAsync(postDto.CreatorId);
-        postDto.Creator = new FeedPostUserDto()
-        {
-            UserId = creator.UserId,
-            Email = creator.Email
-        };
-        
-        var media = await _context.PostMedia
-            .Where(m => 
-                m.MediaPostId == post.PostId)
-            .ToListAsync();
-        
-        var mediaDto = new List<FeedPostMediaDto>();
-        
-        foreach (var m in media)
-        {
-            mediaDto.Add(new FeedPostMediaDto()
+            LikeCount = post.Likes.Count(l => l.IsActive),
+            IsLiked = false, // Not checking for a specific user
+            Likes = post.Likes.Where(l => l.IsActive).Select(l => new FeedPostUserDto
             {
-                MediaId = m.MediaId,
-                Data = m.Data,
-                FileExtension = m.FileExtension,
-                Filename = m.Filename,
-                MediaPostId = postDto.PostId
-            });
-        }
-        
-        // postDto.Media = mediaDto;
-
-        var hashtags = await _context.Hashtags
-            .Where(h =>
-                h.Posts.Any(p =>
-                    p.PostId == postDto.PostId))
-            .ToListAsync();
-        
-        var hashtagsDto = new List<FeedPostHashtagDto>();
-        
-        foreach (var h in hashtags)
-        {
-            hashtagsDto.Add(new FeedPostHashtagDto()
+                UserId = l.UserId,
+                Email = l.User.Email
+            }).ToList(),
+            CommentCount = post.Comments.Count,
+            Comments = post.Comments.Select(c => new FeedPostCommentDto
             {
-                HashtagId = h.HashtagId,
-                Name = h.Name,
-                NumPosts = h.NumPosts
-            });
-        }
+                CommentId = c.CommentId,
+                PostId = c.PostId,
+                UserId = c.UserId,
+                Content = c.Content,
+                CreatedAt = c.CreatedAt,
+                UpdatedAt = c.UpdatedAt,
+                User = new FeedPostUserDto
+                {
+                    UserId = c.User.UserId,
+                    Email = c.User.Email
+                }
+            }).ToList()
+        };
 
-        // postDto.Hashtags = hashtagsDto;
-        
         return postDto;
     }
 
@@ -315,7 +190,6 @@ public class PostService
             VisibilityType = post.VisibilityType
         };
     }
-
     
     public async Task DeletePost(Guid id)
     {

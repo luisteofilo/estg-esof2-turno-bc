@@ -1,4 +1,5 @@
-﻿@page "/Post"
+@page "/Post"
+@using ESOF.WebApp.WebAPI.DtoClasses
 @using Frontend.Helpers
 @using global::Helpers.ViewModels
 @rendermode InteractiveServer
@@ -6,24 +7,24 @@
 @inject ApiHelper ApiHelper
 
 <div class="post">
-<div class="post-header">
-    <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
-    <div class="post-info">
-        <div class="post-author">@PostLine.Creator.email</div>
-        <div class="post-meta">@PostLine.DateTimePost.ToString("dd/MM/yyyy HH:mm") · @((MarkupString)_visibilityTypePic) @PostLine.VisibilityType</div>
-    </div>
-    <div class="post-menu" @onfocusout="@(() => _menuVisible = false)">
-        <button class="menu-button" @onclick="ToggleMenu">
-            ⋯
-        </button>
-        <div class="menu-content @(_menuVisible ? "show" : "")">
-            <button class="menu-button1" @onclick="EditPost">🗑️ Eliminar Publicação</button>
-            <button class="menu-button1" @onclick="RemovePost">📝 Editar Publicação</button>
-            <button class="menu-button1" @onclick="AddToFavorites">⭐ Adicionar aos Favoritos</button>
-            <button class="menu-button1" @onclick="HidePost">🫣 Ocultar</button>
+    <div class="post-header">
+        <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
+        <div class="post-info">
+            <div class="post-author">@PostLine.Creator.email</div>
+            <div class="post-meta">@PostLine.DateTimePost.ToString("dd/MM/yyyy HH:mm") · @((MarkupString)_visibilityTypePic) @PostLine.VisibilityType</div>
+        </div>
+        <div class="post-menu" @onfocusout="@(() => _menuVisible = false)">
+            <button class="menu-button" @onclick="ToggleMenu">
+                ⋯
+            </button>
+            <div class="menu-content @(_menuVisible ? "show" : "")">
+                <button class="menu-button1" @onclick="EditPost">🗑️ Eliminar Publicação</button>
+                <button class="menu-button1" @onclick="RemovePost">📝 Editar Publicação</button>
+                <button class="menu-button1" @onclick="AddToFavorites">⭐ Adicionar aos Favoritos</button>
+                <button class="menu-button1" @onclick="HidePost">🫣 Ocultar</button>
+            </div>
         </div>
     </div>
-</div>
     <div class="post-event">
         📢
     </div>
@@ -40,44 +41,108 @@
     <div class="post-share">
         <button class="share-button" @onclick="SharePost">↪ Partilhar</button>
     </div>
+    <div class="post-actions">
+        <button class="btn btn-primary" @onclick="ToggleLike">
+            <i class="bi @(IsLiked ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill")"></i> @(IsLiked ? "Unlike" : "Like")
+        </button>
+        <span>@LikeCount</span>
+
+        <button class="btn btn-secondary" @onclick="ToggleComments">
+            <i class="bi bi-chat"></i> Comments
+        </button>
+        <span>@CommentCount</span>
+    </div>
+
+    @if (ShowComments)
+    {
+    <div class="post-comments">
+        <textarea @bind="NewCommentText" placeholder="Write a comment..." class="form-control"></textarea>
+        <button class="btn btn-success mt-2" @onclick="AddComment">Post Comment</button>
+
+        <div class="comments-list mt-3">
+            @if (Comments != null && Comments.Count > 0)
+            {
+            @foreach (var comment in Comments)
+            {
+            <div class="comment mb-2">
+                <strong>@comment.UserName:</strong> @comment.Content
+            </div>
+            }
+            }
+            else
+            {
+            <p>No comments yet.</p>
+            }
+        </div>
+    </div>
+    }
+
+    @if (ShowHover)
+    {
+    <div class="hover-menu">
+        <div class="hover-header">
+            <img src="avatar.jpg" alt="Profile Image" class="hover-profile-image" />
+            <div class="hover-info">
+                <div class="hover-email">@PostLine.Creator.email</div>
+            </div>
+        </div>
+        @if (PostLine.Creator.UserId != LoggedInUserId)
+        {
+        @if (IsFriend)
+        {
+        <button class="btn btn-danger mt-2" @onclick="RemoveFriend">Remove Friend</button>
+        }
+        else
+        {
+        <button class="btn btn-primary mt-2" @onclick="SendFriendRequest">Send Friend Request</button>
+        }
+        }
+    </div>
+    }
+
+    @if (ShowNotification)
+    {
+    <div class="notification alert alert-@(NotificationType)" role="alert">
+        @NotificationMessage
+    </div>
+    }
 </div>
     
-    
-
-
 @code{
-  
     [Parameter] public FeedPost PostLine { get; set; } = new FeedPost()
     {
         Creator = new FeedPostUser()
     };
-    private FeedPostList _feedPosts = new FeedPostList();
     private bool _menuVisible = false;
-    
     private string _visibilityTypePic = "";
+    
+    private bool IsLiked { get; set; }
+    private int LikeCount { get; set; }
+    private bool ShowComments { get; set; } = false;
+    private List<CommentDto> Comments { get; set; }
+    private string NewCommentText { get; set; } = string.Empty;
+    private int CommentCount { get; set; }
+    private bool ShowHover { get; set; } = false;
+    private bool IsFriend { get; set; }
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    private Guid LoggedInUserId { get; set; } = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd"); // Set the logged-in user's ID
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    private bool ShowNotification { get; set; } = false;
+    private string NotificationMessage { get; set; }
+    private string NotificationType { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        SetVisibilityTypePic();
+        await LoadLikeData();
+        await LoadCommentData();
+        await CheckFriendStatus();
+    }
     
     private void ToggleMenu()
     {
         _menuVisible = !_menuVisible;
     }
-    
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
-            SetVisibilityTypePic();
-        }
-        catch (ApplicationException ex)
-        {
-            Console.Error.WriteLine($"Failed to fetch posts: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error: {ex.Message}");
-        }
-    }
-    
     private void SetVisibilityTypePic()
     {
         if (PostLine.VisibilityType == FeedPostVisibilityType.Public)
@@ -95,6 +160,121 @@
             _visibilityTypePic = "<span></span>"; 
         }
     }
+    
+    private async Task LoadLikeData()
+    {
+        IsLiked = await ApiHelper.GetFromApiAsync<bool>($"api/Likes/isliked/{PostLine.PostId}/{LoggedInUserId}");
+        LikeCount = await ApiHelper.GetFromApiAsync<int>($"api/Likes/post/{PostLine.PostId}/count");
+    }
+
+    private async Task LoadCommentData()
+    {
+        CommentCount = await ApiHelper.GetFromApiAsync<int>($"api/Comments/post/{PostLine.PostId}/count");
+        Comments = await ApiHelper.GetFromApiAsync<List<CommentDto>>($"api/Comments/post/{PostLine.PostId}");
+    }
+
+    private async Task ToggleLike()
+    {
+        var dto = new ToggleLikeDto { PostId = PostLine.PostId, UserId = LoggedInUserId };
+        try
+        {
+            await ApiHelper.PostToApiAsync<ToggleLikeDto, LikeDto>("api/Likes/toggle", dto);
+            await LoadLikeData();
+            ShowNotificationMessage("Like toggled successfully!", "success");
+        }
+        catch (Exception ex)
+        {
+            ShowNotificationMessage($"Error toggling like: {ex.Message}", "danger");
+        }
+    }
+
+    private void ToggleComments()
+    {
+        ShowComments = !ShowComments;
+    }
+
+    private async Task AddComment()
+    {
+        if (!string.IsNullOrWhiteSpace(NewCommentText))
+        {
+            var dto = new CreateCommentDto { PostId = PostLine.PostId, UserId = LoggedInUserId, Content = NewCommentText };
+            try
+            {
+                await ApiHelper.PostToApiAsync<CreateCommentDto, CommentDto>("api/Comments/create", dto);
+                NewCommentText = string.Empty;
+                await LoadCommentData();
+                ShowNotificationMessage("Comment added successfully!", "success");
+            }
+            catch (Exception ex)
+            {
+                ShowNotificationMessage($"Error adding comment: {ex.Message}", "danger");
+            }
+        }
+    }
+
+    private void ToggleHover()
+    {
+        ShowHover = !ShowHover;
+    }
+
+    private async Task CheckFriendStatus()
+    {
+        var friendDtos = await ApiHelper.GetFromApiAsync<List<FriendDto>>($"api/Friendship/{LoggedInUserId}");
+        IsFriend = friendDtos.Any(f => f.UserId == PostLine.Creator.UserId);
+    }
+
+    private async Task SendFriendRequest()
+    {
+        try
+        {
+            var dto = new SendFriendRequestDto { RequesterId = LoggedInUserId, ReceiverId = PostLine.Creator.UserId };
+            var response = await ApiHelper.PostToApiAsync<SendFriendRequestDto, object>("api/FriendRequests/send", dto);
+            ShowNotificationMessage("Friend request sent successfully!", "success");
+        }
+        catch (ApplicationException ex)
+        {
+            ShowNotificationMessage($"Error sending friend request! Please, make sure you dont have a pending friend request!", "danger");
+        }
+        catch (Exception ex)
+        {
+            ShowNotificationMessage($"Unexpected error: {ex.Message}", "danger");
+        }
+        ShowHover = false;
+    }
+
+    private async Task RemoveFriend()
+    {
+        try
+        {
+            await ApiHelper.DeleteFromApiAsync($"api/Friendship/remove-friend?userId1={LoggedInUserId}&userId2={PostLine.Creator.UserId}");
+            ShowNotificationMessage("Friendship removed successfully!", "success");
+        }
+        catch (ApplicationException ex)
+        {
+            ShowNotificationMessage($"Error removing friend.", "danger");
+        }
+        catch (Exception ex)
+        {
+            ShowNotificationMessage($"Unexpected error: {ex.Message}", "danger");
+        }
+        ShowHover = false;
+    }
+
+
+    private void ShowNotificationMessage(string message, string type)
+    {
+        NotificationMessage = message;
+        NotificationType = type;
+        ShowNotification = true;
+        StateHasChanged();
+
+        _ = Task.Delay(500).ContinueWith(_ =>
+        {
+            ShowNotification = false;
+            StateHasChanged();
+        });
+    }
+    
     private void EditPost()
     {
         _menuVisible = false;

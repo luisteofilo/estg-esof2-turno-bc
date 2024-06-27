@@ -14,10 +14,32 @@ builder.Services.AddScoped<WineService>();
 builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
+
 builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<FriendshipService>();
+builder.Services.AddScoped<FriendRequestService>();
+builder.Services.AddScoped<CommentService>();
+builder.Services.AddScoped<LikeService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 
+builder.Services.AddScoped<TasteEvaluationService>();
+builder.Services.AddScoped<TasteEvaluationQuestionService>();
+builder.Services.AddScoped<TasteQuestionService>();
+builder.Services.AddScoped<TasteQuestionTypeService>();
+
+builder.Services.AddScoped<InteractionService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddDbContext<ApplicationDbContext>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("http://localhost:5297")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -29,9 +51,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowSpecificOrigin");
+app.UseAuthorization();
 app.MapControllers();
-app.Run();
 
+app.Run();
 /*var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -59,43 +83,6 @@ app.MapGet("/users/emails", () =>
     })
     .WithName("GetUsersNames")
     .WithOpenApi();
-
-app.MapGet("/feed/getposts", () =>
-    {
-        var db = new ApplicationDbContext();
-        var postsList = new PostsList()
-        {
-            Lines = db.Posts.Select(p => new PostsListLine()
-            {
-                CreatorId = p.CreatorId,
-                Text = p.Text ?? ""
-            }).ToList()
-        };
-        foreach (var p in postsList.Lines)
-        {
-            var user = db.Users.Find(p.CreatorId);
-            p.Creator = new PostsUser()
-            {
-                email = user.Email
-            };
-        }
-        return postsList;
-    })
-    .WithName("GetAllPosts")
-    .WithOpenApi();
-
-app.MapGet("/deleteaccess/allpostshares", () =>
-    {
-        var db = new ApplicationDbContext();
-        Guid postId = new Guid();
-        Post post = db.Posts.Find(postId);
-        Guid userId = post.CreatorId;
-        return db.PostUserShare.Where(p => p.SharedPostId == postId && p.UserSentId == userId);
-    })
-    .WithName("GetAllSharesOfPostFromCreator")
-    .WithOpenApi();
-
-app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {

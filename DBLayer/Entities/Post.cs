@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.Extensions.Logging;
 
 namespace ESOF.WebApp.DBLayer.Entities;
 
@@ -40,4 +39,11 @@ public class Post
     public List<User> ViewUsers { get; set; }
     [NotMapped]
     public List<Tuple<User, User>> ShareUsers { get; set; }
+    
+    
+    // for the likes and comments
+    public ICollection<Like> Likes { get; set; } 
+    public ICollection<Comment> Comments { get; set; } 
+
+    
 }
