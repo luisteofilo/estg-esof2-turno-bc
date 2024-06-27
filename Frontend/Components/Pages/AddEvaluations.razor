@@ -87,7 +87,7 @@ else
             var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
             Console.WriteLine($"Content-Type being sent: {content.Headers.ContentType}");
 
-            var response = await ApiHelper.PostToApiAsync("api/Evaluation/bulk-store", content);
+            var response = await ApiHelper.PostToApiAsync3("api/Evaluation/bulk-store", content);
             if (response.IsSuccessStatusCode)
             {
                 Console.WriteLine("Evaluations added successfully!");

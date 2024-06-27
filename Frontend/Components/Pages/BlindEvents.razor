@@ -3,12 +3,16 @@
 @using ESOF.WebApp.WebAPI.DtoClasses
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
 
 <PageTitle>Blind Events</PageTitle>
 
 <h1>Blind Events</h1>
 
 <p>This component demonstrates showing data from the API.</p>
+
+<button class="btn btn-primary" @onclick="NavigateToAddBlindEvent">Add Blind Event</button>
 
 @if (_blindEvents == null)
 {
@@ -71,5 +75,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         _blindEvents = await ApiHelper.GetFromApiAsync<List<ResponseBlindEventDto>>("api/BlindEvent/index");
+    }
+    
+    private void NavigateToAddBlindEvent()
+    {
+        Navigation.NavigateTo("/AddBlindEvent");
     }
 }

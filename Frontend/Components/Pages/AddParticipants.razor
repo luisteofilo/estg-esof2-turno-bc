@@ -62,7 +62,7 @@ else
             var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
             Console.WriteLine($"Content-Type being sent: {content.Headers.ContentType}");
 
-            var response = await ApiHelper.PostToApiAsync("api/Participant/store", content);
+            var response = await ApiHelper.PostToApiAsync3("api/Participant/store", content);
             if (response.IsSuccessStatusCode)
             {
                 Console.WriteLine("Participant added successfully!");

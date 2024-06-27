@@ -23,7 +23,7 @@ namespace Frontend.Helpers
             }
         }
 
-        public async Task<HttpResponseMessage> PostToApiAsync(string url, HttpContent content)
+        public async Task<HttpResponseMessage> PostToApiAsync3(string url, HttpContent content)
         {
             try
             {
