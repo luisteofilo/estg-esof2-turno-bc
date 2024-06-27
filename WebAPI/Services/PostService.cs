@@ -115,8 +115,41 @@ public class PostService
                     UserId = c.User.UserId,
                     Email = c.User.Email
                 }
-            }).ToList()
+            }).ToList(),
+            PostWineId = post.PostWineId,
+            PostEventId = post.PostEventId
         };
+
+        if (postDto.PostWineId is not null)
+        {
+            var wine = _context.Wines.Find(postDto.PostWineId);
+            postDto.Wine = new ResponseWineDto()
+            {
+                BrandId = wine.BrandId,
+                Label = wine.label,
+                Category = wine.category,
+                Year = wine.Year,
+                LabelDesignation = wine.LabelDesignation
+            };
+            var brand = _context.Brands.Find(postDto.Wine.BrandId);
+            postDto.Wine.Brand = new ResponseBrandDto()
+            {
+                BrandId = brand.BrandId,
+                Name = brand.Name,
+                Description = brand.Description
+            };
+        }
+
+        if (postDto.PostEventId is not null)
+        {
+            var evento = _context.Events.Find(postDto.PostEventId);
+            postDto.Event = new ResponseEventDto()
+            {
+                EventId = evento.EventId,
+                Name = evento.Name,
+                Slug = evento.Slug
+            };
+        }
 
         return postDto;
     }
@@ -148,8 +181,8 @@ public class PostService
                 }
             }
 
-            post.PostWineId = createFeedPostDto.WineId;
-            post.PostEventId = createFeedPostDto.EventId;
+            post.PostWineId = createFeedPostDto.PostWineId;
+            post.PostEventId = createFeedPostDto.PostEventId;
             
             _context.Posts.Add(post);
             

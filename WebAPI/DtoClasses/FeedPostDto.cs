@@ -34,9 +34,9 @@ public class FeedPostDto
     public int CommentCount { get; set; } 
     public IEnumerable<FeedPostCommentDto>? Comments { get; set; }
     
-    public Guid? WineId { get; set; }
+    public Guid? PostWineId { get; set; }
     public ResponseWineDto? Wine { get; set; }
     
-    public Guid? EventId { get; set; }
+    public Guid? PostEventId { get; set; }
     public ResponseEventDto? Event { get; set; }
 }

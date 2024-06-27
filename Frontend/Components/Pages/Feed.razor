@@ -6,10 +6,28 @@
 @inject ApiHelper ApiHelper
 <h3>Feed</h3>
 <div>
-    <div class="feed-create-post">
-        <span>Create new post: </span>
-        <input @bind="_newPost.Text" placeholder="What's on your mind?"/>
-        <button @onclick="CreatePost">Create Post</button>
+    <div class="feed-create-post" data-bs-toggle="modal" data-bs-target="#createPostModal">
+        <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
+        <button class="btn-default create-post-btn" >
+            What's on your mind?
+        </button>
+    </div>
+    <div class="modal" id="createPostModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        Criar 
+                    </div>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
     <hr/>
 </div>
