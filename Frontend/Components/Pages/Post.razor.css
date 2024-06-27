@@ -138,6 +138,9 @@
 .menu-button:hover {
     background-color: #d8dbe0;
 }
+.share-button:hover {
+    background-color: #d8dbe0;
+}
 
 .menu-content {
     padding: 1px 1px;
