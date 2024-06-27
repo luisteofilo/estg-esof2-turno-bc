@@ -4,19 +4,19 @@
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
-<h3>Feed</h3>
-<div>
-    <div class="feed-create-post">
-        <span>Create new post: </span>
-        <input @bind="_newPost.Text" placeholder="What's on your mind?"/>
-        <button @onclick="CreatePost">Create Post</button>
+<h3 class="my-3">Feed</h3>
+<div class="container">
+    <div class="feed-create-post mb-3">
+        <span class="me-2">Create new post: </span>
+        <input class="form-control d-inline-block w-50 me-2" @bind="_newPost.Text" placeholder="What's on your mind?"/>
+        <button class="btn btn-primary" @onclick="CreatePost">Create Post</button>
     </div>
     <hr/>
 </div>
 <div>
     @if (_feedPosts.Posts == null || _feedPosts.Posts.Count == 0)
     {
-        <h4>No posts available</h4>
+        <h4 class="my-4">No posts available</h4>
     }
     else
     {
