@@ -23,12 +23,24 @@ public class PostService
     {
         try
         {
-            var posts = await _context.Posts.Select(p => MapToPostDto(p)).ToListAsync();
+            var posts = await _context.Posts.Select(p => new FeedPostDto()
+            {
+                PostId = p.PostId,
+                Text = p.Text,
+                CreatorId = p.CreatorId,
+                DateTimePost = p.DateTimePost,
+                VisibilityType = p.VisibilityType,
+                WineId = p.WineId,
+                EventId = p.EventId
+            }).ToListAsync();
+            
 
             foreach (var p in posts)
             {
-                Task getHashtags = GetHashtagDtosOfPost(p.PostId);
-                Task getMedia = GetMediaDtosOfPost(p.PostId);
+                // var tasks = new List<Task>();
+                // Task<List<FeedPostHashtagDto>> getHashtags = GetHashtagDtosOfPost(p.PostId);
+                // tasks.Add(getHashtags);
+                // Task<List<FeedPostMediaDto>> getMedia = GetMediaDtosOfPost(p.PostId);
                 
                 var creator = await _context.Users.FindAsync(p.CreatorId);
                 p.Creator = new FeedPostUserDto()
@@ -45,7 +57,7 @@ public class PostService
                     else
                         p.EventId = null;
                 }
-
+            
                 if (p.WineId is not null)
                 {
                     var postWine = await _context.Wines.FindAsync(p.WineId);
@@ -54,8 +66,11 @@ public class PostService
                     else
                         p.WineId = null;
                 }
-
-                Task.WaitAll(getHashtags, getMedia);
+            
+                // await Task.WhenAll(tasks);
+                
+                // p.Hashtags = getHashtags.Result;
+                // p.Media = new List<FeedPostMediaDto>();
             }
             
             return posts;
@@ -71,7 +86,7 @@ public class PostService
         var hashtags = await _context.Hashtags
             .Where(h => h.Posts.Any(hp => hp.PostId == postId))
             .ToListAsync();
-                
+        
         var hashtagDtos = new List<FeedPostHashtagDto>();
                 
         foreach (var h in hashtags)
@@ -81,8 +96,8 @@ public class PostService
 
         return hashtagDtos;
     }
-    
-    public FeedPostHashtagDto MapToPostHashtagDto(Hashtag h)
+
+    private FeedPostHashtagDto MapToPostHashtagDto(Hashtag h)
     {
         return new FeedPostHashtagDto()
         {
@@ -146,14 +161,13 @@ public class PostService
     {
         return new ResponseWineDto()
         {
+            WineId = w.WineId,
             BrandId = w.BrandId,
             Brand = MapToBrandDto(_context.Brands.Find(w.BrandId)),
+            Label = w.label,
             Year = w.Year,
             Category = w.category,
-            LabelDesignation = w.LabelDesignation,
-            Alcohol = w.Alcohol,
-            MinimumPrice = w.MinimumPrice,
-            MaximumPrice = w.MaximumPrice
+            LabelDesignation = w.LabelDesignation
         };
     }
 
@@ -207,7 +221,7 @@ public class PostService
             });
         }
         
-        postDto.Media = mediaDto;
+        // postDto.Media = mediaDto;
 
         var hashtags = await _context.Hashtags
             .Where(h =>
@@ -227,7 +241,7 @@ public class PostService
             });
         }
 
-        postDto.Hashtags = hashtagsDto;
+        // postDto.Hashtags = hashtagsDto;
         
         return postDto;
     }
@@ -243,7 +257,6 @@ public class PostService
                 DateTimePost = DateTimeOffset.UtcNow,
                 VisibilityType = createFeedPostDto.VisibilityType
             };
-            _context.Posts.Add(post);
             
             if (createFeedPostDto.Media is not null)
             {
@@ -259,6 +272,11 @@ public class PostService
                     _context.PostMedia.Add(media);
                 }
             }
+
+            post.WineId = createFeedPostDto.WineId;
+            post.EventId = createFeedPostDto.EventId;
+            
+            _context.Posts.Add(post);
             
             await _context.SaveChangesAsync();
 

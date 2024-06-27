@@ -66,7 +66,6 @@
         try
         {
             _feedPosts.Posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>("api/Post/index");
-            PostLine = _feedPosts.Posts[0];
             SetVisibilityTypePic();
         }
         catch (ApplicationException ex)
