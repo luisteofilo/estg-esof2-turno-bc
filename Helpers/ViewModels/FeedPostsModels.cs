@@ -31,6 +31,12 @@ public class FeedPost
     public int LikeCount { get; set; }  
     public bool IsLiked { get; set; } 
     
+    
+    public Guid PostWineId { get; set; }
+    public FeedPostWine Wine { get; set; }
+    
+    public Guid PostEventId { get; set; }
+    public FeedPostEvent Event { get; set; }
 }
 
 public enum FeedPostVisibilityType

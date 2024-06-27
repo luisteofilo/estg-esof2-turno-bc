@@ -148,8 +148,8 @@ public class PostService
                 }
             }
 
-            post.WineId = createFeedPostDto.WineId;
-            post.EventId = createFeedPostDto.EventId;
+            post.PostWineId = createFeedPostDto.WineId;
+            post.PostEventId = createFeedPostDto.EventId;
             
             _context.Posts.Add(post);
             
