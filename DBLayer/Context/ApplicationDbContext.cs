@@ -27,28 +27,27 @@ public partial class ApplicationDbContext : DbContext
         optionsBuilder.UseNpgsql(connectionString);
         return optionsBuilder.Options;
     })();
-    
+
     public ApplicationDbContext()
         : base(DefaultOptions)
     {
     }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
-    
+    // public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    //     : base(options)
+    // {
+    // }
+
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
+    public DbSet<ScrapedWine> ScrapedWines { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,6 +57,7 @@ public partial class ApplicationDbContext : DbContext
         BuildPermissions(modelBuilder);
         BuildRolePermissions(modelBuilder);
         BuildUserRoles(modelBuilder);
+        BuildScrapedWines(modelBuilder);
         base.OnModelCreating(modelBuilder);
     }
 }
