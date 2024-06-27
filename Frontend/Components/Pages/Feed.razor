@@ -7,14 +7,14 @@
 <h3>Feed</h3>
 <div>
     <div class=feed-create-post>
-        @* <button id="createPostButton" class="btn btn-primary" data-bs-toggle="display">Criar uma publicação</button> *@
-        @* <div id="createPostModal" class="modal"> *@
-        @*     <div class="modal-content"> *@
-        @*         <span class="close">&times;</span> *@
-        @*         <InputText @bind-Value="_newPost.Text"/> *@
-        @*         <p>baixo</p> *@
-        @*     </div> *@
-        @* </div> *@
+        <button id="createPostButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">Criar uma publicação</button>
+        <div id="createPostModal" class="modal">
+            <div class="modal-content">
+                <button id="closeModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">&times;</button>
+                <InputText @bind-Value="_newPost.Text"/>
+                <p>baixo</p>
+            </div>
+        </div>
     </div>
     <hr/>
 </div>

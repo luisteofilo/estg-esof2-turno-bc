@@ -27,6 +27,7 @@ public class FeedPost
     public IEnumerable<FeedPostUser>? ViewUsers { get; set; }
     
     public IEnumerable<Tuple<FeedPostUser, FeedPostUser>>? ShareUsers { get; set; }
+    
 }
 
 public enum FeedPostVisibilityType
@@ -90,6 +91,37 @@ public class FeedPostUser
     public string email { get; set; }
     /*public ICollection<UserRole> UserRoles { get; set; }*/
 }
+
+
+[TypeConverter(typeof(FeedPostWineConverter))]
+public class FeedPostWine
+{
+    public Guid WineId { get; set; }
+    public Guid BrandId { get; set; }
+    public FeedPostWineBrand Brand { get; set; }
+    public string? label { get; set; }
+    public int? Year { get; set; }
+    public string? category { get; set; }
+    public string? LabelDesignation { get; set; }
+}
+
+[TypeConverter(typeof(FeedPostWineBrandConverter))]
+public class FeedPostWineBrand
+{
+    public Guid BrandId { get; set; }
+    public string Name { get; set; }
+    public string? Description { get; set; }
+}
+
+
+[TypeConverter(typeof(FeedPostEventConverter))]
+public class FeedPostEvent
+{
+    public Guid EventId { get; set; }
+    public string Name { get; set; }
+    public string? Slug { get; set; }
+}
+
 
 public class FeedPostFollow
 {

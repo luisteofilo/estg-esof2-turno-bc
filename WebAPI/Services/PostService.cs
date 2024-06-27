@@ -29,46 +29,49 @@ public class PostService
                 Text = p.Text,
                 CreatorId = p.CreatorId,
                 DateTimePost = p.DateTimePost,
-                VisibilityType = p.VisibilityType
+                VisibilityType = p.VisibilityType,
+                WineId = p.WineId,
+                EventId = p.EventId
             }).ToListAsync();
+            
 
-            // foreach (var p in posts)
-            // {
-            //     var tasks = new List<Task>();
-            //     Task<List<FeedPostHashtagDto>> getHashtags = GetHashtagDtosOfPost(p.PostId);
-            //     tasks.Add(getHashtags);
-            //     // Task<List<FeedPostMediaDto>> getMedia = GetMediaDtosOfPost(p.PostId);
-            //     
-            //     var creator = await _context.Users.FindAsync(p.CreatorId);
-            //     p.Creator = new FeedPostUserDto()
-            //     {
-            //         UserId = creator.UserId,
-            //         Email = creator.Email
-            //     };
-            //     
-            //     if (p.EventId is not null)
-            //     {
-            //         var postEvent = await _context.Events.FindAsync(p.EventId);
-            //         if (postEvent is not null)
-            //             p.Event = MapToEventDto(postEvent);
-            //         else
-            //             p.EventId = null;
-            //     }
-            //
-            //     if (p.WineId is not null)
-            //     {
-            //         var postWine = await _context.Wines.FindAsync(p.WineId);
-            //         if (postWine is not null)
-            //             p.Wine = MapToWineDto(postWine);
-            //         else
-            //             p.WineId = null;
-            //     }
-            //
-            //     await Task.WhenAll(tasks);
-            //     
-            //     // p.Hashtags = getHashtags.Result;
-            //     // p.Media = new List<FeedPostMediaDto>();
-            // }
+            foreach (var p in posts)
+            {
+                // var tasks = new List<Task>();
+                // Task<List<FeedPostHashtagDto>> getHashtags = GetHashtagDtosOfPost(p.PostId);
+                // tasks.Add(getHashtags);
+                // Task<List<FeedPostMediaDto>> getMedia = GetMediaDtosOfPost(p.PostId);
+                
+                var creator = await _context.Users.FindAsync(p.CreatorId);
+                p.Creator = new FeedPostUserDto()
+                {
+                    UserId = creator.UserId,
+                    Email = creator.Email
+                };
+                
+                if (p.EventId is not null)
+                {
+                    var postEvent = await _context.Events.FindAsync(p.EventId);
+                    if (postEvent is not null)
+                        p.Event = MapToEventDto(postEvent);
+                    else
+                        p.EventId = null;
+                }
+            
+                if (p.WineId is not null)
+                {
+                    var postWine = await _context.Wines.FindAsync(p.WineId);
+                    if (postWine is not null)
+                        p.Wine = MapToWineDto(postWine);
+                    else
+                        p.WineId = null;
+                }
+            
+                // await Task.WhenAll(tasks);
+                
+                // p.Hashtags = getHashtags.Result;
+                // p.Media = new List<FeedPostMediaDto>();
+            }
             
             return posts;
         }
@@ -158,14 +161,13 @@ public class PostService
     {
         return new ResponseWineDto()
         {
+            WineId = w.WineId,
             BrandId = w.BrandId,
             Brand = MapToBrandDto(_context.Brands.Find(w.BrandId)),
+            Label = w.label,
             Year = w.Year,
             Category = w.category,
-            LabelDesignation = w.LabelDesignation,
-            Alcohol = w.Alcohol,
-            MinimumPrice = w.MinimumPrice,
-            MaximumPrice = w.MaximumPrice
+            LabelDesignation = w.LabelDesignation
         };
     }
 
@@ -255,7 +257,6 @@ public class PostService
                 DateTimePost = DateTimeOffset.UtcNow,
                 VisibilityType = createFeedPostDto.VisibilityType
             };
-            _context.Posts.Add(post);
             
             if (createFeedPostDto.Media is not null)
             {
@@ -271,6 +272,11 @@ public class PostService
                     _context.PostMedia.Add(media);
                 }
             }
+
+            post.WineId = createFeedPostDto.WineId;
+            post.EventId = createFeedPostDto.EventId;
+            
+            _context.Posts.Add(post);
             
             await _context.SaveChangesAsync();
 
