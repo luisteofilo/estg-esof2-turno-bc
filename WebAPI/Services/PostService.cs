@@ -32,42 +32,43 @@ public class PostService
                 VisibilityType = p.VisibilityType
             }).ToListAsync();
 
-            foreach (var p in posts)
-            {
-                var tasks = new List<Task>();
-                Task<List<FeedPostHashtagDto>> getHashtags = GetHashtagDtosOfPost(p.PostId);
-                tasks.Add(getHashtags);
-                // Task<List<FeedPostMediaDto>> getMedia = GetMediaDtosOfPost(p.PostId);
-                
-                var creator = await _context.Users.FindAsync(p.CreatorId);
-                p.Creator = new FeedPostUserDto()
-                {
-                    UserId = creator.UserId,
-                    Email = creator.Email
-                };
-                
-                if (p.EventId is not null)
-                {
-                    var postEvent = await _context.Events.FindAsync(p.EventId);
-                    if (postEvent is not null)
-                        p.Event = MapToEventDto(postEvent);
-                    else
-                        p.EventId = null;
-                }
-            
-                if (p.WineId is not null)
-                {
-                    var postWine = await _context.Wines.FindAsync(p.WineId);
-                    if (postWine is not null)
-                        p.Wine = MapToWineDto(postWine);
-                    else
-                        p.WineId = null;
-                }
-            
-                await Task.WhenAll(tasks);
-                
-                p.Hashtags = getHashtags.Result;
-            }
+            // foreach (var p in posts)
+            // {
+            //     var tasks = new List<Task>();
+            //     Task<List<FeedPostHashtagDto>> getHashtags = GetHashtagDtosOfPost(p.PostId);
+            //     tasks.Add(getHashtags);
+            //     // Task<List<FeedPostMediaDto>> getMedia = GetMediaDtosOfPost(p.PostId);
+            //     
+            //     var creator = await _context.Users.FindAsync(p.CreatorId);
+            //     p.Creator = new FeedPostUserDto()
+            //     {
+            //         UserId = creator.UserId,
+            //         Email = creator.Email
+            //     };
+            //     
+            //     if (p.EventId is not null)
+            //     {
+            //         var postEvent = await _context.Events.FindAsync(p.EventId);
+            //         if (postEvent is not null)
+            //             p.Event = MapToEventDto(postEvent);
+            //         else
+            //             p.EventId = null;
+            //     }
+            //
+            //     if (p.WineId is not null)
+            //     {
+            //         var postWine = await _context.Wines.FindAsync(p.WineId);
+            //         if (postWine is not null)
+            //             p.Wine = MapToWineDto(postWine);
+            //         else
+            //             p.WineId = null;
+            //     }
+            //
+            //     await Task.WhenAll(tasks);
+            //     
+            //     // p.Hashtags = getHashtags.Result;
+            //     // p.Media = new List<FeedPostMediaDto>();
+            // }
             
             return posts;
         }
@@ -92,8 +93,8 @@ public class PostService
 
         return hashtagDtos;
     }
-    
-    public FeedPostHashtagDto MapToPostHashtagDto(Hashtag h)
+
+    private FeedPostHashtagDto MapToPostHashtagDto(Hashtag h)
     {
         return new FeedPostHashtagDto()
         {
@@ -218,7 +219,7 @@ public class PostService
             });
         }
         
-        postDto.Media = mediaDto;
+        // postDto.Media = mediaDto;
 
         var hashtags = await _context.Hashtags
             .Where(h =>
@@ -238,7 +239,7 @@ public class PostService
             });
         }
 
-        postDto.Hashtags = hashtagsDto;
+        // postDto.Hashtags = hashtagsDto;
         
         return postDto;
     }

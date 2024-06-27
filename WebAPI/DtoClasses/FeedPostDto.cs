@@ -13,9 +13,9 @@ public class FeedPostDto
     
     public DateTimeOffset? DateTimePost { get; set; }
     
-    public IEnumerable<FeedPostMediaDto>? Media { get; set; }
-    
-    public IEnumerable<FeedPostHashtagDto>? Hashtags { get; set; }
+    // public IEnumerable<FeedPostMediaDto>? Media { get; set; }
+    //
+    // public IEnumerable<FeedPostHashtagDto>? Hashtags { get; set; }
     
     public PostVisibilityType? VisibilityType { get; set; }
     

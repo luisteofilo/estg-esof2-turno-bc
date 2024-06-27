@@ -14,19 +14,19 @@ public class FeedPost
     
     public DateTimeOffset DateTimePost { get; set; }
     
-    public IEnumerable<FeedPostMedia> Media { get; set; }
+    public IEnumerable<FeedPostMedia>? Media { get; set; }
     
-    public IEnumerable<FeedPostHashtag> Hashtags { get; set; }
+    public IEnumerable<FeedPostHashtag>? Hashtags { get; set; }
     
     public FeedPostVisibilityType VisibilityType { get; set; }
     
-    public IEnumerable<FeedPostUser> FavoriteUsers { get; set; }
+    public IEnumerable<FeedPostUser>? FavoriteUsers { get; set; }
     
-    public IEnumerable<FeedPostUser> HiddenUsers { get; set; }
+    public IEnumerable<FeedPostUser>? HiddenUsers { get; set; }
     
-    public IEnumerable<FeedPostUser> ViewUsers { get; set; }
+    public IEnumerable<FeedPostUser>? ViewUsers { get; set; }
     
-    public IEnumerable<Tuple<FeedPostUser, FeedPostUser>> ShareUsers { get; set; }
+    public IEnumerable<Tuple<FeedPostUser, FeedPostUser>>? ShareUsers { get; set; }
 }
 
 public enum FeedPostVisibilityType
@@ -34,6 +34,9 @@ public enum FeedPostVisibilityType
     Public,
     Followers
 }
+
+
+[TypeConverter(typeof(FeedPostHashtagConverter))]
 public class FeedPostHashtag
 {
     public Guid HashtagId { get; set; }
@@ -51,6 +54,7 @@ public class FeedPostList
 }
 
 
+[TypeConverter(typeof(FeedPostMediaConverter))]
 public class FeedPostMedia
 {
     public Guid MediaId { get; set; }
@@ -64,6 +68,8 @@ public class FeedPostMedia
     public byte[] Data { get; set; }
 }
 
+
+[TypeConverter(typeof(FeedPostUserConverter))]
 public class FeedPostUser
 {
     public List<FeedPost>? CreatedPosts { get; set; }
@@ -82,10 +88,6 @@ public class FeedPostUser
     public Guid UserId { get; set; }
     
     public string email { get; set; }
-    
-    public byte[]? PasswordHash { get; set; }
-    
-    public byte[]? PasswordSalt { get; set; }
     /*public ICollection<UserRole> UserRoles { get; set; }*/
 }
 
