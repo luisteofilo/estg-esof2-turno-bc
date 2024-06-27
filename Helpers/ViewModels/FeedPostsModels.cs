@@ -33,10 +33,10 @@ public class FeedPost
     
     
     public Guid? PostWineId { get; set; }
-    public FeedPostWine Wine { get; set; }
+    public FeedPostWine? Wine { get; set; }
     
     public Guid? PostEventId { get; set; }
-    public FeedPostEvent Event { get; set; }
+    public FeedPostEvent? Event { get; set; }
 }
 
 public enum FeedPostVisibilityType

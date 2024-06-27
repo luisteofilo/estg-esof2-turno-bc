@@ -16,6 +16,6 @@ public class CreateFeedPostDto
     
     public PostVisibilityType VisibilityType { get; set; }
     
-    public Guid? EventId { get; set; }
-    public Guid? WineId { get; set; }
+    public Guid? PostEventId { get; set; }
+    public Guid? PostWineId { get; set; }
 }
