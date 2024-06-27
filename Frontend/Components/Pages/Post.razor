@@ -6,22 +6,43 @@
 @inject ApiHelper ApiHelper
 
 <div class="post">
-    <div class="post-header">
-        <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
-        <div class="post-info">
-            <div class="post-author">@PostLine.Creator.email</div>
-            <div class="post-meta">@PostLine.DateTimePost.ToString("dd/MM/yyyy HH:mm") · @((MarkupString)_visibilityTypePic) @PostLine.VisibilityType</div>
+<div class="post-header">
+    <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
+    <div class="post-info">
+        <div class="post-author">@PostLine.Creator.email</div>
+        <div class="post-meta">@PostLine.DateTimePost.ToString("dd/MM/yyyy HH:mm") · @((MarkupString)_visibilityTypePic) @PostLine.VisibilityType</div>
+    </div>
+    <div class="post-menu" @onfocusout="@(() => _menuVisible = false)">
+        <button class="menu-button" @onclick="ToggleMenu">
+            ⋯
+        </button>
+        <div class="menu-content @(_menuVisible ? "show" : "")">
+            <button class="menu-button1" @onclick="EditPost">🗑️ Eliminar Publicação</button>
+            <button class="menu-button1" @onclick="RemovePost">📝 Editar Publicação</button>
+            <button class="menu-button1" @onclick="AddToFavorites">⭐ Adicionar aos Favoritos</button>
+            <button class="menu-button1" @onclick="HidePost">🫣 Ocultar</button>
         </div>
-        <div class="post-menu">
-            <button class="menu-button">
-                ⋯
-            </button>
-        </div>
+    </div>
+</div>
+    <div class="post-event">
+        📢
+    </div>
+    <div class="post-wine">
+        🍷
     </div>
     <div class="post-content">
         @PostLine.Text
     </div>
+    <div class="post-images">
+        img
+    </div>
+    <div class="post-hashtag"><strong>#</strong></div>
+    <div class="post-share">
+        <button class="share-button" @onclick="SharePost">↪ Partilhar</button>
+    </div>
 </div>
+    
+    
 
 
 @code{
@@ -31,8 +52,14 @@
         Creator = new FeedPostUser()
     };
     private FeedPostList _feedPosts = new FeedPostList();
+    private bool _menuVisible = false;
     
     private string _visibilityTypePic = "";
+    
+    private void ToggleMenu()
+    {
+        _menuVisible = !_menuVisible;
+    }
     
     protected override async Task OnInitializedAsync()
     {
@@ -56,7 +83,7 @@
     {
         if (PostLine.VisibilityType == FeedPostVisibilityType.Public)
         {
-            _visibilityTypePic = "🌍"; 
+            _visibilityTypePic = "<span>🌍</span>"; 
         }
         else if (PostLine.VisibilityType == FeedPostVisibilityType.Followers)
         {
@@ -66,9 +93,30 @@
         }
         else
         {
-            _visibilityTypePic = ""; 
+            _visibilityTypePic = "<span></span>"; 
         }
     }
-    
+    private void EditPost()
+    {
+        _menuVisible = false;
+    }
 
+    private void RemovePost()
+    {
+        _menuVisible = false;
+    }
+
+    private void AddToFavorites()
+    {
+        _menuVisible = false;
+    }
+
+    private void HidePost()
+    {
+        _menuVisible = false;
+    }
+    private void SharePost()
+    {
+        _menuVisible = false;
+    }
 }

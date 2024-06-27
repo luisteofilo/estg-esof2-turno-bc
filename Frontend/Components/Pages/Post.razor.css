@@ -31,7 +31,11 @@
 .post-meta {
     margin-top:0.5mm;
     font-size: 0.85em;
-    color: #777;
+    color: #6f6f6f;
+}
+.post-share{
+    display: flex;
+    justify-content: flex-end;
 }
 
 .post-menu {
@@ -43,7 +47,61 @@
     color: black;
     border-radius: 10px;
     margin-top: 0.8px;
-    border: 1px solid black;
+    border: none;
     font-size: 1.5em;
     cursor: pointer;
+    transition: color 0.3s;
+}
+
+.share-button{
+    position: relative;
+    background-color: #ffffff;
+    color: black;
+    border-radius: 10px;
+    border: none;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.share-button:hover {
+    background-color: #d8dbe0;
+}
+.menu-button:hover {
+    background-color: #d8dbe0; 
+}
+
+.menu-content {
+    padding: 1px 1px;
+    border-radius: 10px;
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    min-width: 188px;
+}
+
+.menu-content.show {
+    display: block;
+}
+
+.menu-button1 {
+    font-size: 0.85em;
+    display: block;
+    border-radius: 8px;
+    width: 100%;
+    padding: 6px 10px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    color: black;
+}
+
+.menu-button1:hover {
+    background-color: #d8dbe0;
 }

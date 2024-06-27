@@ -24,10 +24,12 @@ public class Post
     [Required]
     public PostVisibilityType VisibilityType { get; set; }
     
-    public Guid? EventId { get; set; }
+    [ForeignKey("Event")]
+    public Guid? PostEventId { get; set; }
     public Event? Event { get; set; }
     
-    public Guid? WineId { get; set; }
+    [ForeignKey("Wine")]
+    public Guid? PostWineId { get; set; }
     public Wine? Wine { get; set; }
     
     [NotMapped]
