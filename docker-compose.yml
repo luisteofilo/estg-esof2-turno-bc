@@ -26,3 +26,4 @@
       - "${EXT_FRONTEND_PORT}:${FRONTEND_PORT}"
 volumes:
   local-db:
+    

@@ -1,0 +1,143 @@
+@page "/taste/viewer"
+@using Frontend.DtoClasses
+@using Frontend.Helpers
+@using Frontend.Services
+@attribute [StreamRendering]
+@inject Frontend.Services.TasteQuestionService TasteQuestionService
+@inject Frontend.Services.TasteQuestionTypeService TasteQuestionTypeService
+@inject Frontend.Services.EventService EventService
+@inject ApiHelper ApiHelper
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Wine Tasting</PageTitle>
+
+<nav aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/taste">Wine Tasting</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a>Form viewer</a>
+        </li>
+    </ol>
+</nav>
+
+<h3>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-check"><path d="M8 3H2v15h7c1.7 0 3 1.3 3 3V7c0-2.2-1.8-4-4-4Z"/><path d="m16 12 2 2 4-4"/><path d="M22 6V3h-6c-2.2 0-4 1.8-4 4v14c0-1.7 1.3-3 3-3h7v-2.3"/></svg>
+    <span>Form Viewer</span>
+</h3>
+<p>Here see how a form will look like on a specific event.</p>
+
+<hr class="hr" />
+
+<div class="d-flex flex-row align-items-center gap-3">
+    <p class="pt-3">Which event do you want to view the form?</p>
+    <form>
+        <select class="form-select" @bind="_event"> 
+            <option value="@Guid.Empty" selected>-- Choose an event --</option>
+            @if(_events != null)
+            {
+                @foreach (var _event in _events)
+                {
+                    <option value="@_event.EventId">@_event.Name</option>
+                }
+            }
+            else
+            {
+                <option disabled>Loading...</option>
+            }
+        </select>
+    </form>
+</div>
+
+@if (_event != Guid.Empty)
+{
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 class="card-title pt-2">
+                @foreach (var _event in _events)
+                {
+                    if (_event.EventId == this._event)
+                    {
+                        _eventName = _event.Name;
+                    }
+                }
+                
+                Form of the event: @_eventName
+            </h5>
+        </div>
+        <div class="card-body">
+            <form>
+                @{
+                    _tasteQuestions = GetQuestionsByEvent().Result;
+                }
+                
+                @if (_tasteQuestions != null)
+                {
+                    @foreach (var question in _tasteQuestions)
+                    {
+                        
+                        <div class="mb-3">
+                            <label for="@question.Question" class="form-label">@question.Question</label>
+                            <input type="@TasteQuestionTypeService.GetType(@question.TasteQuestionTypeId)" class="form-@(TasteQuestionTypeService.GetType(@question.TasteQuestionTypeId) == "checkbox" ? "checkbox" : "control")" id="@question.TasteQuestionId" placeholder="Enter your answer here" />
+                        </div>
+                    }
+                    
+                    @if (_tasteQuestions.Count > 0)
+                    {
+                        <button type="button" class="btn btn-primary">Simulate submit</button>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">This event has no questions!</div>
+                    }
+                }
+                else
+                {
+                    <p>Loading...</p>
+                }
+            </form>
+        </div>
+    </div>
+}
+
+<script>
+    function setEvents(events) {
+        window.events = events;
+    }
+</script>
+
+@code {
+    private Guid _event;
+    private string _eventName;
+    private List<EventDto>? _events;
+    private List<TasteQuestionDto> _tasteQuestions;
+    
+    private Task<List<TasteQuestionDto>?> GetQuestionsByEvent()
+    {
+        if (_event != Guid.Empty)
+        {
+            return TasteQuestionService.GetQuestionsByEvent(_event);
+        }
+
+        return null;
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _events = await EventService.GetEvents();
+            await JS.InvokeAsync<string>("setEvents", _events);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error has occurred: {ex.Message} | {ex.InnerException}");
+            _events = null;
+        }
+    }
+}

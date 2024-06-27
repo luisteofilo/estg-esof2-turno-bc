@@ -1,0 +1,277 @@
+@page "/taste/evaluate"
+@using Frontend.DtoClasses
+@using Frontend.Helpers
+@using Frontend.Services
+@attribute [StreamRendering]
+@inject Frontend.Services.TasteQuestionService TasteQuestionService
+@inject Frontend.Services.TasteEvaluationQuestionService TasteEvaluationQuestionService
+@inject Frontend.Services.TasteQuestionTypeService TasteQuestionTypeService
+@inject Frontend.Services.TasteEvaluationService TasteEvaluationService
+@inject Frontend.Services.EventService EventService
+@inject Frontend.Services.WineService WineService
+@inject ApiHelper ApiHelper
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Wine Tasting</PageTitle>
+
+<nav aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/taste">Wine Tasting</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a>Evaluate a wine</a>
+        </li>
+    </ol>
+</nav>
+
+<h3>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-grape"><path d="M22 5V2l-5.89 5.89"/><circle cx="16.6" cy="15.89" r="3"/><circle cx="8.11" cy="7.4" r="3"/><circle cx="12.35" cy="11.65" r="3"/><circle cx="13.91" cy="5.85" r="3"/><circle cx="18.15" cy="10.09" r="3"/><circle cx="6.56" cy="13.2" r="3"/><circle cx="10.8" cy="17.44" r="3"/><circle cx="5" cy="19" r="3"/></svg>
+    Evaluate a wine
+</h3>
+<p>Here you can control everything related to the wine tasting evaluations.</p>
+
+<hr class="hr" />
+
+<!-- Alert -->
+<div class="alert visually-hidden" role="alert" id="tasteQuestions_alert">
+    MESSAGE_HERE
+</div>
+
+<div class="d-flex flex-row align-items-center gap-3">
+    <p class="pt-3">Which event did you went to?</p>
+    <form>
+        <select class="form-select" @bind="_event"> 
+            <option value="@Guid.Empty" selected>-- Choose an event --</option>
+            @if(_events != null)
+            {
+                @foreach (var _event in _events)
+                {
+                    <option value="@_event.EventId">@_event.Name</option>
+                }
+            }
+            else
+            {
+                <option disabled>Loading...</option>
+            }
+        </select>
+    </form>
+</div>
+
+@if (_event != Guid.Empty)
+{
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 class="card-title pt-2">
+                @foreach (var _event in _events)
+                {
+                    if (_event.EventId == this._event)
+                    {
+                        _eventName = _event.Name;
+                    }
+                }
+                
+                @_eventName - Let's evaluate the wine
+            </h5>
+        </div>
+        <div class="card-body">
+            <form>
+                
+                @{
+                    _tasteQuestions = GetQuestionsByEvent().Result;
+                }
+
+                @if (_tasteQuestions != null)
+                { 
+                    @if (_tasteQuestions.Count > 0)
+                    {
+                        <div class="mb-3">
+                            <label for="wine" class="form-label">First, which wine do you want to evaluate?</label>
+                            <select class="form-select" @bind="_wine">
+                                <option value="@Guid.Empty" selected>-- Choose a wine --</option>
+                                @if (_wines != null)
+                                {
+                                    @foreach (var wine in _wines)
+                                    {
+                                        <option value="@wine.WineId" class="text-capitalize">@wine.label (@wine.Year)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    }
+
+                    @foreach (var question in _tasteQuestions)
+                    {
+                        <hr class="hr" />
+
+                        <div class="mb-3">
+                            <label for="@question.Question" class="form-label">@question.Question</label>
+                            @if (TasteQuestionTypeService.GetType(question.TasteQuestionTypeId) == "checkbox")
+                            {
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       id="@question.TasteQuestionId"
+                                       @bind="GetOrCreateAnswer(question.TasteQuestionId).AnswerBool" />
+                            }
+                            else
+                            {
+                                <input type="@TasteQuestionTypeService.GetType(question.TasteQuestionTypeId)"
+                                       class="form-control"
+                                       id="@question.TasteQuestionId"
+                                       placeholder="Enter your answer here"
+                                       @bind="GetOrCreateAnswer(question.TasteQuestionId).Answer" />
+                            }
+
+                        </div>
+                    }
+
+                    @if (_tasteQuestions.Count > 0)
+                    {
+                        <button type="button" class="btn btn-primary" @onclick="SubmitEvaluation">Submit evaluation</button>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">This event has no questions yet!</div>
+                    }
+                }
+                else
+                {
+                    <p>Loading...</p>
+                }
+            </form>
+        </div>
+    </div>
+}
+
+<script>
+    function SendAlert(alertID, message, type) {
+        const alert = document.getElementById(alertID);
+        alert.classList.remove('visually-hidden');
+        alert.classList.add(`alert-${type}`);
+
+        if (type === 'success') {
+            message = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-check me-3"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg>' + message;
+        } else if (type === 'danger') {
+            message = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x me-3"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>' + message;
+        } else {
+            message = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert me-3"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>' + message;
+        }
+
+        alert.innerHTML = message;
+    }
+
+    function CloseAlert(alertID) {
+        const alert = document.getElementById(alertID);
+        alert.classList.add('visually-hidden');
+    }
+    
+    function setEvents(events) {
+        window.events = events;
+    }    
+    
+    function setWines(wines) {
+        window.wines = wines;
+    }
+
+</script>
+
+@code {
+    private Guid _event;
+    private Guid _wine;
+    private string _eventName;
+    private List<EventDto>? _events;
+    private List<WineDto>? _wines;
+    private List<TasteQuestionDto> _tasteQuestions;
+    private List<TasteQuestionAnswerDto> _answers = new();
+    
+    private Task<List<TasteQuestionDto>?> GetQuestionsByEvent()
+    {
+        if (_event != Guid.Empty)
+        {
+            return TasteQuestionService.GetQuestionsByEvent(_event);
+        }
+
+        return null;
+    }
+    
+    private TasteQuestionAnswerDto GetOrCreateAnswer(Guid questionId)
+    {
+        var answer = _answers.FirstOrDefault(a => a.TasteQuestionId == questionId);
+        if (answer == null)
+        {
+            answer = new TasteQuestionAnswerDto { TasteQuestionId = questionId };
+            _answers.Add(answer);
+        }
+        return answer;
+    }
+    
+    private async Task SubmitEvaluation()
+    {
+        Guid evaluationId = Guid.NewGuid();
+        
+        Console.WriteLine(TasteEvaluationService.Create(new TasteEvaluationDto()
+        {
+            TasteEvaluationId = evaluationId,
+            EventId = _event,
+            // TODO: Add the logged in user ID here
+            UserId = new Guid("7f5644d3-401b-4fe7-a431-07e15e2cd829"),
+            WineId = _wine,
+            WineScore = 0
+        }));
+
+        try
+        {
+            foreach (var answer in _answers)
+            {
+                if (!string.IsNullOrEmpty(answer.Answer))
+                {
+                    TasteEvaluationQuestionService.Create(new TasteEvaluationQuestionDto()
+                    {
+                        TasteQuestionId = answer.TasteQuestionId,
+                        Value = answer.Answer,
+                        TasteEvaluationId = evaluationId,
+                    });
+                }
+                else
+                {
+                    TasteEvaluationQuestionService.Create(new TasteEvaluationQuestionDto()
+                    {
+                        TasteQuestionId = answer.TasteQuestionId,
+                        Value = answer.AnswerBool ? "Yes" : "No",
+                        TasteEvaluationId = evaluationId,
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "An error occurred while trying to submit your taste evaluation!", "danger");
+        }
+        finally
+        {
+            await JS.InvokeAsync<string>("SendAlert", "tasteQuestions_alert", "Taste evaluation submited successfully!", "success");
+        }
+    }
+
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _events = await EventService.GetEvents();
+            _wines = await WineService.Get();
+            
+            await JS.InvokeAsync<string>("setEvents", _events);
+            await JS.InvokeAsync<string>("setWines", _wines);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error has occurred: {ex.Message} | {ex.InnerException}");
+            _events = null;
+        }
+    }
+}
