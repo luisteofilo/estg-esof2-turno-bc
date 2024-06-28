@@ -4,7 +4,7 @@
     public static class UserState
     {
         // logged in fake
-        public static Guid? LoggedInUserId = new Guid("5b50f84e-0cde-43e8-8048-8efdbff24811");
+        public static Guid? LoggedInUserId = new Guid("5ddbaa2b-0651-4fa2-bf1b-a01957074556");
         
         // Not logged in
         //public static Guid? LoggedInUserId = new Guid("00000000-0000-0000-0000-000000000000");
