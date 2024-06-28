@@ -1,6 +1,8 @@
 ﻿@page "/Feed/User/{userEmail}"
+@using ESOF.WebApp.WebAPI.Services
 @using Frontend.Helpers
 @using global::Helpers.ViewModels
+@using Microsoft.IdentityModel.Tokens
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
@@ -34,6 +36,14 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (UserEmail.IsNullOrEmpty())
+        {
+            User = await ApiHelper.GetFromApiAsync<FeedPostUser>($"api/Post/find/user/id/{UserState.LoggedInUserId.Value}");
+        }
+        else
+        {
+            User = await ApiHelper.GetFromApiAsync<FeedPostUser>($"api/Post/find/user/email/{UserEmail}");
+        }
         await LoadPosts();
     }
 
@@ -41,7 +51,7 @@
     {
         try
         {
-            var posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>($"api/Post/index/user/{UserEmail}");
+            var posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>($"api/Post/index/user/email/{UserEmail}");
             if (posts != null)
             {
                 _feedPosts.Posts = posts;

@@ -145,6 +145,15 @@
             var hashtags = _newPost.Text
                 .Split(delimiters, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Where(s => s.StartsWith('#')).ToList();
+
+            var postHashtags = new List<FeedPostHashtag>();
+            foreach (var h in hashtags)
+            {
+                _newPost.Text = _newPost.Text.Replace(h, "");
+                postHashtags.Add(new FeedPostHashtag() { Name = h });
+            }
+
+            _newPost.Hashtags = postHashtags;
             
             var createdPost = await ApiHelper.PostToApiAsync<FeedPost, FeedPost>("api/Post/create", _newPost);
             if (createdPost != null)

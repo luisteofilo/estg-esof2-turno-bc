@@ -14,6 +14,6 @@ public class FeedPostWineDto
     public DateTimeOffset UpdatedAt { get; set; }
     public Guid BrandId { get; set; }     
     public Guid RegionId { get; set; }    
-    public ResponseBrandDto Brand { get; set; }
-    public ResponseRegionDto Region { get; set; }
+    public FeedPostWineBrandDto Brand { get; set; }
+    public FeedPostWineRegionDto Region { get; set; }
 }

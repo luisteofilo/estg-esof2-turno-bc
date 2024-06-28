@@ -1,7 +1,11 @@
 ﻿using System.Xml.Linq;
 using ESOF.WebApp.WebAPI.DtoClasses;
+using Helpers.ViewModels;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using WebAPI.DtoClasses;
+using ResponseBrandDto = ESOF.WebApp.WebAPI.DtoClasses.ResponseBrandDto;
+using ResponseRegionDto = ESOF.WebApp.WebAPI.DtoClasses.ResponseRegionDto;
+using ResponseWineDto = ESOF.WebApp.WebAPI.DtoClasses.ResponseWineDto;
 
 namespace ESOF.WebApp.WebAPI.Services;
 
@@ -27,6 +31,9 @@ public class PostService
         {
             var posts = await _context.Posts
                 .Include(p => p.Creator)
+                .ThenInclude(u => u.Friendships1)
+                .Include(p => p.Creator)
+                .ThenInclude(u => u.Friendships2)
                 .Include(p => p.Likes)
                 .Include(p => p.Comments)
                 .Include(p => p.Media)
@@ -103,14 +110,14 @@ public class PostService
                         {
                             WineId = p.Wine.WineId,
                             BrandId = p.Wine.BrandId,
-                            Brand = new ResponseBrandDto()
+                            Brand = new FeedPostWineBrandDto()
                             {
                                 BrandId = p.Wine.BrandId,
                                 Name = p.Wine.Brand.Name,
                                 Description = p.Wine.Brand.Description
                             },
                             RegionId = p.Wine.RegionId,
-                            Region = new ResponseRegionDto()
+                            Region = new FeedPostWineRegionDto()
                             {
                                 RegionId = p.Wine.RegionId,
                                 Name = p.Wine.Region.Name
@@ -120,7 +127,8 @@ public class PostService
                             Category = p.Wine.category
                         }
                         : null
-                }).OrderByDescending(p => p.DateTimePost)
+                })
+                .OrderByDescending(p => p.DateTimePost)
                 .ToListAsync();
 
             return posts;
@@ -276,6 +284,13 @@ public class PostService
         }
     }
 
+    public bool CheckIfUserIsFollowing(Guid userCreator, Guid? userViewer)
+    {
+        return _context.Friendships
+            .Any(f => (f.UserId1 == userCreator && f.UserId2 == userViewer)
+                      || 
+                      (f.UserId1 == userViewer && f.UserId2 == userCreator));
+    }
     
     private FeedPostDto MapToFeedPostDto(Post p)
     {
@@ -359,14 +374,14 @@ public class PostService
                 {
                     WineId = p.Wine.WineId,
                     BrandId = p.Wine.BrandId,
-                    Brand = new ResponseBrandDto()
+                    Brand = new FeedPostWineBrandDto()
                     {
                         BrandId = p.Wine.BrandId,
                         Name = p.Wine.Brand.Name,
                         Description = p.Wine.Brand.Description
                     },
                     RegionId = p.Wine.RegionId,
-                    Region = new ResponseRegionDto()
+                    Region = new FeedPostWineRegionDto()
                     {
                         RegionId = p.Wine.RegionId,
                         Name = p.Wine.Region.Name
@@ -445,12 +460,7 @@ public class PostService
                 LabelDesignation = wine.LabelDesignation
             };
             var brand = _context.Brands.Find(postDto.Wine.BrandId);
-            postDto.Wine.Brand = new ResponseBrandDto()
-            {
-                BrandId = brand.BrandId,
-                Name = brand.Name,
-                Description = brand.Description
-            };
+            postDto.Wine.Brand = MapToWineBrandDto(brand);
         }
 
         if (postDto.PostEventId is not null)
@@ -580,6 +590,139 @@ public class PostService
                 await transaction.RollbackAsync();
                 throw ex;
             }
+        }
+    }
+
+    public async Task<ResponseEventDto> GetEventByName(string eventName)
+    {
+        try
+        {
+            var evento = await _context.Events.Where(e => e.Name == eventName).FirstOrDefaultAsync();
+            if (evento is not null)
+            {
+                return MapToEventDto(evento);
+            }
+            else
+            {
+                throw new ArgumentException("Event not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while finding the event.", ex);
+        }
+    }
+
+    public ResponseEventDto MapToEventDto(Event e)
+    {
+        return new ResponseEventDto()
+        {
+            EventId = e.EventId,
+            Name = e.Name,
+            Slug = e.Slug
+        };
+    }
+    
+    public async Task<FeedPostWineDto> GetWineByLabel(string wineLabel)
+    {
+        try
+        {
+            var wine = await _context.Wines
+                .Include(w => w.Brand)
+                .Include(w => w.Region)
+                .Where(w => w.label == wineLabel).FirstOrDefaultAsync();
+            if (wine is not null)
+            {
+                return MapToWineDto(wine);
+            }
+            else
+            {
+                throw new ArgumentException("Event not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while finding the event.", ex);
+        }
+    }
+
+    public FeedPostWineDto MapToWineDto(Wine w)
+    {
+        return new FeedPostWineDto()
+        {
+            WineId = w.WineId,
+            Label = w.label,
+            LabelDesignation = w.LabelDesignation,
+            BrandId = w.BrandId,
+            Brand = MapToWineBrandDto(w.Brand),
+            RegionId = w.RegionId,
+            Region = MapToWineRegionDto(w.Region),
+            Category = w.category,
+            Year = w.Year
+        };
+    }
+
+    public FeedPostWineBrandDto MapToWineBrandDto(Brand b)
+    {
+        return new FeedPostWineBrandDto()
+        {
+            BrandId = b.BrandId,
+            Name = b.Name,
+            Description = b.Description
+        };
+    }
+
+    public FeedPostWineRegionDto MapToWineRegionDto(Region r)
+    {
+        return new FeedPostWineRegionDto()
+        {
+            RegionId = r.RegionId,
+            Name = r.Name
+        };
+    }
+
+    public async Task<FeedPostUserDto> GetUserById(Guid id)
+    {
+        try
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user is null)
+            {
+                throw new ArgumentException("User not found");
+            }
+            return new FeedPostUserDto()
+            {
+                UserId = user.UserId,
+                Email = user.Email,
+                UserName = user.UserName
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while finding the event.", ex);
+        }
+    }
+    
+    public async Task<FeedPostUserDto> GetUserByEmail(string email)
+    {
+        try
+        {
+            var user = await _context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
+            
+            if (user is null)
+            {
+                throw new ArgumentException("User not found");
+            }
+            return new FeedPostUserDto()
+            {
+                UserId = user.UserId,
+                Email = user.Email,
+                UserName = user.UserName
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while finding the event.", ex);
         }
     }
 }
