@@ -69,7 +69,7 @@ namespace ESOF.WebApp.WebAPI.Controllers
         {
             try
             {
-                return Ok(await _postService.GetPostsByUserName(WebUtility.UrlDecode(userEmail)));
+                return Ok(await _postService.GetPostsByUserEmail(WebUtility.UrlDecode(userEmail)));
             }
             catch (Exception ex)
             {

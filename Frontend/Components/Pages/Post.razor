@@ -24,8 +24,10 @@
                     <button class="menu-button1" @onclick="RemovePost">🗑️ Delete Post</button>
                     <button class="menu-button1" @onclick="EditPost">📝 Edit Post</button>
                 }
-                <button class="menu-button1" @onclick="AddToFavorites">⭐ Add to Favorites</button>
-                <button class="menu-button1" @onclick="HidePost">🫣 Occult</button>
+                else{
+                    <button class="menu-button1" @onclick="AddToFavorites">⭐ Add to Favorites</button>
+                    <button class="menu-button1" @onclick="HidePost">🫣 Occult</button>
+                }
             </div>
         </div>
     </div>
@@ -35,20 +37,27 @@
     }
     @if (PostLine.PostWineId != null)
     {
-        <div class="post-wine">🍷@PostLine.Wine.Brand.Name · @PostLine.Wine.Brand.Description</div>
+        <div class="post-wine">🍷@PostLine.Wine.label</div>
     }
     <div class="post-content">
         @PostLine.Text
     </div>
     @if (PostLine.Media != null)
     {
-        <div class="post-images">imag</div>
+        <div>Pictures</div>
+    }
+    else
+    {
+        <div>pictures</div>
     }
     @if (PostLine.Hashtags != null)
     {
-        <div class="post-hashtag"><strong>#</strong></div>
+        @foreach (var h in PostLine.Hashtags)
+        {
+            <strong>#@h.Name </strong> 
+        }
     }
-    <div class="post-actions">
+    <div class="post-actions" style="margin-top: 10px">
         <button class="btn btn-primary" @onclick="ToggleLike">
             <i class="bi @(IsLiked ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill")"></i> @(IsLiked ? "Unlike" : "Like")
         </button>

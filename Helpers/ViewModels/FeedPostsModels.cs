@@ -29,9 +29,7 @@ public class FeedPost
     public IEnumerable<Tuple<FeedPostUser, FeedPostUser>>? ShareUsers { get; set; }
     
     public int LikeCount { get; set; }  
-    public bool IsLiked { get; set; } 
-    
-    
+    public bool IsLiked { get; set; }
     public Guid? PostWineId { get; set; }
     public FeedPostWine? Wine { get; set; }
     
