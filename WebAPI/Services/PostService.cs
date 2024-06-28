@@ -479,18 +479,20 @@ public class PostService
                 VisibilityType = createFeedPostDto.VisibilityType
             };
 
-            if (createFeedPostDto.Media is not null)
-                foreach (var m in createFeedPostDto.Media)
-                {
-                    var media = new PostMedia()
-                    {
-                        Data = m.Data,
-                        FileExtension = m.FileExtension,
-                        Filename = m.Filename,
-                        MediaPostId = post.PostId
-                    };
-                    _context.PostMedia.Add(media);
-                }
+            // if (createFeedPostDto.Media is not null)
+            // {
+            //     foreach (var m in createFeedPostDto.Media)
+            //     {
+            //         var media = new PostMedia()
+            //         {
+            //             Data = m.Data,
+            //             FileExtension = m.FileExtension,
+            //             Filename = m.Filename,
+            //             MediaPostId = post.PostId
+            //         };
+            //         _context.PostMedia.Add(media);
+            //     }
+            // }
 
             var hashtags = new List<Hashtag>();
             if (createFeedPostDto.Hashtags is not null)

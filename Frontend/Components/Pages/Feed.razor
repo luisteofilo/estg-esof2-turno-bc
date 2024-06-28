@@ -2,6 +2,7 @@
 @using ESOF.WebApp.WebAPI.DtoClasses
 @using Frontend.Helpers
 @using global::Helpers.ViewModels
+@using Microsoft.IdentityModel.Tokens
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
@@ -132,9 +133,19 @@
 
     private async Task CreatePost()
     {
-        _newPost.CreatorId = UserState.LoggedInUserId.Value;
         try
         {
+            _newPost = new FeedPost()
+            {
+                CreatorId = UserState.LoggedInUserId.Value,
+                Text = _text.Trim()
+            };
+            
+            char[] delimiters = new char[] { ' ', '\t', '\n', '\r', '.', ',', ';', '!', '?' };
+            var hashtags = _newPost.Text
+                .Split(delimiters, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(s => s.StartsWith('#')).ToList();
+            
             var createdPost = await ApiHelper.PostToApiAsync<FeedPost, FeedPost>("api/Post/create", _newPost);
             if (createdPost != null)
             {

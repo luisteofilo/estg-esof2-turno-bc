@@ -25,12 +25,19 @@
         }
         else
         {
-            <i>No posts available</i>
+            @if (LoadingPosts)
+            {
+                <i>Loading...</i>
+            }
+            else
+            {
+                <h5>No posts found</h5>
+            }
         }
     }
     else
     {
-        @foreach (FeedPost p in _feedPosts.Posts)
+        @foreach (var p in _feedPosts.Posts)
         {
             <Post PostLine="p"/>
         }
@@ -39,43 +46,48 @@
 
 @code {
     [Parameter] public string SearchTerm { get; set; } = "";
-    private FeedPostList _feedPosts = new FeedPostList(){Posts = new List<FeedPost>()};
+    private FeedPostList _feedPosts = new() { Posts = new List<FeedPost>() };
+    private bool LoadingPosts = false;
+    // private Timer delayTimer = default!;
 
-    private Timer debounceTimer;
-    
     protected override async Task OnInitializedAsync()
     {
-        debounceTimer?.Dispose();
-        debounceTimer = new Timer(async (state) =>
-        {
-            await LoadPosts();
-        }, null, 1000, Timeout.Infinite);
-    }
-
-    private async Task SearchForPosts()
-    {
-        
         await LoadPosts();
     }
-    
+
+    private async void SearchForPosts()
+    {
+        // delayTimer?.Dispose();
+        // delayTimer = new Timer(async (state) =>
+        // {
+            await LoadPosts();
+        // }, null, 1000, Timeout.Infinite);
+    }
+
     private async Task LoadPosts()
     {
+        LoadingPosts = true;
         try
         {
             var posts = new List<FeedPost>();
-            if (SearchTerm[0] == '#')
+            if (!SearchTerm.IsNullOrEmpty())
             {
-                posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>(
-                    $"api/Post/index/hashtag/name/{SearchTerm[1..].ToLowerInvariant()}");
-            }
-            else
-            {
-                posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>(
-                    $"api/Post/index/user/email/{SearchTerm.ToLowerInvariant()}");
-            }
-            if (posts != null)
-            {
-                _feedPosts.Posts = posts;
+                if (SearchTerm[0] == '#')
+                {
+                    posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>(
+                        $"api/Post/index/hashtag/name/{SearchTerm[1..].ToLowerInvariant()}");
+                }
+                else
+                {
+                    posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>(
+                        $"api/Post/index/user/email/{SearchTerm.ToLowerInvariant()}");
+                }
+
+                if (posts != null)
+                {
+                    _feedPosts.Posts = posts;
+                }
+                StateHasChanged();
             }
         }
         catch (ApplicationException ex)
@@ -86,5 +98,7 @@
         {
             Console.Error.WriteLine($"Error: {ex.Message}");
         }
+        LoadingPosts = false;
     }
+
 }
