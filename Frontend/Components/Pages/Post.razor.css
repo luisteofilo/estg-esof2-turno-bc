@@ -37,10 +37,6 @@
     font-size: 0.85em;
     color: #6f6f6f;
 }
-.post-share{
-    display: flex;
-    justify-content: flex-end;
-}
 
 .post-menu {
     position: relative;
@@ -49,25 +45,13 @@
 .menu-button {
     background-color: #ffffff;
     color: black;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-top: 0.8px;
     border: none;
     font-size: 1.5em;
     cursor: pointer;
     transition: color 0.3s;
 }
-
-.share-button{
-    position: relative;
-    background-color: #ffffff;
-    color: black;
-    border-radius: 10px;
-    border: none;
-    font-size: 0.85em;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
 
 .post-actions .btn-secondary {
     margin-left: 10px; /* Add margin to the left to move it to the right */
@@ -136,6 +120,9 @@
 
 
 .menu-button:hover {
+    background-color: #d8dbe0;
+}
+.share-button:hover {
     background-color: #d8dbe0;
 }
 

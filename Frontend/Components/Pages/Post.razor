@@ -25,32 +25,35 @@
             </div>
         </div>
     </div>
-    <div class="post-event">
-        📢
-    </div>
-    <div class="post-wine">
-        🍷
-    </div>
+    @if (PostLine.PostEventId != null)
+    {
+    <div class="post-event">📢@PostLine.Event.Name · @PostLine.Event.Slug</div>
+    }
+    @if (PostLine.PostWineId != null)
+    {
+        <div class="post-wine">🍷@PostLine.Wine.Brand.Name · @PostLine.Wine.Brand.Description</div>
+    }
     <div class="post-content">
         @PostLine.Text
     </div>
-    <div class="post-images">
-        img
-    </div>
-    <div class="post-hashtag"><strong>#</strong></div>
-    <div class="post-share">
-        <button class="share-button" @onclick="SharePost">↪ Partilhar</button>
-    </div>
+    @if (PostLine.Media != null)
+    {
+        <div class="post-images">imag</div>
+    }
+    @if (PostLine.Hashtags != null)
+    {
+        <div class="post-hashtag"><strong>#</strong></div>
+    }
     <div class="post-actions">
         <button class="btn btn-primary" @onclick="ToggleLike">
             <i class="bi @(IsLiked ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill")"></i> @(IsLiked ? "Unlike" : "Like")
         </button>
         <span>@LikeCount</span>
-
         <button class="btn btn-secondary" @onclick="ToggleComments">
             <i class="bi bi-chat"></i> Comments
         </button>
         <span>@CommentCount</span>
+        <button class="btn btn-secondary" @onclick="SharePost"><i class="bi bi-share-fill"></i>Partilhar</button>
     </div>
 
     @if (ShowComments)
@@ -58,7 +61,6 @@
     <div class="post-comments">
         <textarea @bind="NewCommentText" placeholder="Write a comment..." class="form-control"></textarea>
         <button class="btn btn-success mt-2" @onclick="AddComment">Post Comment</button>
-
         <div class="comments-list mt-3">
             @if (Comments != null && Comments.Count > 0)
             {
@@ -102,6 +104,7 @@
 
     @if (ShowNotification)
     {
+    <br>
     <div class="notification alert alert-@(NotificationType)" role="alert">
         @NotificationMessage
     </div>
