@@ -18,8 +18,11 @@
                 ⋯
             </button>
             <div class="menu-content @(_menuVisible ? "show" : "")">
-                <button class="menu-button1" @onclick="EditPost">🗑️ Delete Post</button>
-                <button class="menu-button1" @onclick="RemovePost">📝 Edit Post</button>
+                @if (@PostLine.CreatorId == @UserState.LoggedInUserId.Value)
+                {
+                    <button class="menu-button1" @onclick="EditPost">🗑️ Delete Post</button>
+                    <button class="menu-button1" @onclick="RemovePost">📝 Edit Post</button>
+                }
                 <button class="menu-button1" @onclick="AddToFavorites">⭐ Add to Favorites</button>
                 <button class="menu-button1" @onclick="HidePost">🫣 Occult</button>
             </div>

@@ -1,16 +1,28 @@
 ﻿@page "/Feed/User"
+@using ESOF.WebApp.WebAPI.DtoClasses
 @using Frontend.Helpers
 @using global::Helpers.ViewModels
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 
-<h3>Your posts</h3>
+<div class="post">
+    <div class="post-header">
+        <img src="avatar.jpg" alt="Profile Image" class="profile-image"/>
+        <div class="post-info">
+            <div class="post-author">@CurrentUser.email</div>
+            <div class="post-meta">@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</div>
+        </div>
+    </div>
+</div>
+
+
+
 <hr/>
 <div>
     @if (_feedPosts.Posts == null || _feedPosts.Posts.Count == 0)
     {
-        <h4>No posts available</h4>
+        <i>No posts available</i>
     }
     else
     {
@@ -23,7 +35,7 @@
 
 @code {
     [Parameter] public string UserEmail { get; set; }
-    private FeedPostUser User { get; set; }
+    private FeedPostUser CurrentUser { get; set; } = new FeedPostUser();
     private FeedPostList _feedPosts = new FeedPostList(){Posts = new List<FeedPost>()};
 
     protected override async Task OnInitializedAsync()
@@ -38,6 +50,7 @@
             var posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>($"api/Post/index/user/id/{UserState.LoggedInUserId.Value}");
             if (posts != null)
             {
+                CurrentUser = posts[0].Creator;
                 _feedPosts.Posts = posts;
             }
         }
