@@ -1,4 +1,4 @@
-﻿namespace ESOF.WebApp.WebAPI.DtoClasses;
+namespace ESOF.WebApp.WebAPI.DtoClasses;
 
 public class ResponseUserDto
 {

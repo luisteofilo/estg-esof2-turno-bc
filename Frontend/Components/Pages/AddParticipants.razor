@@ -1,0 +1,83 @@
+﻿@page "/AddParticipant/{EventId:guid}"
+@using Frontend.Helpers
+@using ESOF.WebApp.WebAPI.DtoClasses
+@rendermode InteractiveServer
+@inject ApiHelper ApiHelper
+@inject NavigationManager Navigation
+
+<PageTitle>Add Participant</PageTitle>
+
+<h1>Add Participant</h1>
+
+@if (_users == null)
+{
+    <p>Loading users...</p>
+}
+else if (_users.Count == 0)
+{
+    <p>No users available to add.</p>
+}
+else
+{
+    <div class="form-container">
+        <label for="userId" class="form-label">User</label>
+        <select class="form-control" id="userId" @bind="userId">
+            @foreach (var user in _users)
+            {
+                <option value="@user.UserId">@user.Email</option>
+            }
+        </select>
+        
+        <button class="btn btn-primary" @onclick="CreateParticipant">Add Participant</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid EventId { get; set; }
+
+    private List<ResponseUserDto> _users = new List<ResponseUserDto>();
+    private Guid userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _users = await ApiHelper.GetFromApiAsync<List<ResponseUserDto>>($"api/Participant/available-users/{EventId}");
+    }
+
+    private async Task CreateParticipant()
+    {
+        try
+        {
+            var participant = new CreateParticipantDto
+            {
+                UserId = userId,
+                BlindEventId = EventId,
+                EvaluationIds = new List<Guid>(),
+                ParticipantWineIds = new List<Guid>()
+            };
+
+            var jsonContent = System.Text.Json.JsonSerializer.Serialize(participant);
+            Console.WriteLine($"Generated JSON: {jsonContent}");
+            
+            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+            Console.WriteLine($"Content-Type being sent: {content.Headers.ContentType}");
+
+            var response = await ApiHelper.PostToApiAsync3("api/Participant/store", content);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Participant added successfully!");
+                Navigation.NavigateTo($"/BlindEventDetails/{EventId}");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to add participant. Status code: {response.StatusCode}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response content: {responseContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}

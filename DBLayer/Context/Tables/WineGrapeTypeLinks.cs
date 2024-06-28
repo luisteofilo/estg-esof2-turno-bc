@@ -19,5 +19,10 @@ public partial class ApplicationDbContext
             .WithMany(gt => gt.WineGrapeTypes)
             .HasForeignKey(wgt => wgt.GrapeTypeId)
             .IsRequired(false); 
+        
+        modelBuilder.Entity<WineGrapeTypeLink>()
+            .Property(wgt => wgt.WineGrapeTypeLinkId)
+            .HasDefaultValueSql("gen_random_uuid()");
+    
     }
 }

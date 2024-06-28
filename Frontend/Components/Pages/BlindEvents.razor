@@ -1,0 +1,84 @@
+﻿@page "/BlindEvent"
+@using Frontend.Helpers
+@using ESOF.WebApp.WebAPI.DtoClasses
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<PageTitle>Blind Events</PageTitle>
+
+<h1>Blind Events</h1>
+
+<p>This component demonstrates showing data from the API.</p>
+
+<button class="btn btn-primary" @onclick="NavigateToAddBlindEvent">Add Blind Event</button>
+
+@if (_blindEvents == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Event Date</th>
+            <th>Organizer</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var blindEvent in _blindEvents)
+        {
+            <tr>
+                <td>@blindEvent.Name</td>
+                <td>@blindEvent.EventDate.ToString("yyyy-MM-dd")</td>
+                <td>@blindEvent.Organizer.Email</td>
+                <td>
+                    @if (UserState.LoggedInUserId.HasValue)
+                    {
+                        var loggedInUserId = UserState.LoggedInUserId.Value;
+                        var isOrganizer = loggedInUserId == blindEvent.OrganizerId;
+                        var isParticipant = blindEvent.Participants.Any(p => p.UserId == loggedInUserId);
+
+                        Console.WriteLine($"LoggedInUserId: {loggedInUserId}");
+                        Console.WriteLine($"OrganizerId: {blindEvent.OrganizerId}");
+                        Console.WriteLine($"Participant UserIds: {string.Join(", ", blindEvent.Participants.Select(p => p.UserId))}");
+
+                        <a href="@($"/BlindEventDetails/{blindEvent.BlindEventId}")" class="btn btn-primary">Details</a>
+
+                        if (isOrganizer)
+                        {
+                            <a href="@($"/AddParticipant/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Participant</a>
+                        }
+
+                        if (isParticipant)
+                        {
+                            <a href="@($"/AddWine/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Wine</a>
+                            <a href="@($"/AddEvaluations/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Evaluation</a>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<ResponseBlindEventDto>? _blindEvents;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _blindEvents = await ApiHelper.GetFromApiAsync<List<ResponseBlindEventDto>>("api/BlindEvent/index");
+    }
+    
+    private void NavigateToAddBlindEvent()
+    {
+        Navigation.NavigateTo("/AddBlindEvent");
+    }
+}
