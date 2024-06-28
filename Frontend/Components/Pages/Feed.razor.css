@@ -76,9 +76,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%; /* Optional: Ensure it takes the full height */
+    height: 100%;
 }
 
 .icon-large {
-    font-size: 5rem; /* Adjust the size as needed */
+    font-size: 5rem;
 }

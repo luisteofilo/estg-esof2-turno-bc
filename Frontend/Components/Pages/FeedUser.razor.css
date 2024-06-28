@@ -15,23 +15,7 @@
     justify-content: space-between;
 }
 
-.profile-image {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
-
 .post-info {
     flex-grow: 1;
-    margin-left: 10px;
-}
-
-.post-author {
-    font-weight: bold;
-}
-
-.post-meta {
-    margin-top:0.5mm;
-    font-size: 0.85em;
     color: #6f6f6f;
 }
