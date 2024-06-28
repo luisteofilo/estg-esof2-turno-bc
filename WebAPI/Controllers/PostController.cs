@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +31,58 @@ namespace ESOF.WebApp.WebAPI.Controllers
             try
             {
                 return Ok(await _postService.GetAllPosts());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpGet("index/hashtag/name/{hashtagName}")]
+        public async Task<ActionResult<List<FeedPostDto>>> GetPostsByHashtagName(string hashtagName)
+        {
+            try
+            {
+                return Ok(await _postService.GetPostsByHashtagName(WebUtility.UrlDecode(hashtagName)));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpGet("index/user/username/{userName}")]
+        public async Task<ActionResult<List<FeedPostDto>>> GetPostsByUserName(string userName)
+        {
+            try
+            {
+                return Ok(await _postService.GetPostsByUserName(WebUtility.UrlDecode(userName)));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpGet("index/user/email/{userEmail}")]
+        public async Task<ActionResult<List<FeedPostDto>>> GetPostsByUserEmail(string userEmail)
+        {
+            try
+            {
+                return Ok(await _postService.GetPostsByUserName(WebUtility.UrlDecode(userEmail)));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpGet("index/user/id/{userId}")]
+        public async Task<ActionResult<List<FeedPostDto>>> GetPostsByUserId(Guid userId)
+        {
+            try
+            {
+                return Ok(await _postService.GetPostsByUserId(userId));
             }
             catch (Exception ex)
             {
