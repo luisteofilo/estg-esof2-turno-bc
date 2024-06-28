@@ -1,0 +1,89 @@
+@page "/wineTinder"
+@using Frontend.Helpers
+@using global::Helpers.ViewModels
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+
+<PageTitle>Wine Tinder</PageTitle>
+
+<div class="container d-flex justify-content-around align-items-center" id="blur">
+    <div id="warning-message" class="alert alert-warning position-absolute" style="display:none;">
+        <span id="warning-text"></span>
+        <a id="warning-link" href="/UserControl">Go to User Control</a>
+    </div>
+
+    @if (_wines.Wines.Count == 0)
+    {
+        <p>
+            <em>No Wines Available!</em>
+        </p>
+    }
+    else
+    {
+        <div class="d-flex flex-column align-items-center">
+            <div class="card-container position-relative d-flex justify-content-center align-items-center" id="swiper">
+                @{
+                    var index = 0;
+                }
+                @foreach (var wine in _wines.Wines)
+                {
+                    <div class="card position-absolute" data-wine-id="@wine.WineId" style="--i: @index">
+                        <img src="sample_wine.jpg" alt="@wine.Label" class="card-img-top">
+                        <div class="card-body">
+                            <h3 class="card-title">@wine.Brand?.Name</h3>
+                            <h4 class="card-subtitle">@wine.Label</h4>
+                            <p class="card-text">@wine.Region?.Name - @wine.Year</p>
+                            <p class="card-text">@wine.Category</p>
+                            <p class="card-text">Alcohol: @wine.Alcohol%</p>
+                            <p class="card-text">Price: @wine.MinimumPrice€ - @wine.MaximumPrice€</p>
+                        </div>
+                    </div>
+                    index++;
+                }
+            </div>
+            <div>
+                <button class="btn btn-trash icons mt-5 me-5" onclick="handleButtonClick('dislike')">
+                    <i class="bi bi-trash-fill" style="color: darkgreen"></i>
+                </button>
+                <button class="btn btn-fire icons mt-5" onclick="handleButtonClick('superLike')">
+                    <i class="bi bi-fire" style="color: orangered"></i>
+                </button>
+                <button class="btn btn-heart icons mt-5 ms-5" onclick="handleButtonClick('like')">
+                    <i class="bi bi-heart-fill" style="color: red"></i>
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private WinesList _wines = new WinesList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _wines.Wines = await ApiHelper.GetFromApiAsync<List<ResponseWineDto>>("api/Wine/index");
+            ShuffleWines(_wines.Wines);
+        } 
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to fetch wines: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
+    }
+    
+    private void ShuffleWines(List<ResponseWineDto> wines)
+    {
+        var random = new Random();
+        for (int i = wines.Count - 1; i > 0; i--)
+        {
+            int j = random.Next(i + 1);
+            (wines[i], wines[j]) = (wines[j], wines[i]);
+        }
+    }
+    
+}

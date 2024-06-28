@@ -1,6 +1,8 @@
 using Frontend.Components;
 using Frontend.Helpers;
+using Frontend.Services;
 using Helpers;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,17 @@ builder.Services.AddAntiforgery();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileHelper.GetString("API_URL")) });
 builder.Services.AddScoped<ApiHelper>();
+builder.Services.AddScoped<EventService>();
+builder.Services.AddScoped<TasteQuestionService>();
+builder.Services.AddScoped<TasteEvaluationQuestionService>();
+builder.Services.AddScoped<TasteQuestionTypeService>();
+builder.Services.AddScoped<TasteEvaluationService>();
+builder.Services.AddScoped<WineService>();
+builder.Services.AddScoped<UserService>();
+
+// Adicionar suporte para ProtectedSessionStorage
+builder.Services.AddScoped<ProtectedSessionStorage>();
+builder.Services.AddServerSideBlazor();
 
 
 
