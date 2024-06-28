@@ -1,0 +1,77 @@
+.post {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.post-info {
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+.post-author {
+    font-weight: bold;
+}
+
+.post-meta {
+    margin-top:0.5mm;
+    font-size: 0.85em;
+    color: #6f6f6f;
+}
+
+.hover-menu {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.hover-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.hover-profile-image {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.hover-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.hover-name {
+    font-weight: bold;
+}
+
+.hover-email {
+    font-size: 0.85em;
+    color: #777;
+}

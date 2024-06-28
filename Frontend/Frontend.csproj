@@ -13,6 +13,9 @@
       </Content>
       <Content Remove="Components\Pages\UserControl.razor" />
       <Content Remove="Components\Pages\Friends\**" />
+      <Content Update="Components\Pages\FeedCurrentUser.css">
+        <DependentUpon>FeedCurrentUser.razor</DependentUpon>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
@@ -40,6 +43,7 @@
     <ItemGroup>
       <None Remove="Components\Pages\Post.css" />
       <None Remove="Components\Pages\Friends\**" />
+      <None Remove="Components\Pages\FeedCurrentUser.css" />
     </ItemGroup>
 
     <ItemGroup>

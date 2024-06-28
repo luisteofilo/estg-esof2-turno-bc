@@ -93,8 +93,8 @@
     private string _text { get; set; } = "";
     private string _event { get; set; } = "";
     private string _wine { get; set; } = "";
-    private string _hashtag { get; set; } = "";
-    
+    private List<FeedPostMedia> imagens { get; set; } = new List<FeedPostMedia>();
+    private List<FeedPostHashtag> _hashtags { get; set; } = new List<FeedPostHashtag>();
     private void SelectVisibility(FeedPostVisibilityType visibility)
     {
         _visibilitytype = visibility;
