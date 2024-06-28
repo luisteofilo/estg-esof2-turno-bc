@@ -1,4 +1,5 @@
-﻿using ESOF.WebApp.WebAPI.DtoClasses;
+﻿using System.Xml.Linq;
+using ESOF.WebApp.WebAPI.DtoClasses;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using WebAPI.DtoClasses;
 
@@ -564,7 +565,11 @@ public class PostService
                 if (post == null)
                     throw new ArgumentException("Post not found.");
 
+                var postMedia =_context.PostMedia.Where(m => m.MediaPostId == id);
+                _context.PostMedia.RemoveRange(postMedia);
+                
                 _context.Posts.Remove(post);
+                
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }

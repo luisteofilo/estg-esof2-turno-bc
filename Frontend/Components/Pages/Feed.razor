@@ -151,4 +151,10 @@
             Console.Error.WriteLine($"Error: {ex.Message}");
         }
     }
+    private async Task HandleDelete(Post post)
+    {
+        _feedPosts.Posts.Remove(post.PostLine);
+
+        StateHasChanged();
+    }
 }

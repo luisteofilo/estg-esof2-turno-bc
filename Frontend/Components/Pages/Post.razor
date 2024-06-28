@@ -1,4 +1,5 @@
 @page "/Post"
+@using System.ComponentModel
 @using ESOF.WebApp.WebAPI.DtoClasses
 @using Frontend.Helpers
 @using global::Helpers.ViewModels
@@ -20,8 +21,8 @@
             <div class="menu-content @(_menuVisible ? "show" : "")">
                 @if (@PostLine.CreatorId == @UserState.LoggedInUserId.Value)
                 {
-                    <button class="menu-button1" @onclick="EditPost">🗑️ Delete Post</button>
-                    <button class="menu-button1" @onclick="RemovePost">📝 Edit Post</button>
+                    <button class="menu-button1" @onclick="RemovePost">🗑️ Delete Post</button>
+                    <button class="menu-button1" @onclick="EditPost">📝 Edit Post</button>
                 }
                 <button class="menu-button1" @onclick="AddToFavorites">⭐ Add to Favorites</button>
                 <button class="menu-button1" @onclick="HidePost">🫣 Occult</button>
@@ -118,7 +119,8 @@
     [Parameter] public FeedPost PostLine { get; set; } = new FeedPost()
     {
         Creator = new FeedPostUser()
-    };
+    }; 
+    [Parameter] public EventCallback<Post> OnDelete { get; set; }
     private bool _menuVisible = false;
     private string _visibilityTypePic = "";
     
@@ -286,9 +288,11 @@
         _menuVisible = false;
     }
 
-    private void RemovePost()
+    private async Task RemovePost()
     {
         _menuVisible = false;
+        await ApiHelper.DeleteFromApiAsync($"api/Posts/{PostLine.PostId}/delete");
+        await OnDelete.InvokeAsync(this);
     }
 
     private void AddToFavorites()
