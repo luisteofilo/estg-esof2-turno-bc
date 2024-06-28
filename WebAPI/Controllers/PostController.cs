@@ -221,7 +221,7 @@ namespace ESOF.WebApp.WebAPI.Controllers
             }
         }
         
-        [HttpGet("/find/event/name/{eventName}")]
+        [HttpGet("find/event/name/{eventName}")]
         public async Task<ActionResult<ResponseEventDto>> GetEventByName(string eventName)
         {
             try
@@ -234,7 +234,7 @@ namespace ESOF.WebApp.WebAPI.Controllers
             }
         }
         
-        [HttpGet("/find/wine/label/{wineLabel}")]
+        [HttpGet("find/wine/label/{wineLabel}")]
         public async Task<ActionResult<ResponseEventDto>> GetWineByLabel(string wineLabel)
         {
             try
@@ -247,7 +247,7 @@ namespace ESOF.WebApp.WebAPI.Controllers
             }
         }
 
-        [HttpGet("/find/user/id/{userId}")]
+        [HttpGet("find/user/id/{userId}")]
         public async Task<ActionResult<FeedPostUserDto>> GetUserById(Guid userId)
         {
             try
@@ -261,7 +261,7 @@ namespace ESOF.WebApp.WebAPI.Controllers
         }
         
         
-        [HttpGet("/find/user/email/{userEmail}")]
+        [HttpGet("find/user/email/{userEmail}")]
         public async Task<ActionResult<FeedPostUserDto>> GetUserByEmail(string userEmail)
         {
             try

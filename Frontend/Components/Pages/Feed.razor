@@ -187,7 +187,7 @@
             
             if (!_wine.IsNullOrEmpty())
             {
-                var postWine = await ApiHelper.GetFromApiAsync<FeedPostWineDto>($"api/Post/find/event/name/{_event}");
+                var postWine = await ApiHelper.GetFromApiAsync<FeedPostWineDto>($"api/Post/find/wine/label/{_wine}");
                 if (postWine is not null)
                 {
                     _newPost.PostWineId = postWine.WineId;
