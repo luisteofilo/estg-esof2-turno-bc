@@ -1,8 +1,13 @@
 ﻿@page "/Feed"
+@using System.Security.Principal
+@using System.Text.Json
+@using Azure
+@using ESOF.WebApp.DBLayer.Entities
 @using ESOF.WebApp.WebAPI.DtoClasses
 @using Frontend.Helpers
 @using global::Helpers.ViewModels
 @using Microsoft.IdentityModel.Tokens
+@using WebAPI.DtoClasses
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
@@ -29,7 +34,7 @@
                                 @_visibilitytype
                             </button>
                             <ul class="feed-visibility dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                @foreach (var visibility in Enum.GetValues<FeedPostVisibilityType>())
+                                @foreach (var visibility in Enum.GetValues<PostVisibilityType>())
                                 {
                                     if (visibility != _visibilitytype)
                                     {
@@ -82,13 +87,14 @@
     {
         @foreach (FeedPost p in _feedPosts.Posts)
         {
-            <Post PostLine="p"/>
+            <Post PostLine="p" OnDelete="@HandleDelete"/>
         }
     }
 </div>
 
 @code {
-    private FeedPostVisibilityType _visibilitytype = FeedPostVisibilityType.Public;
+    private Guid _currentUserId { get; set; }
+    private PostVisibilityType _visibilitytype = PostVisibilityType.Public;
     private FeedPost _newPost = new FeedPost();
     private FeedPostList _feedPosts = new FeedPostList(){Posts = new List<FeedPost>()};
     private string _text { get; set; } = "";
@@ -96,13 +102,21 @@
     private string _wine { get; set; } = "";
     private List<FeedPostMedia> imagens { get; set; } = new List<FeedPostMedia>();
     private List<FeedPostHashtag> _hashtags { get; set; } = new List<FeedPostHashtag>();
-    private void SelectVisibility(FeedPostVisibilityType visibility)
+    private void SelectVisibility(PostVisibilityType visibility)
     {
         _visibilitytype = visibility;
     }
 
     protected override async Task OnInitializedAsync()
     {
+        if (UserState.LoggedInUserId is null)
+        {
+            _currentUserId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd");
+        }
+        else
+        {
+            _currentUserId = UserState.LoggedInUserId.Value;
+        }
         await LoadPosts();
     }
 
@@ -137,8 +151,8 @@
         {
             _newPost = new FeedPost()
             {
-                CreatorId = UserState.LoggedInUserId.Value,
-                Text = _text.Trim()
+                CreatorId = _currentUserId ,
+                Text = _text.Trim(),
             };
             
             char[] delimiters = new char[] { ' ', '\t', '\n', '\r', '.', ',', ';', '!', '?' };
@@ -146,20 +160,47 @@
                 .Split(delimiters, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Where(s => s.StartsWith('#')).ToList();
 
-            var postHashtags = new List<FeedPostHashtag>();
+            var postHashtagDtos = new List<CreateFeedPostHashtagDto>();
             foreach (var h in hashtags)
             {
                 _newPost.Text = _newPost.Text.Replace(h, "");
-                postHashtags.Add(new FeedPostHashtag() { Name = h });
+                postHashtagDtos.Add(new CreateFeedPostHashtagDto() { Name = h[1..] });
             }
 
-            _newPost.Hashtags = postHashtags;
+            var postDto = new CreateFeedPostDto()
+            {
+                CreatorId = _newPost.CreatorId,
+                Text = _newPost.Text,
+                VisibilityType = _visibilitytype,
+                Hashtags = postHashtagDtos
+            };
             
-            var createdPost = await ApiHelper.PostToApiAsync<FeedPost, FeedPost>("api/Post/create", _newPost);
+            if(!_event.IsNullOrEmpty()){
+                var postEvent = await ApiHelper.GetFromApiAsync<ResponseEventDto>($"api/Post/find/event/name/{_event}");
+                if (postEvent is not null)
+                {
+                    _newPost.PostEventId = postEvent.EventId;
+                    _newPost.Event = MapToFeedPostEvent(postEvent);
+                    postDto.PostEventId = postEvent.EventId;
+                }
+            }
+            
+            if (!_wine.IsNullOrEmpty())
+            {
+                var postWine = await ApiHelper.GetFromApiAsync<FeedPostWineDto>($"api/Post/find/event/name/{_event}");
+                if (postWine is not null)
+                {
+                    _newPost.PostWineId = postWine.WineId;
+                    _newPost.Wine = MapToFeedPostWine(postWine);
+                    postDto.PostWineId = postWine.WineId;
+                }
+            }
+
+            var createdPost = await ApiHelper.PostToApiAsync<CreateFeedPostDto, FeedPost>("api/Post/create", postDto);
             if (createdPost != null)
             {
                 _feedPosts.Posts.Insert(0, createdPost); 
-                _newPost = new FeedPost(); 
+                _newPost = new FeedPost();
             }
         }
         catch (ApplicationException ex)
@@ -170,11 +211,156 @@
         {
             Console.Error.WriteLine($"Error: {ex.Message}");
         }
+        StateHasChanged();
     }
+    
+    // private FeedPost MapToFeedPost(FeedPostDto p)
+    // {
+    //     var post = new FeedPostDto
+    //     {
+    //         PostId = p.PostId,
+    //         Text = p.Text,
+    //         CreatorId = p.CreatorId,
+    //         Creator = p.Creator != null
+    //             ? new FeedPostUserDto
+    //             {
+    //                 UserId = p.Creator.UserId,
+    //                 Email = p.Creator.Email,
+    //                 UserName = p.Creator.UserName
+    //             }
+    //             : null,
+    //         DateTimePost = p.DateTimePost,
+    //         VisibilityType = p.VisibilityType,
+    //         Likes = p.Likes != null
+    //             ? p.Likes.Where(l => l.IsActive)
+    //                 .Select(l => new FeedPostUserDto
+    //                 {
+    //                     UserId = l.UserId,
+    //                     Email = l.User.Email
+    //                 })
+    //                 .ToList()
+    //             : null,
+    //         LikeCount = p.Likes != null
+    //             ? p.Likes.Count(l => l.IsActive)
+    //             : 0,
+    //         Comments = p.Comments != null
+    //             ? p.Comments.Select(c => new FeedPostCommentDto
+    //                 {
+    //                     CommentId = c.CommentId,
+    //                     PostId = c.PostId,
+    //                     UserId = c.UserId,
+    //                     Content = c.Content,
+    //                     CreatedAt = c.CreatedAt,
+    //                     UpdatedAt = c.UpdatedAt,
+    //                     User = new FeedPostUserDto
+    //                     {
+    //                         UserId = c.User.UserId,
+    //                         Email = c.User.Email
+    //                     }
+    //                 })
+    //                 .ToList()
+    //             : null,
+    //         CommentCount = p.Comments != null 
+    //             ? p.Comments.Count
+    //             : 0,
+    //         Media = p.Media != null
+    //             ? p.Media.Select(m => new FeedPostMediaDto()
+    //                 {
+    //                     MediaId = m.MediaId,
+    //                     Data = m.Data,
+    //                     FileExtension = m.FileExtension,
+    //                     Filename = m.Filename
+    //                 })
+    //                 .ToList()
+    //             : null,
+    //         Hashtags = p.Hashtags != null
+    //             ? p.Hashtags.Select(h => new FeedPostHashtagDto()
+    //             {
+    //                 HashtagId = h.HashtagId,
+    //                 Name = h.Name
+    //             })
+    //             .ToList()
+    //             : null,
+    //         PostEventId = p.PostEventId,
+    //         Event = p.Event != null
+    //             ? new ResponseEventDto()
+    //             {
+    //                 EventId = p.Event.EventId,
+    //                 Name = p.Event.Name,
+    //                 Slug = p.Event.Slug
+    //             }
+    //             : null,
+    //         PostWineId = p.PostWineId,
+    //         Wine = p.Wine != null
+    //             ? new FeedPostWineDto()
+    //             {
+    //                 WineId = p.Wine.WineId,
+    //                 BrandId = p.Wine.BrandId,
+    //                 Brand = new FeedPostWineBrandDto()
+    //                 {
+    //                     BrandId = p.Wine.BrandId,
+    //                     Name = p.Wine.Brand.Name,
+    //                     Description = p.Wine.Brand.Description
+    //                 },
+    //                 RegionId = p.Wine.RegionId,
+    //                 Region = new FeedPostWineRegionDto()
+    //                 {
+    //                     RegionId = p.Wine.RegionId,
+    //                     Name = p.Wine.Region.Name
+    //                 },
+    //                 Label = p.Wine.label,
+    //                 LabelDesignation = p.Wine.LabelDesignation,
+    //                 Category = p.Wine.category
+    //             }
+    //             : null
+    //     };
+    //     return post;
+    // }
+
+    
+    private FeedPostEvent MapToFeedPostEvent(ResponseEventDto e)
+    {
+        return new FeedPostEvent()
+        {
+            EventId = e.EventId,
+            Name = e.Name,
+            Slug = e.Slug
+        };
+    }
+
+    private FeedPostWine MapToFeedPostWine(FeedPostWineDto w)
+    {
+        return new FeedPostWine()
+        {
+            WineId = w.WineId,
+            label = w.Label,
+            LabelDesignation = w.LabelDesignation,
+            BrandId = w.BrandId,
+            Brand = MapToWineBrand(w.Brand),
+            category = w.Category,
+            Year = w.Year
+        };
+    }
+
+    private FeedPostWineBrand MapToWineBrand(FeedPostWineBrandDto b)
+    {
+        return new FeedPostWineBrand()
+        {
+            BrandId = b.BrandId,
+            Name = b.Name,
+            Description = b.Description
+        };
+    }
+    
     private async Task HandleDelete(Post post)
     {
         _feedPosts.Posts.Remove(post.PostLine);
-
         StateHasChanged();
+    }
+    
+    public T Clone<T>(T source)
+    {
+        var serialized = JsonSerializer.Serialize(source);
+        return JsonSerializer.Deserialize<T>(serialized);
     }
 }

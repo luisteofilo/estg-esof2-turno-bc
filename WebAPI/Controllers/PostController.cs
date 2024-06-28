@@ -233,6 +233,19 @@ namespace ESOF.WebApp.WebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        
+        [HttpGet("/find/wine/label/{wineLabel}")]
+        public async Task<ActionResult<ResponseEventDto>> GetWineByLabel(string wineLabel)
+        {
+            try
+            {
+                return Ok(await _postService.GetWineByLabel(wineLabel));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpGet("/find/user/id/{userId}")]
         public async Task<ActionResult<FeedPostUserDto>> GetUserById(Guid userId)

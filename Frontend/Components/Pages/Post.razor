@@ -300,8 +300,9 @@
     private async Task RemovePost()
     {
         _menuVisible = false;
-        await ApiHelper.DeleteFromApiAsync($"api/Posts/{PostLine.PostId}/delete");
+        await ApiHelper.DeleteFromApiAsync($"api/Post/{PostLine.PostId}/delete");
         await OnDelete.InvokeAsync(this);
+        StateHasChanged();
     }
 
     private void AddToFavorites()
