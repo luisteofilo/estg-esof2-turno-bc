@@ -1,4 +1,4 @@
-namespace Frontend.Services;
+namespace Frontend.DtoClasses;
 
 public class UserDto
 {

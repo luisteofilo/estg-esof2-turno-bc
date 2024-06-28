@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddAntiforgery();
+
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileHelper.GetString("API_URL")) });
 builder.Services.AddScoped<ApiHelper>();
 builder.Services.AddScoped<EventService>();
@@ -24,6 +26,8 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddServerSideBlazor();
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,6 +41,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+app.UseRouting();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()

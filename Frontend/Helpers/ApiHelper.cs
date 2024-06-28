@@ -1,4 +1,4 @@
-﻿using ESOF.WebApp.WebAPI.DtoClasses;
+using ESOF.WebApp.WebAPI.DtoClasses;
 
 namespace Frontend.Helpers
 {
@@ -115,6 +115,26 @@ namespace Frontend.Helpers
             {
                 // Handle exception
                 throw new ApplicationException($"Error putting data to {url}: {e.Message}");
+            }
+        }
+        
+        public async Task<HttpResponseMessage> PostToApiAsync3(string url, HttpContent content)
+        {
+            try
+            {
+                Console.WriteLine($"Content-Type being sent: {content.Headers.ContentType}");
+                
+                var response = await _httpClient.PostAsync(url, content);
+                return response;
+            }
+            catch (HttpRequestException e)
+            {
+                string errorMessage = string.Empty;
+                if (e.InnerException != null)
+                {
+                    errorMessage = e.InnerException.Message;
+                }
+                throw new ApplicationException($"Error posting data to {url}: {e.Message}. Inner Exception: {errorMessage}");
             }
         }
         

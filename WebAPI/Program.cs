@@ -19,6 +19,10 @@ builder.Services.AddScoped<FriendshipService>();
 builder.Services.AddScoped<FriendRequestService>();
 builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<LikeService>();
+builder.Services.AddScoped<BlindEventService>();
+builder.Services.AddScoped<ParticipantService>();
+builder.Services.AddScoped<ParticipantWineService>();
+builder.Services.AddScoped<EvaluationService>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 
