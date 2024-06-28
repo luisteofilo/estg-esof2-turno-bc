@@ -13,9 +13,9 @@ public class FeedPostDto
     
     public DateTimeOffset? DateTimePost { get; set; }
     
-    // public IEnumerable<FeedPostMediaDto>? Media { get; set; }
-    //
-    // public IEnumerable<FeedPostHashtagDto>? Hashtags { get; set; }
+    public IEnumerable<FeedPostMediaDto>? Media { get; set; }
+    
+    public IEnumerable<FeedPostHashtagDto>? Hashtags { get; set; }
     
     public PostVisibilityType? VisibilityType { get; set; }
     
@@ -35,7 +35,7 @@ public class FeedPostDto
     public IEnumerable<FeedPostCommentDto>? Comments { get; set; }
     
     public Guid? PostWineId { get; set; }
-    public ResponseWineDto? Wine { get; set; }
+    public FeedPostWineDto? Wine { get; set; }
     
     public Guid? PostEventId { get; set; }
     public ResponseEventDto? Event { get; set; }

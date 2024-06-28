@@ -1,0 +1,52 @@
+﻿@page "/Feed/User/{userEmail}"
+@using Frontend.Helpers
+@using global::Helpers.ViewModels
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+
+<h3>Posts from user: @UserEmail</h3>
+<div>
+    @if (_feedPosts.Posts == null || _feedPosts.Posts.Count == 0)
+    {
+        <h4>No posts available</h4>
+    }
+    else
+    {
+        @foreach (FeedPost p in _feedPosts.Posts)
+        {
+            <Post PostLine="p"/>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public string UserEmail { get; set; }
+    private FeedPostUser User { get; set; }
+    private FeedPostList _feedPosts = new FeedPostList(){Posts = new List<FeedPost>()};
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
+        try
+        {
+            var posts = await ApiHelper.GetFromApiAsync<List<FeedPost>>($"api/Post/index/user/{UserEmail}");
+            if (posts != null)
+            {
+                _feedPosts.Posts = posts;
+            }
+        }
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to fetch posts: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}
