@@ -18,10 +18,10 @@
                 ⋯
             </button>
             <div class="menu-content @(_menuVisible ? "show" : "")">
-                <button class="menu-button1" @onclick="EditPost">🗑️ Eliminar Publicação</button>
-                <button class="menu-button1" @onclick="RemovePost">📝 Editar Publicação</button>
-                <button class="menu-button1" @onclick="AddToFavorites">⭐ Adicionar aos Favoritos</button>
-                <button class="menu-button1" @onclick="HidePost">🫣 Ocultar</button>
+                <button class="menu-button1" @onclick="EditPost">🗑️ Delete Post</button>
+                <button class="menu-button1" @onclick="RemovePost">📝 Edit Post</button>
+                <button class="menu-button1" @onclick="AddToFavorites">⭐ Add to Favorites</button>
+                <button class="menu-button1" @onclick="HidePost">🫣 Occult</button>
             </div>
         </div>
     </div>
@@ -53,7 +53,7 @@
             <i class="bi bi-chat"></i> Comments
         </button>
         <span>@CommentCount</span>
-        <button class="btn btn-secondary" @onclick="SharePost"><i class="bi bi-share-fill"></i>Partilhar</button>
+        <button class="btn btn-secondary" @onclick="SharePost"><i class="bi bi-share-fill"></i>Share</button>
     </div>
 
     @if (ShowComments)

@@ -1,7 +1,6 @@
 .post {
     border: 1px solid #ccc;
     padding: 10px;
-    margin-bottom: 10px;
     border-radius: 10px;
     max-width: 600px;
     margin: 0 auto; 
@@ -118,7 +117,6 @@
     color: #777;
 }
 
-
 .menu-button:hover {
     background-color: #d8dbe0;
 }
@@ -128,7 +126,7 @@
 
 .menu-content {
     padding: 1px 1px;
-    border-radius: 10px;
+    border-radius: 5px;
     display: none;
     position: absolute;
     top: 100%;
@@ -147,7 +145,7 @@
 .menu-button1 {
     font-size: 0.85em;
     display: block;
-    border-radius: 8px;
+    border-radius: 5px;
     width: 100%;
     padding: 6px 10px;
     background: none;

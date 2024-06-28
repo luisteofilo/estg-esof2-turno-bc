@@ -5,27 +5,67 @@
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
-<h3>Feed</h3>
 <div>
-    <div class="feed-create-post" data-bs-toggle="modal" data-bs-target="#createPostModal">
-        <img src="avatar.jpg" alt="Profile Image" class="profile-image" />
-        <button class="btn-default create-post-btn" >
-            What's on your mind?
-        </button>
+    <div class="feed-create-post-container" data-bs-toggle="modal" data-bs-target="#createPostModal">
+        <div class="feed-create-post-content">
+            <img src="avatar.jpg" alt="Profile Image" class="profile-image"/>
+            <div class="feed-create-post-text">What are you thinking about?</div>
+        </div>
     </div>
-    <div class="modal" id="createPostModal">
+    <div id="createPostModal" class="modal fade" >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <div class="modal-title">
-                        Criar 
+                    <div class="modal-title feed-create-post-text">
+                        Create Post
                     </div>
                 </div>
                 <div class="modal-body">
+                    <div class="feed-create-post-content">
+                        <img src="avatar.jpg" alt="Profile Image" class="profile-image"/>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle feed-visibility" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+                                @_visibilitytype
+                            </button>
+                            <ul class="feed-visibility dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                @foreach (var visibility in Enum.GetValues<FeedPostVisibilityType>())
+                                {
+                                    if (visibility != _visibilitytype)
+                                    {
+                                        <li @onclick="() => SelectVisibility(visibility)">
+                                            @visibility
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="margin-top: 35px">
+                        <textarea @bind="_text" @bind:event="oninput" placeholder="What are you thinking about?" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="input-group flex-wrap mb-1" style="margin-top: 4px">
+                        <span class="input-group-text" id="basic-addon">📢</span>
+                        <input @bind="_event" @bind:event="oninput" placeholder="Add Event here" class="form-control" aria-describedby="basic-addon" />
+                    </div>
+                    <div class="input-group flex-wrap mb-1">
+                        <span class="input-group-text" id="basic-addon1">🍷</span>
+                        <input @bind="_wine" @bind:event="oninput" placeholder="Add Wine here" class="form-control" aria-describedby="basic-addon1"/>
+                    </div>
+                    
+                    <div>
+                        <div style="margin-top: 4px">
+                            <button class="form-control icon-center btn" style="margin-top: 4px" @onclick="AddImage">
+                                <i class="bi bi-image icon-large"></i>
+                            </button>
+                        </div>
+                    </div>
                     
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <div class="feed-create-post-content" style="width: 100%">
+                    <button style="flex-grow: 1; margin-right: 5px;" type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="CreatePost">Publish</button>
+                    <button style="flex-grow: 0;" type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -47,8 +87,18 @@
 </div>
 
 @code {
+    private FeedPostVisibilityType _visibilitytype = FeedPostVisibilityType.Public;
     private FeedPost _newPost = new FeedPost();
     private FeedPostList _feedPosts = new FeedPostList(){Posts = new List<FeedPost>()};
+    private string _text { get; set; } = "";
+    private string _event { get; set; } = "";
+    private string _wine { get; set; } = "";
+    private string _hashtag { get; set; } = "";
+    
+    private void SelectVisibility(FeedPostVisibilityType visibility)
+    {
+        _visibilitytype = visibility;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,6 +123,11 @@
         {
             Console.Error.WriteLine($"Error: {ex.Message}");
         }
+    }
+
+    private void AddImage()
+    {
+        
     }
 
     private async Task CreatePost()
