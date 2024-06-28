@@ -6,22 +6,27 @@
 @attribute [StreamRendering(true)]
 @inject ApiHelper ApiHelper
 
-<h3>Search for posts</h3>
-
-
-<div id="searchbar">
-    <label>
-        Search:
-        <input @bind="SearchTerm" @bind:event="onchange" @bind:after="SearchForPosts"/>
-    </label>
+<div class="post">
+    <div class="post-header">
+        <div class="post-info">
+            <div style="text-align: center;">Posts Search</div>
+        </div>
+    </div>
 </div>
+<div class="search">
+    <div class="input-group flex-wrap mb-1">
+        <input @bind="SearchTerm" @bind:event="onchange" @bind:after="SearchForPosts" placeholder="Type Hashtag or user email" class="form-control" aria-describedby="basic-addon" />
+        <button class="input-group-text" id="basic-addon" @onclick="ClearInput">🔎</button>
+    </div>
+</div>
+
 <hr/>
 <div>
     @if (_feedPosts.Posts == null || _feedPosts.Posts.Count == 0)
     {
         @if (SearchTerm.IsNullOrEmpty())
         {
-            <h5>Search for hashtags or user emails.</h5>
+            <i>No posts available</i>
         }
         else
         {
@@ -37,7 +42,7 @@
     }
     else
     {
-        @foreach (var p in _feedPosts.Posts)
+        @foreach (FeedPost p in _feedPosts.Posts)
         {
             <Post PostLine="p"/>
         }
@@ -50,6 +55,13 @@
     private bool LoadingPosts = false;
     // private Timer delayTimer = default!;
 
+    private Timer debounceTimer;
+
+    private void ClearInput()
+    {
+        SearchTerm = string.Empty;
+    }
+    
     protected override async Task OnInitializedAsync()
     {
         await LoadPosts();
@@ -57,13 +69,10 @@
 
     private async void SearchForPosts()
     {
-        // delayTimer?.Dispose();
-        // delayTimer = new Timer(async (state) =>
-        // {
-            await LoadPosts();
-        // }, null, 1000, Timeout.Infinite);
+        
+        await LoadPosts();
     }
-
+    
     private async Task LoadPosts()
     {
         LoadingPosts = true;
@@ -100,5 +109,4 @@
         }
         LoadingPosts = false;
     }
-
 }

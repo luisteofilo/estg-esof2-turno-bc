@@ -15,23 +15,30 @@
     justify-content: space-between;
 }
 
-.profile-image {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
-
 .post-info {
     flex-grow: 1;
-    margin-left: 10px;
-}
-
-.post-author {
-    font-weight: bold;
-}
-
-.post-meta {
-    margin-top:0.5mm;
-    font-size: 0.85em;
     color: #6f6f6f;
+}
+
+.search{
+    display: flex;
+    align-items: center;
+    max-width: 600px;
+    margin: 20px auto 0;
+}
+
+.input-group-text:hover{
+    background-color: #6c737b;
+}
+
+.form-control {
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 0.85em;
+    text-align: start;
+    padding: 6px 10px;
+    color: #6f6f6f;
+    background-color: #d8dbe0;
 }

@@ -5,7 +5,14 @@
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 
-<h3>Posts from user: @UserEmail</h3>
+<div class="post">
+    <div class="post-header">
+        <div class="post-info">
+            <div style="text-align: center;">@UserEmail Posts</div>
+        </div>
+    </div>
+</div>
+<hr/>
 <div>
     @if (_feedPosts.Posts == null || _feedPosts.Posts.Count == 0)
     {
