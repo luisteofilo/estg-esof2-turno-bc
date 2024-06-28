@@ -41,6 +41,7 @@
     <ItemGroup>
       <Compile Remove="Controllers\UserController.cs" />
       <Compile Remove="DtoClasses\ResponsePostDto.cs" />
+      <Compile Remove="DtoClasses\UpdatePostDto.cs" />
     </ItemGroup>
 
     <ItemGroup>
