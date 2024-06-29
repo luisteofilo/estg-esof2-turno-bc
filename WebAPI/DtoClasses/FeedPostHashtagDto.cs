@@ -2,7 +2,7 @@
 
 public class FeedPostHashtagDto
 {
-    public Guid? HashtagId { get; set; }
+    public Guid HashtagId { get; set; }
     
     public string? Name { get; set; }
 

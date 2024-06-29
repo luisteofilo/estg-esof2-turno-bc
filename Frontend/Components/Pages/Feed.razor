@@ -1,38 +1,123 @@
 ﻿@page "/Feed"
+@using System.Security.Principal
+@using System.Text.Json
+@using System.Web
+@using Azure
+@using ESOF.WebApp.DBLayer.Entities
+@using ESOF.WebApp.WebAPI.DtoClasses
 @using Frontend.Helpers
 @using global::Helpers.ViewModels
+@using Microsoft.IdentityModel.Tokens
+@using WebAPI.DtoClasses
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject ApiHelper ApiHelper
-<h3 class="my-3">Feed</h3>
-<div class="container">
-    <div class="feed-create-post mb-3">
-        <span class="me-2">Create new post: </span>
-        <input class="form-control d-inline-block w-50 me-2" @bind="_newPost.Text" placeholder="What's on your mind?"/>
-        <button class="btn btn-primary" @onclick="CreatePost">Create Post</button>
+<div>
+    <div class="feed-create-post-container" data-bs-toggle="modal" data-bs-target="#createPostModal">
+        <div class="feed-create-post-content">
+            <img src="avatar.jpg" alt="Profile Image" class="profile-image"/>
+            <div class="feed-create-post-text">What are you thinking about?</div>
+        </div>
+    </div>
+    <div id="createPostModal" class="modal fade" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title feed-create-post-text">
+                        Create Post
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="feed-create-post-content">
+                        <img src="avatar.jpg" alt="Profile Image" class="profile-image"/>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle feed-visibility" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+                                @_visibilitytype
+                            </button>
+                            <ul class="feed-visibility dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                @foreach (var visibility in Enum.GetValues<PostVisibilityType>())
+                                {
+                                    if (visibility != _visibilitytype)
+                                    {
+                                        <li @onclick="() => SelectVisibility(visibility)">
+                                            @visibility
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="margin-top: 35px">
+                        <textarea @bind="_text" @bind:event="oninput" placeholder="What are you thinking about?" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="input-group flex-wrap mb-1" style="margin-top: 4px">
+                        <span class="input-group-text" id="basic-addon">📢</span>
+                        <input @bind="_event" @bind:event="oninput" placeholder="Add Event here" class="form-control" aria-describedby="basic-addon" />
+                    </div>
+                    <div class="input-group flex-wrap mb-1">
+                        <span class="input-group-text" id="basic-addon1">🍷</span>
+                        <input @bind="_wine" @bind:event="oninput" placeholder="Add Wine here" class="form-control" aria-describedby="basic-addon1"/>
+                    </div>
+                    
+                    <div>
+                        <div style="margin-top: 4px">
+                            <button class="form-control icon-center btn" style="margin-top: 4px" @onclick="AddImage">
+                                <i class="bi bi-image icon-large"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <div class="feed-create-post-content" style="width: 100%">
+                    <button style="flex-grow: 1; margin-right: 5px;" type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="CreatePost">Publish</button>
+                    <button style="flex-grow: 0;" type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <hr/>
 </div>
 <div>
     @if (_feedPosts.Posts == null || _feedPosts.Posts.Count == 0)
     {
-        <h4 class="my-4">No posts available</h4>
+        <i>No posts available</i>
     }
     else
     {
         @foreach (FeedPost p in _feedPosts.Posts)
         {
-            <Post PostLine="p"/>
+            <Post PostLine="p" OnDelete="@HandleDelete"/>
         }
     }
 </div>
 
 @code {
+    private Guid _currentUserId { get; set; }
+    private PostVisibilityType _visibilitytype = PostVisibilityType.Public;
     private FeedPost _newPost = new FeedPost();
-    private FeedPostList _feedPosts = new FeedPostList();
+    private FeedPostList _feedPosts = new FeedPostList(){Posts = new List<FeedPost>()};
+    private string _text { get; set; } = "";
+    private string _event { get; set; } = "";
+    private string _wine { get; set; } = "";
+    private List<FeedPostMedia> imagens { get; set; } = new List<FeedPostMedia>();
+    private List<FeedPostHashtag> _hashtags { get; set; } = new List<FeedPostHashtag>();
+    private void SelectVisibility(PostVisibilityType visibility)
+    {
+        _visibilitytype = visibility;
+    }
 
     protected override async Task OnInitializedAsync()
     {
+        if (UserState.LoggedInUserId is null)
+        {
+            _currentUserId = new Guid("4d64adb4-9265-441a-b808-e261838d5cb5");
+        }
+        else
+        {
+            _currentUserId = UserState.LoggedInUserId.Value;
+        }
         await LoadPosts();
     }
 
@@ -56,15 +141,67 @@
         }
     }
 
+    private void AddImage()
+    {
+        
+    }
+
     private async Task CreatePost()
     {
         try
         {
-            var createdPost = await ApiHelper.PostToApiAsync<FeedPost, FeedPost>("api/Post/create", _newPost);
+            _newPost = new FeedPost()
+            {
+                CreatorId = _currentUserId ,
+                Text = _text.Trim(),
+            };
+            
+            char[] delimiters = new char[] { ' ', '\t', '\n', '\r', '.', ',', ';', '!', '?' };
+            var hashtags = _newPost.Text
+                .Split(delimiters, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(s => s.StartsWith('#')).ToList();
+
+            var postHashtagDtos = new List<CreateFeedPostHashtagDto>();
+            foreach (var h in hashtags)
+            {
+                _newPost.Text = _newPost.Text.Replace(h, "");
+                postHashtagDtos.Add(new CreateFeedPostHashtagDto() { Name = h[1..] });
+            }
+
+            var postDto = new CreateFeedPostDto()
+            {
+                CreatorId = _newPost.CreatorId,
+                Text = _newPost.Text,
+                VisibilityType = _visibilitytype,
+                Hashtags = postHashtagDtos
+            };
+            
+            if(!_event.IsNullOrEmpty()){
+                var postEvent = await ApiHelper.GetFromApiAsync<ResponseEventDto>($"api/Post/find/event/slug/{_event}");
+                if (postEvent is not null)
+                {
+                    _newPost.PostEventId = postEvent.EventId;
+                    _newPost.Event = MapToFeedPostEvent(postEvent);
+                    postDto.PostEventId = postEvent.EventId;
+                }
+            }
+            
+            if (!_wine.IsNullOrEmpty())
+            {
+                var postWine = await ApiHelper.GetFromApiAsync<FeedPostWineDto>($"api/Post/find/wine/label/{HttpUtility.UrlEncode(_wine)}");
+                if (postWine is not null)
+                {
+                    _newPost.PostWineId = postWine.WineId;
+                    _newPost.Wine = MapToFeedPostWine(postWine);
+                    postDto.PostWineId = postWine.WineId;
+                }
+            }
+
+            var createdPost = await ApiHelper.PostToApiAsync<CreateFeedPostDto, FeedPostDto>("api/Post/create", postDto);
             if (createdPost != null)
             {
-                _feedPosts.Posts.Insert(0, createdPost); 
-                _newPost = new FeedPost(); 
+                _feedPosts.Posts.Insert(0, MapToFeedPost(createdPost)); 
+                _newPost = new FeedPost();
             }
         }
         catch (ApplicationException ex)
@@ -75,5 +212,108 @@
         {
             Console.Error.WriteLine($"Error: {ex.Message}");
         }
+        StateHasChanged();
+    }
+    
+    private FeedPost MapToFeedPost(FeedPostDto p)
+    {
+        var post = new FeedPost
+        {
+            PostId = p.PostId,
+            Text = p.Text,
+            CreatorId = p.CreatorId,
+            Creator = p.Creator != null
+                ? new FeedPostUser
+                {
+                    UserId = p.Creator.UserId,
+                    Email = p.Creator.Email,
+                    UserName = p.Creator.UserName
+                }
+                : null,
+            DateTimePost = p.DateTimePost,
+            VisibilityType = p.VisibilityType,
+            Hashtags = p.Hashtags != null
+                ? p.Hashtags.Select(h => new FeedPostHashtag()
+                {
+                    HashtagId = h.HashtagId,
+                    Name = h.Name
+                })
+                .ToList()
+                : null,
+            PostEventId = p.PostEventId,
+            Event = p.Event != null
+                ? new FeedPostEvent()
+                {
+                    EventId = p.Event.EventId,
+                    Name = p.Event.Name,
+                    Slug = p.Event.Slug
+                }
+                : null,
+            PostWineId = p.PostWineId,
+            Wine = p.Wine != null
+                ? new FeedPostWine()
+                {
+                    WineId = p.Wine.WineId,
+                    BrandId = p.Wine.BrandId,
+                    Brand = new FeedPostWineBrand()
+                    {
+                        BrandId = p.Wine.BrandId,
+                        Name = p.Wine.Brand.Name,
+                        Description = p.Wine.Brand.Description
+                    },
+                    label = p.Wine.Label,
+                    LabelDesignation = p.Wine.LabelDesignation,
+                    category = p.Wine.Category
+                }
+                : null
+        };
+        return post;
+    }
+
+    
+    private FeedPostEvent MapToFeedPostEvent(ResponseEventDto e)
+    {
+        return new FeedPostEvent()
+        {
+            EventId = e.EventId,
+            Name = e.Name,
+            Slug = e.Slug
+        };
+    }
+
+    private FeedPostWine MapToFeedPostWine(FeedPostWineDto w)
+    {
+        return new FeedPostWine()
+        {
+            WineId = w.WineId,
+            label = w.Label,
+            LabelDesignation = w.LabelDesignation,
+            BrandId = w.BrandId,
+            Brand = MapToWineBrand(w.Brand),
+            category = w.Category,
+            Year = w.Year
+        };
+    }
+
+    private FeedPostWineBrand MapToWineBrand(FeedPostWineBrandDto b)
+    {
+        return new FeedPostWineBrand()
+        {
+            BrandId = b.BrandId,
+            Name = b.Name,
+            Description = b.Description
+        };
+    }
+    
+    private void HandleDelete(Post post)
+    {
+        _feedPosts.Posts.Remove(post.PostLine);
+        StateHasChanged();
+    }
+    
+    public T Clone<T>(T source)
+    {
+        var serialized = JsonSerializer.Serialize(source);
+        return JsonSerializer.Deserialize<T>(serialized);
     }
 }

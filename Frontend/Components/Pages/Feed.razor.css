@@ -1,5 +1,84 @@
-﻿.feed-create-post {
+﻿.feed-create-post-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 0 auto;
+    border-radius: 10px;
+    max-width: 600px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    cursor: pointer;
+}
+.profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.feed-create-post-content{
     display: flex;
     align-items: center;
-    justify-content: space-between;
+}
+
+.feed-create-post-text {
+    flex-grow: 1;
+    margin-left: 10px;
+    font-size: 0.85em;
+    display: block;
+    border-radius: 5px;
+    width: 100%;
+    padding: 6px 10px;
+    text-align: center;
+    border: none;
+    color: #6f6f6f;
+    background-color: #d8dbe0;
+}
+
+.modal .modal-dialog {
+    max-width: 600px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.feed-visibility{
+    margin-left: 5px;
+    font-size: 0.85em;
+    text-align: start;
+    border-radius: 5px;
+    width: auto;
+    padding: 6px 10px;
+    border: none;
+    cursor: pointer;
+    color: #6f6f6f;
+    background-color: #d8dbe0;
+}
+
+.feed-visibility:hover {
+    background-color: #6c747c;
+    color: #ffffff;
+}
+
+.form-control {
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 0.85em;
+    text-align: start;
+    padding: 6px 10px;
+    color: #6f6f6f;
+    background-color: #d8dbe0;
+}
+
+.icon-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.icon-large {
+    font-size: 5rem;
 }

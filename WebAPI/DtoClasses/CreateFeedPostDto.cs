@@ -8,11 +8,14 @@ public class CreateFeedPostDto
     
     public Guid CreatorId { get; set; }
     
-    public DateTimeOffset DateTimePost { get; set; }
+    public DateTimeOffset? DateTimePost { get; set; }
     
-    public IEnumerable<CreateFeedPostMediaDto>? Media { get; set; }
+    // public IEnumerable<CreateFeedPostMediaDto>? Media { get; set; }
     
     public IEnumerable<CreateFeedPostHashtagDto>? Hashtags { get; set; }
     
     public PostVisibilityType VisibilityType { get; set; }
+    
+    public Guid? PostEventId { get; set; }
+    public Guid? PostWineId { get; set; }
 }

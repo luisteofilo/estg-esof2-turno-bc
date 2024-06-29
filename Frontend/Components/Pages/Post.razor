@@ -1,96 +1,138 @@
-﻿@using ESOF.WebApp.WebAPI.DtoClasses
+@page "/Post"
+@using System.ComponentModel
+@using ESOF.WebApp.WebAPI.DtoClasses
 @using Frontend.Helpers
 @using global::Helpers.ViewModels
+@rendermode InteractiveServer
+@attribute [StreamRendering]
 @inject ApiHelper ApiHelper
 
 <div class="post">
     <div class="post-header">
         <img src="avatar.jpg" alt="Profile Image" class="profile-image" @onclick="ToggleHover" style="cursor:pointer;" />
         <div class="post-info">
-            <div class="post-author" @onclick="ToggleHover" style="cursor:pointer;">@PostLine.Creator.email</div>
-            <div class="post-meta">@PostLine.DateTimePost · @PostLine.VisibilityType</div>
+            <div class="post-author" @onclick="ToggleHover" style="cursor:pointer;">@PostLine.Creator.Email</div>
+            <div class="post-meta">@PostLine.DateTimePost.ToString("dd/MM/yyyy HH:mm") · @((MarkupString)_visibilityTypePic) @PostLine.VisibilityType</div>
         </div>
-        <div class="post-menu">
-            <button class="menu-button">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
+        <div class="post-menu" @onfocusout="@(() => _menuVisible = false)">
+            <button class="menu-button" @onclick="ToggleMenu">
+                ⋯
             </button>
+            <div class="menu-content @(_menuVisible ? "show" : "")">
+                @if (@PostLine.CreatorId == @UserState.LoggedInUserId.Value)
+                {
+                    <button class="menu-button1" @onclick="RemovePost">🗑️ Delete Post</button>
+                    <button class="menu-button1" @onclick="EditPost">📝 Edit Post</button>
+                }
+                else{
+                    <button class="menu-button1" @onclick="AddToFavorites">⭐ Add to Favorites</button>
+                    <button class="menu-button1" @onclick="HidePost">🫣 Occult</button>
+                }
+            </div>
         </div>
     </div>
+    @if (PostLine.PostEventId != null)
+    {
+    <div class="post-event">📢@PostLine.Event.Name · @PostLine.Event.Slug</div>
+    }
+    @if (PostLine.PostWineId != null)
+    {
+        <div class="post-wine">🍷@PostLine.Wine.label</div>
+    }
     <div class="post-content">
         @PostLine.Text
     </div>
-    <div class="post-actions">
+    @if (PostLine.Media != null)
+    {
+        <div>Pictures</div>
+    }
+    else
+    {
+        <div>pictures</div>
+    }
+    @if (PostLine.Hashtags != null)
+    {
+        @foreach (var h in PostLine.Hashtags)
+        {
+            <strong>#@h.Name </strong> 
+        }
+    }
+    <div class="post-actions" style="margin-top: 10px">
         <button class="btn btn-primary" @onclick="ToggleLike">
             <i class="bi @(IsLiked ? "bi-hand-thumbs-up" : "bi-hand-thumbs-up-fill")"></i> @(IsLiked ? "Unlike" : "Like")
         </button>
         <span>@LikeCount</span>
-
         <button class="btn btn-secondary" @onclick="ToggleComments">
             <i class="bi bi-chat"></i> Comments
         </button>
         <span>@CommentCount</span>
+        <button class="btn btn-secondary" @onclick="SharePost"><i class="bi bi-share-fill"></i>Share</button>
     </div>
 
     @if (ShowComments)
     {
-        <div class="post-comments">
-            <textarea @bind="NewCommentText" placeholder="Write a comment..." class="form-control"></textarea>
-            <button class="btn btn-success mt-2" @onclick="AddComment">Post Comment</button>
-
-            <div class="comments-list mt-3">
-                @if (Comments != null && Comments.Count > 0)
-                {
-                    @foreach (var comment in Comments)
-                    {
-                        <div class="comment mb-2">
-                            <strong>@comment.UserName:</strong> @comment.Content
-                        </div>
-                    }
-                }
-                else
-                {
-                    <p>No comments yet.</p>
-                }
+    <div class="post-comments">
+        <textarea @bind="NewCommentText" placeholder="Write a comment..." class="form-control"></textarea>
+        <button class="btn btn-success mt-2" @onclick="AddComment">Post Comment</button>
+        <div class="comments-list mt-3">
+            @if (Comments != null && Comments.Count > 0)
+            {
+            @foreach (var comment in Comments)
+            {
+            <div class="comment mb-2">
+                <strong>@comment.UserName:</strong> @comment.Content
             </div>
+            }
+            }
+            else
+            {
+            <p>No comments yet.</p>
+            }
         </div>
+    </div>
     }
 
     @if (ShowHover)
     {
-        <div class="hover-menu">
-            <div class="hover-header">
-                <img src="avatar.jpg" alt="Profile Image" class="hover-profile-image" />
-                <div class="hover-info">
-                    <div class="hover-email">@PostLine.Creator.email</div>
-                </div>
+    <div class="hover-menu">
+        <div class="hover-header">
+            <img src="avatar.jpg" alt="Profile Image" class="hover-profile-image" />
+            <div class="hover-info">
+                <div class="hover-email">@PostLine.Creator.Email</div>
             </div>
-            @if (PostLine.Creator.UserId != LoggedInUserId)
-            {
-                @if (IsFriend)
-                {
-                    <button class="btn btn-danger mt-2" @onclick="RemoveFriend">Remove Friend</button>
-                }
-                else
-                {
-                    <button class="btn btn-primary mt-2" @onclick="SendFriendRequest">Send Friend Request</button>
-                }
-            }
         </div>
+        @if (PostLine.Creator.UserId != LoggedInUserId)
+        {
+        @if (IsFriend)
+        {
+        <button class="btn btn-danger mt-2" @onclick="RemoveFriend">Remove Friend</button>
+        }
+        else
+        {
+        <button class="btn btn-primary mt-2" @onclick="SendFriendRequest">Send Friend Request</button>
+        }
+        }
+    </div>
     }
 
     @if (ShowNotification)
     {
-        <div class="notification alert alert-@(NotificationType)" role="alert">
-            @NotificationMessage
-        </div>
+    <br>
+    <div class="notification alert alert-@(NotificationType)" role="alert">
+        @NotificationMessage
+    </div>
     }
 </div>
-
-@code {
-    [Parameter] public FeedPost PostLine { get; set; }
-
+    
+@code{
+    [Parameter] public FeedPost PostLine { get; set; } = new FeedPost()
+    {
+        Creator = new FeedPostUser()
+    }; 
+    [Parameter] public EventCallback<Post> OnDelete { get; set; }
+    private bool _menuVisible = false;
+    private string _visibilityTypePic = "";
+    
     private bool IsLiked { get; set; }
     private int LikeCount { get; set; }
     private bool ShowComments { get; set; } = false;
@@ -105,14 +147,37 @@
     private bool ShowNotification { get; set; } = false;
     private string NotificationMessage { get; set; }
     private string NotificationType { get; set; }
-
+    
     protected override async Task OnInitializedAsync()
     {
+        SetVisibilityTypePic();
         await LoadLikeData();
         await LoadCommentData();
         await CheckFriendStatus();
     }
-
+    
+    private void ToggleMenu()
+    {
+        _menuVisible = !_menuVisible;
+    }
+    private void SetVisibilityTypePic()
+    {
+        if (PostLine.VisibilityType == FeedPostVisibilityType.Public)
+        {
+            _visibilityTypePic = "<span>🌍</span>"; 
+        }
+        else if (PostLine.VisibilityType == FeedPostVisibilityType.Followers)
+        {
+            _visibilityTypePic = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"13\" height=\"13\" fill=\"currentColor\" class=\"bi bi-people-fill\" viewBox=\"0 0 16 16\">" +
+                                 "<path d=\"M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5\"/>" +
+                                 "</svg>";
+        }
+        else
+        {
+            _visibilityTypePic = "<span></span>"; 
+        }
+    }
+    
     private async Task LoadLikeData()
     {
         IsLiked = await ApiHelper.GetFromApiAsync<bool>($"api/Likes/isliked/{PostLine.PostId}/{LoggedInUserId}");
@@ -225,5 +290,32 @@
             ShowNotification = false;
             StateHasChanged();
         });
+    }
+    
+    private void EditPost()
+    {
+        _menuVisible = false;
+    }
+
+    private async Task RemovePost()
+    {
+        _menuVisible = false;
+        await ApiHelper.DeleteFromApiAsync($"api/Post/{PostLine.PostId}/delete");
+        await OnDelete.InvokeAsync(this);
+        StateHasChanged();
+    }
+
+    private void AddToFavorites()
+    {
+        _menuVisible = false;
+    }
+
+    private void HidePost()
+    {
+        _menuVisible = false;
+    }
+    private void SharePost()
+    {
+        _menuVisible = false;
     }
 }

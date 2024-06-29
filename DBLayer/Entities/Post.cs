@@ -23,6 +23,14 @@ public class Post
     [Required]
     public PostVisibilityType VisibilityType { get; set; }
     
+    [ForeignKey("Event")]
+    public Guid? PostEventId { get; set; }
+    public Event? Event { get; set; }
+    
+    [ForeignKey("Wine")]
+    public Guid? PostWineId { get; set; }
+    public Wine? Wine { get; set; }
+    
     [NotMapped]
     public List<User> FavoriteUsers { get; set; }
     [NotMapped]

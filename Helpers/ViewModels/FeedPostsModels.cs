@@ -14,30 +14,35 @@ public class FeedPost
     
     public DateTimeOffset DateTimePost { get; set; }
     
-    public IEnumerable<FeedPostMedia> Media { get; set; }
+    public IEnumerable<FeedPostMedia>? Media { get; set; }
     
-    public IEnumerable<FeedPostHashtag> Hashtags { get; set; }
+    public IEnumerable<FeedPostHashtag>? Hashtags { get; set; }
     
     public FeedPostVisibilityType VisibilityType { get; set; }
     
-    public IEnumerable<FeedPostUser> FavoriteUsers { get; set; }
+    public IEnumerable<FeedPostUser>? FavoriteUsers { get; set; }
     
-    public IEnumerable<FeedPostUser> HiddenUsers { get; set; }
+    public IEnumerable<FeedPostUser>? HiddenUsers { get; set; }
     
-    public IEnumerable<FeedPostUser> ViewUsers { get; set; }
+    public IEnumerable<FeedPostUser>? ViewUsers { get; set; }
     
-    public IEnumerable<Tuple<FeedPostUser, FeedPostUser>> ShareUsers { get; set; }
+    public IEnumerable<Tuple<FeedPostUser, FeedPostUser>>? ShareUsers { get; set; }
     
-    public int LikeCount { get; set; }  
-    public bool IsLiked { get; set; } 
+    public Guid? PostWineId { get; set; }
+    public FeedPostWine? Wine { get; set; }
     
+    public Guid? PostEventId { get; set; }
+    public FeedPostEvent? Event { get; set; }
 }
 
 public enum FeedPostVisibilityType
 {
-    Public,
-    Followers
+    Public = 0,
+    Followers = 1
 }
+
+
+[TypeConverter(typeof(FeedPostHashtagConverter))]
 public class FeedPostHashtag
 {
     public Guid HashtagId { get; set; }
@@ -55,6 +60,7 @@ public class FeedPostList
 }
 
 
+[TypeConverter(typeof(FeedPostMediaConverter))]
 public class FeedPostMedia
 {
     public Guid MediaId { get; set; }
@@ -68,30 +74,65 @@ public class FeedPostMedia
     public byte[] Data { get; set; }
 }
 
+
+[TypeConverter(typeof(FeedPostUserConverter))]
 public class FeedPostUser
 {
-    public List<FeedPost> CreatedPosts { get; set; }
+    public List<FeedPost>? CreatedPosts { get; set; }
     
-    public List<FeedPost> ViewedPosts { get; set; }
+    public List<FeedPost>? ViewedPosts { get; set; }
     
-    public List<FeedPost> FavoritedPosts { get; set; }
-    public List<FeedPost> HiddenPosts { get; set; }
+    public List<FeedPost>? FavoritedPosts { get; set; }
+    public List<FeedPost>? HiddenPosts { get; set; }
     
-    public List<Tuple<FeedPost,FeedPost>> ReceivedPosts { get; set; }
-    public List<Tuple<FeedPost,FeedPost>> SentPosts { get; set; }
+    public List<Tuple<FeedPost,FeedPost>>? ReceivedPosts { get; set; }
+    public List<Tuple<FeedPost,FeedPost>>? SentPosts { get; set; }
     
-    public List<FeedPost> Followers { get; set; }
-    public List<FeedPost> Following { get; set; }
+    public List<FeedPost>? Followers { get; set; }
+    public List<FeedPost>? Following { get; set; }
     
     public Guid UserId { get; set; }
     
-    public string email { get; set; }
+    public string Email { get; set; }
     
-    public byte[] PasswordHash { get; set; }
+    public string UserName { get; set; }
     
-    public byte[] PasswordSalt { get; set; }
+    public byte[]? PasswordHash { get; set; }
+    
+    public byte[]? PasswordSalt { get; set; }
     /*public ICollection<UserRole> UserRoles { get; set; }*/
 }
+
+
+[TypeConverter(typeof(FeedPostWineConverter))]
+public class FeedPostWine
+{
+    public Guid WineId { get; set; }
+    public Guid BrandId { get; set; }
+    public FeedPostWineBrand Brand { get; set; }
+    public string? label { get; set; }
+    public int? Year { get; set; }
+    public string? category { get; set; }
+    public string? LabelDesignation { get; set; }
+}
+
+[TypeConverter(typeof(FeedPostWineBrandConverter))]
+public class FeedPostWineBrand
+{
+    public Guid BrandId { get; set; }
+    public string Name { get; set; }
+    public string? Description { get; set; }
+}
+
+
+[TypeConverter(typeof(FeedPostEventConverter))]
+public class FeedPostEvent
+{
+    public Guid EventId { get; set; }
+    public string Name { get; set; }
+    public string? Slug { get; set; }
+}
+
 
 public class FeedPostFollow
 {

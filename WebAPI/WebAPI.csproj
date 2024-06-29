@@ -41,6 +41,16 @@
 
     <ItemGroup>
       <Compile Remove="Controllers\UserController.cs" />
+      <Compile Remove="DtoClasses\ResponsePostDto.cs" />
+      <Compile Remove="DtoClasses\UpdatePostDto.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\PostMVCScaffold\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\PostMVCScaffold\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\PostMVCScaffold\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\PostMVCScaffold\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\PostMVCScaffold\Index.cshtml" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 using ESOF.WebApp.DBLayer.Context;
 using ESOF.WebApp.DBLayer.Entities;
 using ESOF.WebApp.WebAPI.Services;
+using Helpers.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,5 +93,3 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
 */
-
-

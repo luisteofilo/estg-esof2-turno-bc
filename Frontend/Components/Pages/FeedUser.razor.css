@@ -1,0 +1,21 @@
+.post {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.post-info {
+    flex-grow: 1;
+    color: #6f6f6f;
+}

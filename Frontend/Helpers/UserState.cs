@@ -12,7 +12,7 @@ namespace Frontend.Helpers
         // or
         // public static Guid LoggedInUserId = Guid.Empty;
         //logged in fake 2
-        public static Guid? LoggedInUserId = new Guid("5085d3ab-05d3-4643-9632-331b856daefe");
+        public static Guid? LoggedInUserId = new Guid("4d64adb4-9265-441a-b808-e261838d5cb5");
         // logged in fake 3
         //public static Guid? LoggedInUserId = new Guid("1a950cd6-cb12-4b12-ae72-357b6c1eacfc");
         // logged in fake 4
