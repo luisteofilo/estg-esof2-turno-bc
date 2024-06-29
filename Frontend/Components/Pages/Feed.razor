@@ -111,7 +111,7 @@
     {
         if (UserState.LoggedInUserId is null)
         {
-            _currentUserId = new Guid("9d957de9-df3a-4c68-9a93-617b43b1bcfd");
+            _currentUserId = new Guid("4d64adb4-9265-441a-b808-e261838d5cb5");
         }
         else
         {
@@ -196,10 +196,10 @@
                 }
             }
 
-            var createdPost = await ApiHelper.PostToApiAsync<CreateFeedPostDto, FeedPost>("api/Post/create", postDto);
+            var createdPost = await ApiHelper.PostToApiAsync<CreateFeedPostDto, FeedPostDto>("api/Post/create", postDto);
             if (createdPost != null)
             {
-                _feedPosts.Posts.Insert(0, createdPost); 
+                // _feedPosts.Posts.Insert(0, createdPost); 
                 _newPost = new FeedPost();
             }
         }

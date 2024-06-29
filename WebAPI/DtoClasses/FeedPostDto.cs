@@ -27,11 +27,11 @@ public class FeedPostDto
     //
     // public IEnumerable<Tuple<FeedPostUserDto, FeedPostUserDto>>? ShareUsers { get; set; }
     
-    public int LikeCount { get; set; } 
-    public bool IsLiked { get; set; } 
+    public int? LikeCount { get; set; } 
+    public bool? IsLiked { get; set; } 
     public IEnumerable<FeedPostUserDto>? Likes { get; set; } 
         
-    public int CommentCount { get; set; } 
+    public int? CommentCount { get; set; } 
     public IEnumerable<FeedPostCommentDto>? Comments { get; set; }
     
     public Guid? PostWineId { get; set; }

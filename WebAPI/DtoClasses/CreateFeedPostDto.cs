@@ -8,7 +8,7 @@ public class CreateFeedPostDto
     
     public Guid CreatorId { get; set; }
     
-    public DateTimeOffset DateTimePost { get; set; }
+    public DateTimeOffset? DateTimePost { get; set; }
     
     // public IEnumerable<CreateFeedPostMediaDto>? Media { get; set; }
     
