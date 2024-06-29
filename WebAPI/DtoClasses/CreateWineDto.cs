@@ -12,4 +12,6 @@ public class CreateWineDto
     public Guid BrandId { get; set; }
     public Guid RegionId { get; set; }
     public ICollection<Guid> GrapeTypeIds { get; set; }
+    public ICollection<Guid> EvaluationIds { get; set; }
+    public ICollection<Guid> ParticipantWineIds { get; set; }
 }

@@ -65,6 +65,10 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Friendship> Friendships { get; set; }
     public DbSet<FriendRequest> FriendRequests { get; set; }
     
+    public DbSet<BlindEvent> BlindEvents { get; set; }
+    public DbSet<Participant> Participants { get; set; }
+    public DbSet<Evaluation> Evaluations { get; set; }
+    public DbSet<ParticipantWine> ParticipantWines { get; set; }
 
 
     public DbSet<Interaction> Interaction { get; set; }
@@ -127,21 +131,11 @@ public partial class ApplicationDbContext : DbContext
         BuildTasteEvaluationQuestions(modelBuilder);
         BuildInteraction(modelBuilder);
 
+        BuildBlindEvents(modelBuilder);
+        BuildParticipants(modelBuilder);
+        BuildEvaluations(modelBuilder);
+        BuildParticipantWines(modelBuilder);
         base.OnModelCreating(modelBuilder);
-        
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-        {
-            var deletedAtProperty = entityType.FindProperty("DeletedAt");
-            if (deletedAtProperty != null && deletedAtProperty.ClrType == typeof(DateTimeOffset?))
-            {
-                var parameter = Expression.Parameter(entityType.ClrType, "p");
-                var body = Expression.Equal(
-                    Expression.Call(typeof(EF), nameof(EF.Property), new[] { typeof(DateTimeOffset?) }, parameter, Expression.Constant("DeletedAt")),
-                    Expression.Constant(null));
-                var lambda = Expression.Lambda(body, parameter);
-                modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
-            }
-        }
         
         BuildEvent(modelBuilder);
         BuildEventParticipants(modelBuilder);

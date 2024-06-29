@@ -10,6 +10,16 @@ public partial class ApplicationDbContext
             .HasMany(u => u.UserRoles)
             .WithOne(ur => ur.User)
             .HasForeignKey(ur => ur.UserId);
+        
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.OrganizedEvents)
+            .WithOne(be => be.Organizer)
+            .HasForeignKey(be => be.OrganizerId);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Participants)
+            .WithOne(p => p.User)
+            .HasForeignKey(p => p.UserId);
 
         modelBuilder.Entity<User>()
             .HasMany(u => u.Likes)

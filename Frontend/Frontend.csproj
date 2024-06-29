@@ -52,7 +52,7 @@
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Components\Pages\Friends\Friends.razor" />
-
+        
     </ItemGroup>
 
 </Project>

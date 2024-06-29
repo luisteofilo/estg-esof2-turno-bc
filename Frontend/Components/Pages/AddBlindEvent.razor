@@ -1,0 +1,68 @@
+﻿@page "/AddBlindEvent"
+@using Frontend.Helpers
+@using ESOF.WebApp.WebAPI.DtoClasses
+@rendermode InteractiveServer
+@inject ApiHelper ApiHelper
+@inject NavigationManager Navigation
+
+<PageTitle>Add Blind Event</PageTitle>
+
+<h1>Add Blind Event</h1>
+
+<div class="form-container">
+    <label for="name" class="form-label">Name</label>
+    <input type="text" class="form-control" id="name" @bind="name" />
+    
+    <label for="eventDate" class="form-label">Event Date</label>
+    <input type="date" class="form-control" id="eventDate" @bind="eventDate" />
+
+    <button class="btn btn-primary" @onclick="CreateBlindEvent">Add Blind Event</button>
+</div>
+
+@code {
+    private string name = string.Empty;
+    private DateTime eventDate = DateTime.Now;
+    private Guid organizerID = UserState.LoggedInUserId ?? Guid.Empty;
+    
+    private async Task CreateBlindEvent()
+    {
+        try
+        {
+            // Convertendo a data para UTC
+            var utcEventDate = DateTime.SpecifyKind(eventDate, DateTimeKind.Utc);
+
+            var blindEvent = new CreateBlindEventDto
+            {
+                OrganizerId = organizerID,
+                EventDate = utcEventDate,
+                Name = name,
+                ParticipantIds = new List<Guid>(),
+                EvaluationIds = new List<Guid>(),
+                ParticipantWineIds = new List<Guid>()
+            };
+
+            var jsonContent = System.Text.Json.JsonSerializer.Serialize(blindEvent);
+            Console.WriteLine($"Generated JSON: {jsonContent}");
+            
+            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+            Console.WriteLine($"Content-Type being sent: {content.Headers.ContentType}");
+
+            var response = await ApiHelper.PostToApiAsync3("api/BlindEvent/store", content);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Blind event created successfully!");
+                Navigation.NavigateTo("/BlindEvent");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to create blind event. Status code: {response.StatusCode}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response content: {responseContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}

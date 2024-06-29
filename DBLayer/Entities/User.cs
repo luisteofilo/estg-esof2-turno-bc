@@ -38,4 +38,15 @@ public class User
 
     public ICollection<EventParticipant> EventParticipants { get; set; }
     public ICollection<Interaction> Interactions { get; set; }
+    
+    public ICollection<BlindEvent> OrganizedEvents { get; set; }
+
+    
+    public ICollection<Participant> Participants { get; set; }
+
+    public User()
+    {
+        OrganizedEvents = new List<BlindEvent>();
+        Participants = new List<Participant>();
+    }
 }
