@@ -11,7 +11,7 @@
     <div class="post-header">
         <img src="avatar.jpg" alt="Profile Image" class="profile-image" @onclick="ToggleHover" style="cursor:pointer;" />
         <div class="post-info">
-            <div class="post-author" @onclick="ToggleHover" style="cursor:pointer;">@PostLine.Creator.email</div>
+            <div class="post-author" @onclick="ToggleHover" style="cursor:pointer;">@PostLine.Creator.Email</div>
             <div class="post-meta">@PostLine.DateTimePost.ToString("dd/MM/yyyy HH:mm") · @((MarkupString)_visibilityTypePic) @PostLine.VisibilityType</div>
         </div>
         <div class="post-menu" @onfocusout="@(() => _menuVisible = false)">
@@ -98,7 +98,7 @@
         <div class="hover-header">
             <img src="avatar.jpg" alt="Profile Image" class="hover-profile-image" />
             <div class="hover-info">
-                <div class="hover-email">@PostLine.Creator.email</div>
+                <div class="hover-email">@PostLine.Creator.Email</div>
             </div>
         </div>
         @if (PostLine.Creator.UserId != LoggedInUserId)

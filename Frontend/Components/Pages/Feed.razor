@@ -1,6 +1,7 @@
 ﻿@page "/Feed"
 @using System.Security.Principal
 @using System.Text.Json
+@using System.Web
 @using Azure
 @using ESOF.WebApp.DBLayer.Entities
 @using ESOF.WebApp.WebAPI.DtoClasses
@@ -176,7 +177,7 @@
             };
             
             if(!_event.IsNullOrEmpty()){
-                var postEvent = await ApiHelper.GetFromApiAsync<ResponseEventDto>($"api/Post/find/event/name/{_event}");
+                var postEvent = await ApiHelper.GetFromApiAsync<ResponseEventDto>($"api/Post/find/event/slug/{_event}");
                 if (postEvent is not null)
                 {
                     _newPost.PostEventId = postEvent.EventId;
@@ -187,7 +188,7 @@
             
             if (!_wine.IsNullOrEmpty())
             {
-                var postWine = await ApiHelper.GetFromApiAsync<FeedPostWineDto>($"api/Post/find/wine/label/{_wine}");
+                var postWine = await ApiHelper.GetFromApiAsync<FeedPostWineDto>($"api/Post/find/wine/label/{HttpUtility.UrlEncode(_wine)}");
                 if (postWine is not null)
                 {
                     _newPost.PostWineId = postWine.WineId;
@@ -199,7 +200,7 @@
             var createdPost = await ApiHelper.PostToApiAsync<CreateFeedPostDto, FeedPostDto>("api/Post/create", postDto);
             if (createdPost != null)
             {
-                // _feedPosts.Posts.Insert(0, createdPost); 
+                _feedPosts.Posts.Insert(0, MapToFeedPost(createdPost)); 
                 _newPost = new FeedPost();
             }
         }
@@ -214,108 +215,60 @@
         StateHasChanged();
     }
     
-    // private FeedPost MapToFeedPost(FeedPostDto p)
-    // {
-    //     var post = new FeedPostDto
-    //     {
-    //         PostId = p.PostId,
-    //         Text = p.Text,
-    //         CreatorId = p.CreatorId,
-    //         Creator = p.Creator != null
-    //             ? new FeedPostUserDto
-    //             {
-    //                 UserId = p.Creator.UserId,
-    //                 Email = p.Creator.Email,
-    //                 UserName = p.Creator.UserName
-    //             }
-    //             : null,
-    //         DateTimePost = p.DateTimePost,
-    //         VisibilityType = p.VisibilityType,
-    //         Likes = p.Likes != null
-    //             ? p.Likes.Where(l => l.IsActive)
-    //                 .Select(l => new FeedPostUserDto
-    //                 {
-    //                     UserId = l.UserId,
-    //                     Email = l.User.Email
-    //                 })
-    //                 .ToList()
-    //             : null,
-    //         LikeCount = p.Likes != null
-    //             ? p.Likes.Count(l => l.IsActive)
-    //             : 0,
-    //         Comments = p.Comments != null
-    //             ? p.Comments.Select(c => new FeedPostCommentDto
-    //                 {
-    //                     CommentId = c.CommentId,
-    //                     PostId = c.PostId,
-    //                     UserId = c.UserId,
-    //                     Content = c.Content,
-    //                     CreatedAt = c.CreatedAt,
-    //                     UpdatedAt = c.UpdatedAt,
-    //                     User = new FeedPostUserDto
-    //                     {
-    //                         UserId = c.User.UserId,
-    //                         Email = c.User.Email
-    //                     }
-    //                 })
-    //                 .ToList()
-    //             : null,
-    //         CommentCount = p.Comments != null 
-    //             ? p.Comments.Count
-    //             : 0,
-    //         Media = p.Media != null
-    //             ? p.Media.Select(m => new FeedPostMediaDto()
-    //                 {
-    //                     MediaId = m.MediaId,
-    //                     Data = m.Data,
-    //                     FileExtension = m.FileExtension,
-    //                     Filename = m.Filename
-    //                 })
-    //                 .ToList()
-    //             : null,
-    //         Hashtags = p.Hashtags != null
-    //             ? p.Hashtags.Select(h => new FeedPostHashtagDto()
-    //             {
-    //                 HashtagId = h.HashtagId,
-    //                 Name = h.Name
-    //             })
-    //             .ToList()
-    //             : null,
-    //         PostEventId = p.PostEventId,
-    //         Event = p.Event != null
-    //             ? new ResponseEventDto()
-    //             {
-    //                 EventId = p.Event.EventId,
-    //                 Name = p.Event.Name,
-    //                 Slug = p.Event.Slug
-    //             }
-    //             : null,
-    //         PostWineId = p.PostWineId,
-    //         Wine = p.Wine != null
-    //             ? new FeedPostWineDto()
-    //             {
-    //                 WineId = p.Wine.WineId,
-    //                 BrandId = p.Wine.BrandId,
-    //                 Brand = new FeedPostWineBrandDto()
-    //                 {
-    //                     BrandId = p.Wine.BrandId,
-    //                     Name = p.Wine.Brand.Name,
-    //                     Description = p.Wine.Brand.Description
-    //                 },
-    //                 RegionId = p.Wine.RegionId,
-    //                 Region = new FeedPostWineRegionDto()
-    //                 {
-    //                     RegionId = p.Wine.RegionId,
-    //                     Name = p.Wine.Region.Name
-    //                 },
-    //                 Label = p.Wine.label,
-    //                 LabelDesignation = p.Wine.LabelDesignation,
-    //                 Category = p.Wine.category
-    //             }
-    //             : null
-    //     };
-    //     return post;
-    // }
+    private FeedPost MapToFeedPost(FeedPostDto p)
+    {
+        var post = new FeedPost
+        {
+            PostId = p.PostId,
+            Text = p.Text,
+            CreatorId = p.CreatorId,
+            Creator = p.Creator != null
+                ? new FeedPostUser
+                {
+                    UserId = p.Creator.UserId,
+                    Email = p.Creator.Email,
+                    UserName = p.Creator.UserName
+                }
+                : null,
+            DateTimePost = p.DateTimePost,
+            VisibilityType = p.VisibilityType,
+            Hashtags = p.Hashtags != null
+                ? p.Hashtags.Select(h => new FeedPostHashtag()
+                {
+                    HashtagId = h.HashtagId,
+                    Name = h.Name
+                })
+                .ToList()
+                : null,
+            PostEventId = p.PostEventId,
+            Event = p.Event != null
+                ? new FeedPostEvent()
+                {
+                    EventId = p.Event.EventId,
+                    Name = p.Event.Name,
+                    Slug = p.Event.Slug
+                }
+                : null,
+            PostWineId = p.PostWineId,
+            Wine = p.Wine != null
+                ? new FeedPostWine()
+                {
+                    WineId = p.Wine.WineId,
+                    BrandId = p.Wine.BrandId,
+                    Brand = new FeedPostWineBrand()
+                    {
+                        BrandId = p.Wine.BrandId,
+                        Name = p.Wine.Brand.Name,
+                        Description = p.Wine.Brand.Description
+                    },
+                    label = p.Wine.Label,
+                    LabelDesignation = p.Wine.LabelDesignation,
+                    category = p.Wine.Category
+                }
+                : null
+        };
+        return post;
+    }
 
     
     private FeedPostEvent MapToFeedPostEvent(ResponseEventDto e)
@@ -352,7 +305,7 @@
         };
     }
     
-    private async Task HandleDelete(Post post)
+    private void HandleDelete(Post post)
     {
         _feedPosts.Posts.Remove(post.PostLine);
         StateHasChanged();

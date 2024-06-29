@@ -1,11 +1,6 @@
-﻿using System.Xml.Linq;
-using ESOF.WebApp.WebAPI.DtoClasses;
+﻿using ESOF.WebApp.WebAPI.DtoClasses;
 using Helpers.ViewModels;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using WebAPI.DtoClasses;
-using ResponseBrandDto = ESOF.WebApp.WebAPI.DtoClasses.ResponseBrandDto;
-using ResponseRegionDto = ESOF.WebApp.WebAPI.DtoClasses.ResponseRegionDto;
-using ResponseWineDto = ESOF.WebApp.WebAPI.DtoClasses.ResponseWineDto;
 
 namespace ESOF.WebApp.WebAPI.Services;
 
@@ -55,7 +50,7 @@ public class PostService
                         UserName = p.Creator.UserName
                     },
                     DateTimePost = p.DateTimePost,
-                    VisibilityType = p.VisibilityType,
+                    VisibilityType = (FeedPostVisibilityType)p.VisibilityType,
                     LikeCount = p.Likes.Count(l => l.IsActive),
                     IsLiked = false,
                     Likes = p.Likes.Where(l => l.IsActive)
@@ -308,7 +303,7 @@ public class PostService
                 }
                 : null,
             DateTimePost = p.DateTimePost,
-            VisibilityType = p.VisibilityType,
+            VisibilityType = (FeedPostVisibilityType)p.VisibilityType,
             Likes = p.Likes != null
                 ? p.Likes.Where(l => l.IsActive)
                     .Select(l => new FeedPostUserDto
@@ -418,7 +413,7 @@ public class PostService
                 Email = post.Creator.Email
             },
             DateTimePost = post.DateTimePost,
-            VisibilityType = post.VisibilityType,
+            VisibilityType = (FeedPostVisibilityType)post.VisibilityType,
             LikeCount = post.Likes.Count(l => l.IsActive),
             IsLiked = false, // Not checking for a specific user
             Likes = post.Likes.Where(l => l.IsActive)
@@ -562,7 +557,7 @@ public class PostService
             Text = post.Text,
             CreatorId = post.CreatorId,
             DateTimePost = post.DateTimePost,
-            VisibilityType = post.VisibilityType
+            VisibilityType = (FeedPostVisibilityType)post.VisibilityType
         };
     }
 
@@ -598,6 +593,26 @@ public class PostService
         try
         {
             var evento = await _context.Events.Where(e => e.Name == eventName).FirstOrDefaultAsync();
+            if (evento is not null)
+            {
+                return MapToEventDto(evento);
+            }
+            else
+            {
+                throw new ArgumentException("Event not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while finding the event.", ex);
+        }
+    }
+
+    public async Task<ResponseEventDto> GetEventBySlug(string eventSlug)
+    {
+        try
+        {
+            var evento = await _context.Events.Where(e => e.Slug == eventSlug).FirstOrDefaultAsync();
             if (evento is not null)
             {
                 return MapToEventDto(evento);

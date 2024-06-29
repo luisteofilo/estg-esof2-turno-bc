@@ -28,8 +28,6 @@ public class FeedPost
     
     public IEnumerable<Tuple<FeedPostUser, FeedPostUser>>? ShareUsers { get; set; }
     
-    public int LikeCount { get; set; }  
-    public bool IsLiked { get; set; }
     public Guid? PostWineId { get; set; }
     public FeedPostWine? Wine { get; set; }
     
@@ -39,8 +37,8 @@ public class FeedPost
 
 public enum FeedPostVisibilityType
 {
-    Public,
-    Followers
+    Public = 0,
+    Followers = 1
 }
 
 
@@ -95,7 +93,7 @@ public class FeedPostUser
     
     public Guid UserId { get; set; }
     
-    public string email { get; set; }
+    public string Email { get; set; }
     
     public string UserName { get; set; }
     

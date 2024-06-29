@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -234,12 +235,25 @@ namespace ESOF.WebApp.WebAPI.Controllers
             }
         }
         
+        [HttpGet("find/event/slug/{eventSlug}")]
+        public async Task<ActionResult<ResponseEventDto>> GetEventBySlug(string eventSlug)
+        {
+            try
+            {
+                return Ok(await _postService.GetEventBySlug(eventSlug));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("find/wine/label/{wineLabel}")]
         public async Task<ActionResult<ResponseEventDto>> GetWineByLabel(string wineLabel)
         {
             try
             {
-                return Ok(await _postService.GetWineByLabel(wineLabel));
+                return Ok(await _postService.GetWineByLabel(HttpUtility.UrlDecode(wineLabel)));
             }
             catch (Exception ex)
             {
