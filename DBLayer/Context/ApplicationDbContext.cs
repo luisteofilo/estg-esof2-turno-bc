@@ -51,7 +51,6 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Region> Regions { get; set; }
     public DbSet<GrapeType> GrapeTypes { get; set; }
     public DbSet<WineGrapeTypeLink> WineGrapeTypeLinks { get; set; }
-    
     public DbSet<Post> Posts { get; set; }
     public DbSet<Hashtag> Hashtags { get; set; }
     public DbSet<PostMedia> PostMedia { get; set; }
@@ -59,27 +58,19 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<PostUserHidden> PostUserHidden { get; set; }
     public DbSet<PostUserShare> PostUserShare { get; set; }
     public DbSet<PostUserView> PostUserView { get; set; }
-    
     public DbSet<Like> Likes { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Friendship> Friendships { get; set; }
     public DbSet<FriendRequest> FriendRequests { get; set; }
-    
     public DbSet<BlindEvent> BlindEvents { get; set; }
     public DbSet<Participant> Participants { get; set; }
     public DbSet<Evaluation> Evaluations { get; set; }
     public DbSet<ParticipantWine> ParticipantWines { get; set; }
-
-
     public DbSet<Interaction> Interaction { get; set; }
-    
-    
-    
     public DbSet<TasteQuestionType> TasteQuestionTypes { get; set; }
     public DbSet<TasteQuestion> TasteQuestions { get; set; }
     public DbSet<TasteEvaluation> TasteEvaluations { get; set; }
     public DbSet<TasteEvaluationQuestion> TasteEvaluationQuestions { get; set; }
-    
     public DbSet<Event> Events { get; set; }
     public DbSet<EventParticipant> EventParticipants { get; set; }
 
@@ -117,14 +108,11 @@ public partial class ApplicationDbContext : DbContext
         BuildRegions(modelBuilder);
         BuildGrapeTypes(modelBuilder);
         BuildWineGrapeTypeLinks(modelBuilder);
-
         BuildPosts(modelBuilder);
         BuildLikes(modelBuilder);
         BuildComments(modelBuilder);
         BuildFriendships(modelBuilder);
         BuildFriendRequests(modelBuilder);
-
-
         BuildTasteQuestionTypes(modelBuilder);
         BuildTasteQuestions(modelBuilder);
         BuildTasteEvaluations(modelBuilder);
