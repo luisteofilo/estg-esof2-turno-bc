@@ -1,0 +1,47 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  frontend:
+    build:
+      context: "D:\\Engenharia Informática\\2Ano\\2Semestre\\Engenharia de Software\
+        \ II\\4ºAno\\TP\\estg-esof2-turno-bc"
+      dockerfile: "Frontend/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Frontend.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net8.0/Frontend.staticwebassets.runtime.CT.json"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "frontend:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\fjfd2\\.nuget\\packages:/home/app/.nuget/packages"
+    - "D:\\Engenharia Informática\\2Ano\\2Semestre\\Engenharia de Software II\\4º\
+      Ano\\TP\\estg-esof2-turno-bc\\Frontend:/app:rw"
+    - "D:\\Engenharia Informática\\2Ano\\2Semestre\\Engenharia de Software II\\4º\
+      Ano\\TP\\estg-esof2-turno-bc:/src:rw"
+    working_dir: "/app"
+  webapi:
+    build:
+      context: "D:\\Engenharia Informática\\2Ano\\2Semestre\\Engenharia de Software\
+        \ II\\4ºAno\\TP\\estg-esof2-turno-bc"
+      dockerfile: "WebAPI/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/ESOF WebApp WebAPI.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "webapi:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\fjfd2\\.nuget\\packages:/home/app/.nuget/packages"
+    - "D:\\Engenharia Informática\\2Ano\\2Semestre\\Engenharia de Software II\\4º\
+      Ano\\TP\\estg-esof2-turno-bc\\WebAPI:/app:rw"
+    - "D:\\Engenharia Informática\\2Ano\\2Semestre\\Engenharia de Software II\\4º\
+      Ano\\TP\\estg-esof2-turno-bc:/src:rw"
+    working_dir: "/app"

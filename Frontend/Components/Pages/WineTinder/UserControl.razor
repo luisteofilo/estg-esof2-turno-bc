@@ -1,0 +1,60 @@
+@page "/UserControl"
+
+@using Frontend.Helpers
+@using global::Helpers.ViewModels
+@attribute [StreamRendering]
+@inject ApiHelper ApiHelper
+
+<PageTitle>User Control</PageTitle>
+
+<h3>User Control</h3>
+
+@if (_users.Users.Count == 0)
+{
+    <p>
+        <em>No Users Available!</em>
+    </p>
+}
+else
+{
+    <table class="table table-striped" style="width: 100%;">
+        <thead> 
+        <tr>
+            <th scope="col">Email</th>
+            <th scope="col" style="text-align: right;">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in _users.Users)
+            {
+                <tr>
+                    <td>@user.Email</td>
+                    <td style="text-align: right">
+                        <button type="button" class="btn btn-success" onclick="logUser('@user.UserId')">Log in</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private UserList _users = new UserList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _users.Users = await  ApiHelper.GetFromApiAsync<List<ResponseUserDto>>("api/User/index");
+        }
+        catch (ApplicationException ex)
+        {
+            Console.Error.WriteLine($"Failed to fetch users: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error: {ex.Message}");
+        }
+    }
+    
+}

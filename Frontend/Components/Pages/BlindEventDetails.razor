@@ -1,0 +1,82 @@
+﻿@page "/BlindEventDetails/{EventId:guid}"
+@using Frontend.Helpers
+@using ESOF.WebApp.WebAPI.DtoClasses
+@inject ApiHelper ApiHelper
+@inject NavigationManager Navigation
+
+<PageTitle>Blind Event Details</PageTitle>
+
+<h1>Blind Event Details</h1>
+
+@if (blindEvent == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div>
+        <h2>@blindEvent.Name</h2>
+        <p><strong>Date:</strong> @blindEvent.EventDate.ToString("yyyy-MM-dd")</p>
+        <p><strong>Organizer:</strong> @blindEvent.Organizer.Email</p>
+
+        <h3>Participants</h3>
+        <ul>
+            @foreach (var participant in blindEvent.Participants)
+            {
+                <li>@participant.User.Email</li>
+            }
+        </ul>
+
+        @if (UserState.LoggedInUserId == blindEvent.OrganizerId)
+        {
+            <h3>Wines</h3>
+            @if (blindEvent.ParticipantWines != null && blindEvent.ParticipantWines.Any())
+            {
+                <ul>
+                    @foreach (var participantWine in blindEvent.ParticipantWines)
+                    {
+                        <li>@participantWine.Wine.Label (@participantWine.Wine.Year) - added by @participantWine.Participant.User.Email</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No wines have been added to this event yet.</p>
+            }
+
+            <h3>Evaluations</h3>
+            @if (blindEvent.Evaluations == null || !blindEvent.Evaluations.Any())
+            {
+                <p>No evaluations available.</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var evaluation in blindEvent.Evaluations)
+                    {
+                        <li>
+                            Participant: @evaluation.Participant.User.Email, Wine: @evaluation.Wine.Label, Grade: @evaluation.Grade
+                        </li>
+                    }
+                </ul>
+            }
+        }
+
+        @if (UserState.LoggedInUserId.HasValue && UserState.LoggedInUserId != Guid.Empty && UserState.LoggedInUserId == blindEvent.OrganizerId)
+        {
+            <a href="@($"/AddParticipant/{blindEvent.BlindEventId}")" class="btn btn-primary">Add Participant</a>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid EventId { get; set; }
+
+    private ResponseBlindEventDto blindEvent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        blindEvent = await ApiHelper.GetFromApiAsync<ResponseBlindEventDto>($"api/BlindEvent/show/{EventId}");
+    }
+}

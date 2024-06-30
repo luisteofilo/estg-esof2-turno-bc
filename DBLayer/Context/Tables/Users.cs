@@ -1,7 +1,5 @@
 using ESOF.WebApp.DBLayer.Entities;
 using Microsoft.EntityFrameworkCore;
-
-// ReSharper disable once CheckNamespace
 namespace ESOF.WebApp.DBLayer.Context;
 
 public partial class ApplicationDbContext
@@ -12,6 +10,50 @@ public partial class ApplicationDbContext
             .HasMany(u => u.UserRoles)
             .WithOne(ur => ur.User)
             .HasForeignKey(ur => ur.UserId);
+        
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.OrganizedEvents)
+            .WithOne(be => be.Organizer)
+            .HasForeignKey(be => be.OrganizerId);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Participants)
+            .WithOne(p => p.User)
+            .HasForeignKey(p => p.UserId);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Likes)
+            .WithOne(l => l.User)
+            .HasForeignKey(l => l.UserId);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Comments)
+            .WithOne(c => c.User)
+            .HasForeignKey(c => c.UserId);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.SentFriendshipRequests)
+            .WithOne(fr => fr.Requester)
+            .HasForeignKey(fr => fr.RequesterId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.ReceivedFriendshipRequests)
+            .WithOne(fr => fr.Receiver)
+            .HasForeignKey(fr => fr.ReceiverId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Friendships1)
+            .WithOne(f => f.User1)
+            .HasForeignKey(f => f.UserId1)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Friendships2)
+            .WithOne(f => f.User2)
+            .HasForeignKey(f => f.UserId2)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)
@@ -20,5 +62,7 @@ public partial class ApplicationDbContext
         modelBuilder.Entity<User>()
             .Property(p => p.UserId)
             .HasDefaultValueSql("gen_random_uuid()");
+        modelBuilder.Entity<UserRole>()
+            .HasKey(e => new { e.RoleId, e.UserId });
     }
 }

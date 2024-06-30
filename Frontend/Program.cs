@@ -2,6 +2,7 @@ using Frontend.Components;
 using Frontend.Helpers;
 using Frontend.Services;
 using Helpers;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +10,25 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddAntiforgery();
+
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(EnvFileHelper.GetString("API_URL")) });
 builder.Services.AddScoped<ApiHelper>();
+builder.Services.AddScoped<WineLeaderboardService>();
+builder.Services.AddScoped<RegionService>();
 builder.Services.AddScoped<ScrapingService>();
+builder.Services.AddScoped<UserLeaderboardService>();
+builder.Services.AddScoped<EventService>();
+builder.Services.AddScoped<TasteQuestionService>();
+builder.Services.AddScoped<TasteEvaluationQuestionService>();
+builder.Services.AddScoped<TasteQuestionTypeService>();
+builder.Services.AddScoped<TasteEvaluationService>();
+builder.Services.AddScoped<WineService>();
+builder.Services.AddScoped<UserService>();
+
+// Adicionar suporte para ProtectedSessionStorage
+builder.Services.AddScoped<ProtectedSessionStorage>();
+builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
 
@@ -26,6 +43,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+app.UseRouting();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
