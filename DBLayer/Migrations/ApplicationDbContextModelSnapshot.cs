@@ -857,6 +857,32 @@ namespace ESOF.WebApp.DBLayer.Migrations
                     b.ToTable("WineGrapeTypeLinks");
                 });
 
+            // ScrapedWine Entity
+            modelBuilder.Entity("ESOF.WebApp.DBLayer.Entities.ScrapedWine", b =>
+                {
+                    b.Property<Guid>("ScrapedWineId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("current_timestamp");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ScrapedWineId");
+
+                    b.ToTable("ScrapedWines");
+                });
+
             // HashtagPost Entity
             modelBuilder.Entity("HashtagPost", b =>
                 {

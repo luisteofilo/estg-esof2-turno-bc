@@ -26,11 +26,10 @@ public partial class ApplicationDbContext : DbContext
         }
 
         var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={password}";
-        Console.WriteLine($"ConnectionString: {connectionString}"); // Debug line
         optionsBuilder.UseNpgsql(connectionString);
         return optionsBuilder.Options;
     })();
-    
+
     public ApplicationDbContext()
         : base(DefaultOptions)
     {
@@ -46,11 +45,15 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
+
     public DbSet<Wine> Wines { get; set; }
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Region> Regions { get; set; }
     public DbSet<GrapeType> GrapeTypes { get; set; }
     public DbSet<WineGrapeTypeLink> WineGrapeTypeLinks { get; set; }
+
+    public DbSet<ScrapedWine> ScrapedWines { get; set; }
+
     public DbSet<Post> Posts { get; set; }
     public DbSet<Hashtag> Hashtags { get; set; }
     public DbSet<PostMedia> PostMedia { get; set; }
@@ -62,6 +65,7 @@ public partial class ApplicationDbContext : DbContext
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Friendship> Friendships { get; set; }
     public DbSet<FriendRequest> FriendRequests { get; set; }
+
     public DbSet<BlindEvent> BlindEvents { get; set; }
     public DbSet<Participant> Participants { get; set; }
     public DbSet<Evaluation> Evaluations { get; set; }
@@ -96,6 +100,7 @@ public partial class ApplicationDbContext : DbContext
         }
         base.OnConfiguring(optionsBuilder);
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         BuildUsers(modelBuilder);
@@ -103,30 +108,35 @@ public partial class ApplicationDbContext : DbContext
         BuildPermissions(modelBuilder);
         BuildRolePermissions(modelBuilder);
         BuildUserRoles(modelBuilder);
+
         BuildWines(modelBuilder);
         BuildBrands(modelBuilder);
         BuildRegions(modelBuilder);
         BuildGrapeTypes(modelBuilder);
         BuildWineGrapeTypeLinks(modelBuilder);
+
+        BuildScrapedWines(modelBuilder);
+
         BuildPosts(modelBuilder);
         BuildLikes(modelBuilder);
         BuildComments(modelBuilder);
         BuildFriendships(modelBuilder);
         BuildFriendRequests(modelBuilder);
+
         BuildTasteQuestionTypes(modelBuilder);
         BuildTasteQuestions(modelBuilder);
         BuildTasteEvaluations(modelBuilder);
         BuildTasteEvaluationQuestions(modelBuilder);
         BuildInteraction(modelBuilder);
-
         BuildBlindEvents(modelBuilder);
         BuildParticipants(modelBuilder);
         BuildEvaluations(modelBuilder);
         BuildParticipantWines(modelBuilder);
-        base.OnModelCreating(modelBuilder);
-        
         BuildEvent(modelBuilder);
         BuildEventParticipants(modelBuilder);
+
+        base.OnModelCreating(modelBuilder);
+
         //QRCODE
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {

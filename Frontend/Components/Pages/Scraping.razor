@@ -1,0 +1,102 @@
+﻿@page "/scraping"
+@using Frontend.DtoClasses
+@using Frontend.Services
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+@inject ScrapingService ScrapingService
+
+<PageTitle>Scraping</PageTitle>
+
+<h1>Scraping</h1>
+
+<div class="row">
+    <div class="input-group">
+        <div class="input-group-text">URL</div>
+        <input @bind="_url" type="url" class="form-control"/>
+        <button @onclick="() => SubmitScrapingRequest()" class="btn btn-primary">Submit</button>
+    </div>
+</div>
+
+<div class="row mt-3">
+    The following websites are supported:
+    <ul>
+        <li><a href="https://www.garrafeiranacional.com">https://www.garrafeiranacional.com</a></li>
+        <li><a href="https://infovini.com">https://infovini.com</a></li>
+        <li><a href="https://www.lojadovinho.com">https://www.lojadovinho.com</a></li>
+        <li><a href="https://www.vinhedo.pt">https://www.vinhedo.pt</a></li>
+        <li><a href="https://wine.pt">https://wine.pt</a></li>
+        <li><a href="https://winestuff.pt">https://winestuff.pt</a></li>
+    </ul>
+</div>
+
+<div class="row mt-3">
+    @if (_wines is null)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else if (!_wines.Any())
+    {
+        <p>No wines have been scraped yet. Please use the form above.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                <th>URL</th>
+                <th>Wine</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var wine in _wines)
+            {
+                <tr>
+                    <td>@wine.Url</td>
+                    <td>@wine.Label</td>
+                    <td>@wine.CreatedAt.LocalDateTime.ToString()</td>
+                    <td>
+                        <button @onclick="() => DeleteWine(wine.ScrapedWineId)" class="btn btn-danger">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private string? _url;
+    private List<ScrapedWineDto>? _wines;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchWines();
+    }
+
+    private async Task FetchWines()
+    {
+        _wines = await ScrapingService.GetAllWines();
+    }
+
+    private async Task SubmitScrapingRequest()
+    {
+        var request = new ScrapingRequestDto() { Url = _url };
+        await ScrapingService.CreateWineScrapingRequest(request);
+        await FetchWines();
+    }
+
+    private async Task DeleteWine(Guid wineId)
+    {
+        await ScrapingService.DeleteWine(wineId);
+        await FetchWines();
+    }
+
+}

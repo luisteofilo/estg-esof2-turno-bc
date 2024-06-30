@@ -7,15 +7,21 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddScoped<WineService>();
 builder.Services.AddScoped<GrapeTypeService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<RegionService>();
+
+builder.Services.AddScoped<ScrapingService>();
+
 builder.Services.AddScoped<WineLeaderboardService>();
 builder.Services.AddScoped<UserLeaderboardService>();
+
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<FriendshipService>();
 builder.Services.AddScoped<FriendRequestService>();
@@ -25,8 +31,6 @@ builder.Services.AddScoped<BlindEventService>();
 builder.Services.AddScoped<ParticipantService>();
 builder.Services.AddScoped<ParticipantWineService>();
 builder.Services.AddScoped<EvaluationService>();
-builder.Services.AddDbContext<ApplicationDbContext>();
-
 
 builder.Services.AddScoped<TasteEvaluationService>();
 builder.Services.AddScoped<TasteEvaluationQuestionService>();
@@ -35,7 +39,6 @@ builder.Services.AddScoped<TasteQuestionTypeService>();
 
 builder.Services.AddScoped<InteractionService>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddDbContext<ApplicationDbContext>();
 
 builder.Services.AddCors(options =>
 {
@@ -61,10 +64,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
-  
-  
-  
-  
+
 /*var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -98,5 +98,3 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
 */
-
-
